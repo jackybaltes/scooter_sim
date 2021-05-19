@@ -1,0 +1,61 @@
+{
+  "name": "urdf-loader",
+  "version": "0.10.2",
+  "description": "URDF Loader for THREE.js and webcomponent viewer",
+  "main": "src/URDFLoader.js",
+  "type": "module",
+  "scripts": {
+    "start": "concurrently --kill-others \"rollup -c -w\" \"cd .. && static-server\"",
+    "build": "rollup -c",
+    "test": "jest",
+    "lint": "eslint \"./src/*.js\" \"./test/*.js\" && tsc -p tsconfig.json --noEmit"
+  },
+  "files": [
+    "src/*",
+    "umd/*",
+    "example/index.js",
+    "example/dragAndDrop.js",
+    "example/styles.css"
+  ],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gkjohnson/urdf-loaders.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gkjohnson/urdf-loaders/issues"
+  },
+  "homepage": "https://github.com/gkjohnson/urdf-loaders#readme",
+  "keywords": [
+    "javascript",
+    "threejs",
+    "graphics",
+    "ros",
+    "robotics",
+    "urdf",
+    "urdf-models",
+    "webcomponents"
+  ],
+  "peerDependencies": {
+    "three": "^0.128.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@rollup/plugin-node-resolve": "^8.4.0",
+    "@webcomponents/webcomponentsjs": "^2.4.4",
+    "babel-jest": "^25.4.0",
+    "concurrently": "^6.1.0",
+    "eslint": "^7.10.0",
+    "eslint-plugin-jest": "^24.1.0",
+    "jest": "^25.4.0",
+    "jest-cli": "^25.4.0",
+    "jsdom": "^16.4.0",
+    "node-fetch": "^2.6.1",
+    "nyc": "^15.1.0",
+    "rollup": "^2.29.0",
+    "static-server": "^3.0.0",
+    "three": "0.128.0",
+    "typescript": "^3.9.7"
+  }
+}

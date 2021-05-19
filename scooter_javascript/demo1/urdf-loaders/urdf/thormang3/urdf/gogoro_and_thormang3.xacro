@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="gogoro_and_thormang3" xmlns:xacro="https://www.ros.org/wiki/xacro">
+    
+    <!-- Import Gogoro and Thormang3 model -->
+    <xacro:include filename="$(find gogoro_description)/urdf/thormang3_gogoro.xacro"/>
+    <xacro:include filename="$(find gogoro_description)/urdf/gogoro.urdf"/>
+
+    <!-- Connect Thormang3 pelvis to Gogoro's body -->
+
+    <joint name="thormang3_fixed_gogoro" type="revolute">
+        <origin xyz="0 0 -.9" rpy="0 0 0"/>
+        <parent link="pelvis_link"/>
+        <child link="body"/>
+        <axis xyz="0 0 1"/>
+        <limit velocity="6.5" effort="1000" lower="0.0" upper="0.0" />
+        <dynamics damping="1.0" friction="0.0"/>
+    </joint>
+    
+    <transmission name="tran4">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="thormang3_fixed_gogoro">
+            <!-- <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>-->
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor4">
+            <!-- <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface> -->
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+</robot>
