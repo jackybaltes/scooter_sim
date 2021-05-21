@@ -38692,6 +38692,8 @@
 	    constructor(track_threejs,render)
 	    {
 
+	        this.lost=false;
+
 	        //idk why but javascript need this else it doesn't feel good 
 	        this.stop_blink_zebra = this.stop_blink_zebra.bind(this);
 	        this.stop_blink_train = this.stop_blink_train.bind(this);
@@ -38707,10 +38709,11 @@
 	        // x = -12.4
 	        // y =0.94
 	        this.track_ = track_threejs; // the track described as a threeJS object
-
 	        this.zebra_blink = false;
 	        this.traffic_state = 0;
 	        this.train_blink = false;
+	        this.scooter_yaw = 0;
+
 
 	        //Parsin the track to find visuals
 	        this.zebra_l = this.track_.links["left_1"].children[0].children[0].material;
@@ -38735,78 +38738,93 @@
 	        //this.part1_on = new Boolean(false);
 	        this.part1_cango_after = { value: false };
 	        this.part1_on = { value: false };
-	        this.colision_callback(this.part1_on,this.part1_cango_after,1000,this.stop_blink_zebra);
+	        this.part_1_colision_callback(3000,this.stop_blink_zebra);
 
 	        //Traffic light
 	        this.part2 = new CheckPoint(new Vector2(-4.5,-16.2),new Vector2(-6,-17.4));
 	        this.part2_after = new CheckPoint(new Vector2(-3,-16.2),new Vector2(-4.5,-17.4));
 	        this.part2_cango_after = { value: false };
 	        this.part2_on = { value: false };
-	        this.colision_callback(this.part2_on,this.part2_cango_after,1000,this.trun_traffic_green);
+	        //this.colision_callback(this.part2_on,this.part2_cango_after,3000,this.trun_traffic_green);
+	        this.part_2_colision_callback(3000,this.trun_traffic_green);
 
 	        //position part
 	        this.part3 = new CheckPoint(new Vector2(5.7,-17.3),new Vector2(3,-20.4));
 	        this.part3_after = new CheckPoint(new Vector2(5.7,-14.8),new Vector2(3,-17.1));
 	        this.part3_cango_after = { value: false };
 	        this.part3_on = { value: false };
-	        this.colision_callback(this.part3_on,this.part3_cango_after,1000);
+	        //this.colision_callback(this.part3_on,this.part3_cango_after,3000);
+	        this.part_3_colision_callback(3000);
 
 
 	        this.part4 = new CheckPoint(new Vector2(2.65,2.44),new Vector2(-0.82,0.5));
-	        this.part4_after = new CheckPoint(new Vector2(5.7,-14.8),new Vector2(0.81,0.61));
+	        this.part4_after = new CheckPoint(new Vector2(5.7,3.2),new Vector2(0.81,0.61));
 	        this.part4_cango_after = { value: false };
 	        this.part4_on = { value: false };
-	        this.colision_callback(this.part4_on,this.part4_cango_after,1000);
+	        //this.colision_callback(this.part4_on,this.part4_cango_after,3000);
+	        this.part_4_colision_callback(3000);
 
 
 	        this.part5 = new CheckPoint(new Vector2(5.8,9.67),new Vector2(3,7.66));
-	        this.part5_after = new CheckPoint(new Vector2(5.8,-12.7),new Vector2(3,9.6));
+	        this.part5_after = new CheckPoint(new Vector2(5.8,12.7),new Vector2(3,9.6));
 	        this.part5_cango_after = { value: false };
 	        this.part5_on = { value: false };
-	        this.colision_callback(this.part5_on,this.part5_cango_after,1000,this.stop_blink_train);
-
+	        //this.colision_callback(this.part5_on,this.part5_cango_after,3000,this.stop_blink_train);
+	        this.part_5_colision_callback(3000,this.stop_blink_train);
 
 
 
 	        //coords for the line
-	        this.coord = [[-11.35,-8.90],
-	                [-11.3,-14.07],
-	                [-9.94,-15.59],
-	                [-8.64,-16.11],
-	                [-7.16,-16.18],
-	                [1.57,-16.24],
-	                [2.51,-15.88],
-	                [2.97,-14.85],
-	                [4.17,-13.96],
-	                [2.78,-12.92],
-	                [2.78,-4.19],
-	                [2.31,-3.30],
-	                [1.22,-3.03],
-	                [-8.54,-3.03],
-	                [-8.58,2.311],
-	                [0.77,2.37],
-	                [1.80,2.42],
-	                [2.63,2.98],
-	                [2.89,3.96],
-	                [2.88,15.16],
-	                [5.90,15.16],
-	                [5.87,0.49],
-	                [-4.61,0.49],
-	                [-4.61,-1.22],
-	                [2.75,-1.18],
-	                [4.25,-1.18],
-	                [4.25,-4.84],
-	                [4.81,-5.73],
-	                [5.80,-6.20],
-	                [5.69,-20.58],
-	                [-4.5,-20.58],
-	                [-4.5,-17.51],
-	                [-8.68,-17.46],
-	                [-9.98,-17.13],
-	                [-11.22,-16.45],
-	                [-12.23,-15.43],
-	                [-13.05,-14.09],
-	                [-13.01,-8.94]];
+	        this.coord = [        
+	        [-11.57,15.86],
+	        [-11.57,14.00],
+	        [-11.92,12.80],
+	        [-11.92,-2.35],
+
+	        [-11.35,-8.90],
+	        [-11.3,-14.07],
+	        [-9.94,-15.59],
+	        [-8.64,-16.11],
+	        [-7.16,-16.18],
+	        [1.57,-16.24],
+	        [2.51,-15.88],
+	        [2.97,-14.85],
+	        [4.17,-13.96],
+	        [2.78,-12.92],
+	        [2.78,-4.19],
+	        [2.31,-3.30],
+	        [1.22,-3.03],
+	        [-8.54,-3.03],
+	        [-8.58,2.311],
+	        [0.77,2.37],
+	        [1.80,2.42],
+	        [2.63,2.98],
+	        [2.89,3.96],
+	        [2.88,15.16],
+	        [5.90,15.16],
+	        [5.87,0.49],
+	        [-4.61,0.49],
+	        [-4.61,-1.22],
+	        [2.75,-1.18],
+	        [4.25,-1.18],
+	        [4.25,-4.84],
+	        [4.81,-5.73],
+	        [5.80,-6.20],
+	        [5.69,-20.58],
+	        [-4.5,-20.58],
+	        [-4.5,-17.51],
+	        [-8.68,-17.46],
+	        [-9.98,-17.13],
+	        [-11.22,-16.45],
+	        [-12.23,-15.43],
+	        [-13.05,-14.09],
+	        [-13.01,-8.94],
+	    
+	        [-12.40,-2.31],
+	        [-12.40,12.80],
+	        [-12.69,14.00],
+	        [-12.74,15.85]
+	];
 
 	        this.arrayX = [];
 	        this.arrayY = [];
@@ -38820,6 +38838,16 @@
 	    
 
 	    }
+
+
+	    get_done()
+	    {
+	        return this.lost;
+	    }
+
+	    
+
+
 
 	    async stop_blink_zebra()
 	    {
@@ -38855,8 +38883,8 @@
 	    async stop_blink_train()
 	    {
 	        this.train_blink = false;
-	        this.change_color(this.train_l,this.red);
-	        this.change_color(this.train_r,this.red);
+	        this.change_color(this.train_l,this.black);
+	        this.change_color(this.train_r,this.black);
 	    }
 
 
@@ -38928,34 +38956,42 @@
 	    }
 
 
-	    init_track()
+	    async init_track()
 	    {
+	        //this.train_blink = false;
+	        //this.zebra_blink = false;
+	        await this.stop_blink_train();
+	        await this.stop_blink_zebra();
+	        await this.sleep(100);
 
-	/*
-	        this.change_color(this.zebra_l,this.red);
-	        this.change_color(this.zebra_r,this.red);
+	        console.log("init_track");
+	        this.part1_cango_after = { value: false };
+	        this.part1_on = { value: false };
+	        this.part2_cango_after = { value: false };
+	        this.part2_on = { value: false };
+	        this.part3_cango_after = { value: false };
+	        this.part3_on = { value: false };
+	        this.part4_cango_after = { value: false };
+	        this.part4_on = { value: false };
+	        this.part5_cango_after = { value: false };
+	        this.part5_on = { value: false };
+	        this.zebra_blink = false;
+	        this.traffic_state = 0;
+	        this.train_blink = false;
+	        this.lost = false;
 
-	        this.change_color(this.traffic_r,this.red);
-	        this.change_color(this.traffic_g,this.black);
-	        this.change_color(this.traffic_y,this.black);
-
-	        this.change_color(this.train_l,this.red);
-	        this.change_color(this.train_r,this.red);
-	*/
-	        this.blink_zebra();
-	        this.trun_traffic_red();
-	        this.blink_train();
-
-
+	        await this.blink_zebra();
+	        await this.trun_traffic_red();
+	        await this.blink_train();
 	    }
 
 
-	    update(scooter_pos)
+	    update(scooter_pos,scooter_yaw)
 	    {
-	        //console.log(this.part1.is_in(scooter_pos));
-	        //console.log(this.is_in_track(scooter_pos,this.arrayX,this.arrayY));
 
 	        //can opti the code a lot here
+	        this.scooter_yaw = scooter_yaw;
+
 	        this.part1_on.value =this.part1.is_in(scooter_pos); 
 	        this.part2_on.value =this.part2.is_in(scooter_pos); 
 	        this.part3_on.value =this.part3.is_in(scooter_pos); 
@@ -38963,45 +38999,41 @@
 	        this.part5_on.value =this.part5.is_in(scooter_pos); 
 
 	        /*
-	        console.log("part1_on ="+this.part1_on.value);
-	        console.log("part1_cango = "+this.part1_cango_after.value);
-	        console.log("====");
-	        */
-
-
-
-	        
-
-	        /*
 	        if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY))
 	        {
 	            console.log("LOST");
-	        }
-	        */
-
+	            this.lost = true;
+	        }*/
+	        
 	        if(this.part1_after.is_in(scooter_pos) && !this.part1_cango_after.value)
 	        {
 	            console.log("LOST PART1");
+	            this.lost = true;
 	        }
 
-	        if(this.part2_after.is_in(scooter_pos) && !this.part3_cango_after.value)
+	        if(this.part2_after.is_in(scooter_pos) && !this.part2_cango_after.value)
 	        {
 	            console.log("LOST PART2");
+	            this.lost = true;
 	        }
-
-	        if(this.part3_after.is_in(scooter_pos) && !this.part4_cango_after.value)
+	        if(this.part3_after.is_in(scooter_pos) && !this.part3_cango_after.value)
 	        {
 	            console.log("LOST PART3");
+	            this.lost = true;
 	        }
-
-	        if(this.part4_after.is_in(scooter_pos) && !this.part5_cango_after.value)
+	        if(this.part4_after.is_in(scooter_pos) && !this.part4_cango_after.value)
 	        {
 	            console.log("LOST PART4");
+	            this.lost = true;
 	        }
+
+
+	        console.log(this.part5_after.is_in(scooter_pos));
 
 	        if(this.part5_after.is_in(scooter_pos) && !this.part5_cango_after.value)
 	        {
 	            console.log("LOST PART5");
+	            this.lost = true;
 	        }
 	        
 	    }
@@ -39010,44 +39042,6 @@
 
 
 
-
-
-	    async colision_callback(boolean_flag_object,boolean_result_object,time_needed_ms,function_ = null)
-	    {
-	        boolean_result_object.value = false; 
-
-	        while(true)
-	        {   
-	            var var_counter = 0;
-	            console.log("IS IN=",boolean_flag_object.value);
-	            while(boolean_flag_object.value)
-	            {
-	                console.log("IS IN=",boolean_flag_object.value);
-	                console.log("var_counter=",var_counter);
-	                var_counter++;
-	                await this.sleep(1000);
-	                if(var_counter*100>=time_needed_ms)
-	                {
-	                    console.log("breaking");
-	                    break;
-	                }
-	            }
-	            //if we break and th boolean is true, we can say it's good now 
-	            if(boolean_flag_object.value)
-	            {
-	                console.log("setting");
-	                if(function_)
-	                {
-	                    function_(this);
-	                }
-	                boolean_result_object.value = true; 
-	            }
-	            //else we just try again
-	            //delay to not kill the computer
-	            await this.sleep(1000);
-	        }
-	        
-	    }
 
 
 
@@ -39060,11 +39054,8 @@
 
 	        var x = point.x;
 	        var y = -point.z;
-	        
 	        //console.log('x='+x);
 	        //console.log('y='+y);
-
-
 	        var i, j=cornersX.length-1 ;
 	        var odd = false;
 	    
@@ -39076,7 +39067,6 @@
 	                && (pX[i]<=x || pX[j]<=x)) {
 	                odd ^= (pX[i] + (y-pY[i])*(pX[j]-pX[i])/(pY[j]-pY[i])) < x; 
 	            }
-	    
 	            j=i; 
 	        }
 	    
@@ -39086,7 +39076,203 @@
 
 
 
+	    async part_1_colision_callback(time_needed_ms,function_ = null)
+	    {
+	        this.part1_cango_after.value = false; 
+	        while(true)
+	        {   
+	            var var_counter = 0;
+	            while(this.part1_on.value)
+	            {
+	                var_counter++;
+	                await this.sleep(1000);
+	                if(var_counter*1000>=time_needed_ms)
+	                {
+	                    //console.log("breaking");
+	                    break;
+	                }
+	            }
+	            //if we break and th boolean is true, we can say it's good now 
+	            if(this.part1_on.value)
+	            {
+	                if(function_)
+	                {
+	                    function_(this);
+	                }
+	                this.part1_cango_after.value = true; 
+	            }
+	            //else we just try again
+	            //delay to not kill the computer
+	            await this.sleep(1000);
+	        }
+	    }
+
+
+
+
+
+
+
+	    async part_2_colision_callback(time_needed_ms,function_ = null)
+	    {
+	        this.part2_cango_after.value = false; 
+	        while(true)
+	        {   
+	            var var_counter = 0;
+	            while(this.part2_on.value)
+	            {
+
+	                var_counter++;
+	                console.log(var_counter);
+	                await this.sleep(1000);
+	                if(var_counter*1000>=time_needed_ms)
+	                {
+	                    break;
+	                }
+	            }
+	            //if we break and th boolean is true, we can say it's good now 
+	            if(this.part2_on.value)
+	            {
+	                if(function_)
+	                {
+	                    function_(this);
+	                }
+	                this.part2_cango_after.value = true; 
+	            }
+	            //else we just try again
+	            //delay to not kill the computer
+	            await this.sleep(1000);
+	        }
+	    }
+
+
+
+
+
+	    async part_3_colision_callback(time_needed_ms,function_ = null)
+	    {
+	        this.part3_cango_after.value = false; 
+	        while(true)
+	        {   
+	            var ori_Ok = this.scooter_yaw<1.8 && this.scooter_yaw>1.4;
+	            var var_counter = 0;
+	            while(this.part3_on.value && ori_Ok)
+	            {
+	                console.log(var_counter);
+
+	                var_counter++;
+	                await this.sleep(1000);
+	                if(var_counter*1000>=time_needed_ms)
+	                {
+	                    break;
+	                }
+	            }
+	            //if we break and th boolean is true, we can say it's good now 
+	            if(this.part3_on.value && ori_Ok)
+	            {
+	                if(function_)
+	                {
+	                    function_(this);
+	                }
+	                this.part3_cango_after.value = true; 
+	            }
+	            //else we just try again
+	            //delay to not kill the computer
+	            await this.sleep(1000);
+	        }
+	    }
+
+
+	    async part_4_colision_callback(time_needed_ms,function_ = null)
+	    {
+	        this.part4_cango_after.value = false; 
+	        while(true)
+	        {   
+	            var var_counter = 0;
+	            while(this.part4_on.value)
+	            {
+	                var_counter++;
+	                await this.sleep(1000);
+	                if(var_counter*1000>=time_needed_ms)
+	                {
+	                    break;
+	                }
+	            }
+	            //if we break and th boolean is true, we can say it's good now 
+	            if(this.part4_on.value)
+	            {
+	                //console.log("setting");
+	                if(function_)
+	                {
+	                    function_(this);
+	                }
+	                this.part4_cango_after.value = true; 
+	            }
+	            //else we just try again
+	            //delay to not kill the computer
+	            await this.sleep(1000);
+	        }
+	    }
+
+
+
+
+
+
+	    async part_5_colision_callback(time_needed_ms,function_ = null)
+	    {
+	        this.part4_cango_after.value = false; 
+	        while(true)
+	        {   
+	            console.log("=====");
+	            console.log(this.part5_on.value);
+
+	            var var_counter = 0;
+	            while(this.part5_on.value)
+	            {
+	                var_counter++;
+	                await this.sleep(1000);
+	                if(var_counter*1000>=time_needed_ms)
+	                {
+	                    break;
+	                }
+	            }
+	            //if we break and th boolean is true, we can say it's good now 
+	            if(this.part5_on.value)
+	            {
+	                if(function_)
+	                {
+	                    function_(this);
+	                }
+	                this.part5_cango_after.value = true; 
+	            }
+	            //else we just try again
+	            //delay to not kill the computer
+	            await this.sleep(1000);
+	        }
+	    }
+
+
+
+
+
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	class CheckPoint
 	{
@@ -39114,12 +39300,24 @@
 
 	let scene, camera, renderer, track, scooter, controls;
 
+	let spawn_x =-12.2;
+	let spawn_y =0.94;
+	let spawn_z =-15;
+
+
+
+
+	let a_up=true;
+	let d_up=true;
+	let w_up=true;
+	let s_up=true;
+
 	let test_track;
 	let scooter_loaded =false;
 
 	let velocity = 0.0; //m/s
 	let scooter_yaw_rotation = 0.0;
-	const max_x_velocity = 10;
+	const max_x_velocity = 1;
 	const min_x_velocity = 0;
 	let steering_angle = 0.0;
 	const max_steering_angle = 0.5235;
@@ -39128,9 +39326,6 @@
 	const b = 1.184012; //inter wheel distance=
 	const a = b/2;
 	const g= 9.806;
-
-
-	let log_flag = false;
 
 
 
@@ -39147,36 +39342,25 @@
 
 	function init() {
 
-
-	    
-
 	    scene = new Scene();
 	    scene.background = new Color(0x92fffb);
-
 	    camera = new PerspectiveCamera();
-	    camera.position.set(0, 10, 0);
-	    camera.lookAt(-10,0,10);
-
+	    camera.position.set(-11, 10, 17);
+	    camera.lookAt(-11, 0, 17);
 	    renderer = new WebGLRenderer({ antialias: false });
 	    //renderer.outputEncoding = sRGBEncoding;
 	    //renderer.shadowMap.enabled = true;
 	    //renderer.shadowMap.type = PCFSoftShadowMap;
 	    document.body.appendChild(renderer.domElement);
-
 	    const directionalLight = new DirectionalLight(0xffffff, 1.0);
 	    directionalLight.castShadow = true;
 	    directionalLight.shadow.mapSize.setScalar(1024);
 	    directionalLight.position.set(5, 30, 5);
 	    scene.add(directionalLight);
 
-	    //const ambientLight = new AmbientLight(0xffffff, 0.3);
-	    //scene.add(ambientLight);
+	    const ambientLight = new AmbientLight(0xffffff, 0.01);
+	    scene.add(ambientLight);
 
-	    //const ground = new Mesh(new PlaneBufferGeometry(), new ShadowMaterial({ opacity: 0.25 }));
-	    //ground.rotation.x = -Math.PI / 2;
-	    //ground.scale.setScalar(30);
-	    //ground.receiveShadow = true;
-	    //scene.add(ground);
 
 	    controls = new OrbitControls(camera, renderer.domElement);
 	    controls.minDistance = 4;
@@ -39191,19 +39375,14 @@
 	        scooter = result;
 	    });
 	    manager.onLoad = () => {
-	        scooter.position.x = -12.2;
-	        scooter.position.y = 0.94;
-	        scooter.position.z = -15.15;
-	        //scooter.rotation.y = -Math.PI/2;
-
-	        //-x 
-	        //-y 
-	        //-z 
-
+	        scooter.position.x = spawn_x;
+	        scooter.position.y = spawn_y;
+	        scooter.position.z = spawn_z;
+	        scooter.rotation.y = -Math.PI/2;
+	        scooter_yaw_rotation = -Math.PI/2;
 	        scene.add(scooter);
 	        scooter_loaded = true;
 	    };
-	    
 	    
 	    const manager2 = new LoadingManager();
 	    const loader2 = new URDFLoader(manager2);
@@ -39219,35 +39398,10 @@
 	        
 	    };
 	    
-
-	    /*
-	    // wait until all the geometry has loaded to add the model to the scene
-	    manager.onLoad = () => {
-
-	        //robot.rotation.x = - Math.PI / 2;
-	        //robot.traverse(c => {
-	        //    c.castShadow = true;
-	        //});
-	        //for (let i = 1; i <= 6; i++) {
-	            //robot.joints[`HP${ i }`].setJointValue(MathUtils.degToRad(30));
-	            //robot.joints[`KP${ i }`].setJointValue(MathUtils.degToRad(120));
-	            //robot.joints[`AP${ i }`].setJointValue(MathUtils.degToRad(-60));
-	        //}
-	        
-	        //scooter.updateMatrixWorld(true);
-	        //const bb = new Box3();
-	        //bb.setFromObject(scooter);
-	        //scooter.position.y -= bb.min.y;
-	        scene.add(scooter);
-	    };
-	    */
-
-
 	    onResize();
 	    window.addEventListener('resize', onResize);
-
-	    document.addEventListener("keydown",user_imput);
-
+	    document.addEventListener("keydown",user_imput_down);
+	    document.addEventListener("keyup",user_imput_up);
 
 	}
 
@@ -39264,41 +39418,179 @@
 
 	    requestAnimationFrame(render);
 	    renderer.render(scene, camera);
-	    //console.log("RENDER")
-	    
+
+
+	    steer_keyboard();
+
+	    if(test_track)
+	    {
+	        if(test_track.get_done())
+	        {
+	            test_track.init_track();
+	            scooter.position.x = spawn_x;
+	            scooter.position.y = spawn_y;
+	            scooter.position.z = spawn_z;
+	            scooter.rotation.y = -Math.PI/2;
+	            scooter_yaw_rotation = -Math.PI/2;
+	            steering_angle =0.0;
+	            velocity =0.0;
+
+	        }
+	    }
+
 	    if(scooter_loaded)
 	    {
 	        physics();
-
+	        var cam_dist = 10;
+	        var camdist_x = cam_dist*Math.cos(-scooter_yaw_rotation);
+	        var camdist_y = cam_dist*Math.sin(-scooter_yaw_rotation);
+	        camera.position.set(scooter.position.x-camdist_x, scooter.position.y+5, scooter.position.z-camdist_y);
+	        camera.lookAt(scooter.position.x, scooter.position.y, scooter.position.z);
 	    }
 
 	}
 
 
 
+	function physics() 
+	{   
+	    if(test_track)
+	    {
+	        var point_x = a*Math.cos(-scooter_yaw_rotation);
+	        var point_y = a*Math.sin(-scooter_yaw_rotation);
+	        var wheel_position = new Vector3(scooter.position.x+point_x,scooter.position.y,scooter.position.z+point_y);
+	        test_track.update(wheel_position,scooter_yaw_rotation);
+	    }
+	    //Velocity of the scooter on the X axis
+	    var yaw_velocity = velocity*steering_angle/b;
+	    scooter_yaw_rotation+=yaw_velocity;
+	    var x_vel = velocity*Math.cos(scooter_yaw_rotation+Math.PI/2);
+	    var y_vel = velocity*Math.sin(scooter_yaw_rotation+Math.PI/2);
+	    scooter.position.x += y_vel;
+	    scooter.position.z += x_vel;
+	    scooter.setJointValue("steering_joint",steering_angle);
+	    var phi = transfer_function_steer_to_tilt(steering_angle)-transfer_function_steer_to_tilt(0);
+	    phi = phi*100;
+	    if(phi<-0.8)
+	    {
+	        phi = -0.8;
+	    }
+	    else if(phi>0.8)
+	    {
+	        phi=0.8;
+	    }
+	    applyRotation$1(scooter,[phi,scooter_yaw_rotation,0]);
+	}
 
-	function user_imput(event)
+	function applyRotation$1(obj, rpy, additive = false) {
+	    var tempQuaternion = new Quaternion();
+	    var tempEuler = new Euler();
+	    // if additive is true the rotation is applied in
+	    // addition to the existing rotation
+	    if (!additive) obj.rotation.set(0, 0, 0);
+	    tempEuler.set(rpy[0], rpy[1], rpy[2], 'ZYX');
+	    tempQuaternion.setFromEuler(tempEuler);
+	    tempQuaternion.multiply(obj.quaternion);
+	    obj.quaternion.copy(tempQuaternion);
+	}
+
+	//take stearing and convert it to the tilt
+	function transfer_function_steer_to_tilt(s)
 	{
-	    const vel_update = 0.1;
-	    const steer_update = 0.05;
+	    return ((a*velocity)/(b*h)) * ( (s+(velocity/a) )/( (Math.pow(s,2)-(g/h))  ));
+	}
 
-	    //console.log(`Key pressed: ${event.key}`);
-	    if(event.key == "w")
+
+
+
+
+
+
+
+
+
+
+	function steer_keyboard()
+	{
+
+	    const vel_update = 0.01;
+	    const steer_update = 0.1;
+
+	    if(!w_up)
 	    {
 	        velocity += vel_update;
 	    }
-	    else if(event.key == "s")
+	    else if(!s_up)
 	    {
 	        velocity -= vel_update;
 	    }
-	    else if(event.key == "a")
+	    if(!a_up)
 	    {
 	        steering_angle+=steer_update;
 	    }
-	    else if(event.key == "d")
+	    else if(!d_up)
 	    {
 	        steering_angle-=steer_update;
 	    }
+
+	    if(a_up && d_up)
+	    {
+	        if(steering_angle>=0.05)
+	        {
+	            steering_angle-=0.05;
+	        }
+	        else if(steering_angle<=-0.05)
+	        {
+	            steering_angle+=0.05;
+	        }
+	    }
+	    check_angles();
+	}
+
+
+	function user_imput_up(event)
+	{
+	    if(event.key == "w")
+	    {
+	        w_up = true;
+	    }
+	    else if(event.key == "s")
+	    {
+	        s_up = true;
+	    }
+	    if(event.key == "a")
+	    {
+	        a_up=true;
+	    }
+	    else if(event.key == "d")
+	    {
+	        d_up=true;
+	    }
+	}
+
+
+
+
+	function user_imput_down(event)
+	{
+
+	    if(event.key == "w")
+	    {
+	        w_up = false;
+	    }
+	    else if(event.key == "s")
+	    {
+	        s_up = false;
+	    }
+	    if(event.key == "a")
+	    {
+	        a_up=false;
+	    }
+	    else if(event.key == "d")
+	    {
+	        d_up=false;
+	    }
+	    
 	}
 
 
@@ -39323,95 +39615,6 @@
 	    {
 	        steering_angle = max_steering_angle;
 	    }
-
-	    /*
-	    if(!user_imput_done)
-	    {
-	        if(steering_angle>0.1)
-	        {
-	            steering_angle-= 0.1;
-	        }else if(steering_angle<-0.1)
-	        {
-	            steering_angle+= 0.1;
-	        }
-	        else
-	        {
-	            steering_angle = 0;
-	        }
-	    }
-
-	    user_imput_done = false;
-	    */
-	}
-
-
-	function physics() 
-	{   
-
-	    if(test_track)
-	    {
-	        test_track.update(scooter.position);
-	        check_angles();
-	    }
-
-	    //Velocity of the scooter on the X axis
-	    var yaw_velocity = velocity*steering_angle/b;
-	    scooter_yaw_rotation+=yaw_velocity;
-	    var x_vel = velocity*Math.cos(scooter_yaw_rotation+Math.PI/2);
-	    var y_vel = velocity*Math.sin(scooter_yaw_rotation+Math.PI/2);
-	    scooter.position.x += y_vel;
-	    scooter.position.z += x_vel;
-	    scooter.setJointValue("steering_joint",steering_angle);
-	    var phi = transfer_function_steer_to_tilt(steering_angle);
-	    applyRotation$1(scooter,[phi*100,scooter_yaw_rotation,0]);
-
-	    if(!log_flag)
-	    {   
-
-
-	        var test = scooter.links["back"].children[0].children;
-
-	        console.log(test);
-
-
-	        //console.log(scooter.links);
-	        //console.log("aray len ="+test.length);
-	        if(test.length > 0)
-	        {
-	            test[0].material = new MeshPhongMaterial();
-	            test[0].material.color = new Color(255,0,0);
-	            //console.log(test[0].material);
-	            log_flag = true;
-	        }
-
-	        console.log("=====");
-
-	        
-	    }
-
-
-	}
-
-	function applyRotation$1(obj, rpy, additive = false) {
-	    var tempQuaternion = new Quaternion();
-	    var tempEuler = new Euler();
-	    
-	    // if additive is true the rotation is applied in
-	    // addition to the existing rotation
-	    if (!additive) obj.rotation.set(0, 0, 0);
-
-	    tempEuler.set(rpy[0], rpy[1], rpy[2], 'ZYX');
-	    tempQuaternion.setFromEuler(tempEuler);
-	    tempQuaternion.multiply(obj.quaternion);
-	    obj.quaternion.copy(tempQuaternion);
-
-	}
-
-
-	//take stearing and convert it to the tilt
-	function transfer_function_steer_to_tilt(s)
-	{
-	    return ((a*velocity)/(b*h)) * ( (s+(velocity/a) )/( (Math.pow(s,2)-(g/h))  ));
 	}
 
 }());

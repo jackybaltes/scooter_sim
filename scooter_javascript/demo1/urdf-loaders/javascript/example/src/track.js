@@ -9,6 +9,8 @@ export class Track {
     constructor(track_threejs,render)
     {
 
+        this.lost=false;
+
         //idk why but javascript need this else it doesn't feel good 
         this.stop_blink_zebra = this.stop_blink_zebra.bind(this);
         this.stop_blink_train = this.stop_blink_train.bind(this);
@@ -24,10 +26,11 @@ export class Track {
         // x = -12.4
         // y =0.94
         this.track_ = track_threejs; // the track described as a threeJS object
-
         this.zebra_blink = false;
         this.traffic_state = 0;
         this.train_blink = false;
+        this.scooter_yaw = 0;
+
 
         //Parsin the track to find visuals
         this.zebra_l = this.track_.links["left_1"].children[0].children[0].material
@@ -52,78 +55,93 @@ export class Track {
         //this.part1_on = new Boolean(false);
         this.part1_cango_after = { value: false }
         this.part1_on = { value: false }
-        this.colision_callback(this.part1_on,this.part1_cango_after,1000,this.stop_blink_zebra);
+        this.part_1_colision_callback(3000,this.stop_blink_zebra);
 
         //Traffic light
         this.part2 = new CheckPoint(new Vector2(-4.5,-16.2),new Vector2(-6,-17.4));
         this.part2_after = new CheckPoint(new Vector2(-3,-16.2),new Vector2(-4.5,-17.4));
         this.part2_cango_after = { value: false }
         this.part2_on = { value: false }
-        this.colision_callback(this.part2_on,this.part2_cango_after,1000,this.trun_traffic_green);
+        //this.colision_callback(this.part2_on,this.part2_cango_after,3000,this.trun_traffic_green);
+        this.part_2_colision_callback(3000,this.trun_traffic_green);
 
         //position part
         this.part3 = new CheckPoint(new Vector2(5.7,-17.3),new Vector2(3,-20.4));
         this.part3_after = new CheckPoint(new Vector2(5.7,-14.8),new Vector2(3,-17.1));
         this.part3_cango_after = { value: false }
         this.part3_on = { value: false }
-        this.colision_callback(this.part3_on,this.part3_cango_after,1000);
+        //this.colision_callback(this.part3_on,this.part3_cango_after,3000);
+        this.part_3_colision_callback(3000);
 
 
         this.part4 = new CheckPoint(new Vector2(2.65,2.44),new Vector2(-0.82,0.5));
-        this.part4_after = new CheckPoint(new Vector2(5.7,-14.8),new Vector2(0.81,0.61));
+        this.part4_after = new CheckPoint(new Vector2(5.7,3.2),new Vector2(0.81,0.61));
         this.part4_cango_after = { value: false }
         this.part4_on = { value: false }
-        this.colision_callback(this.part4_on,this.part4_cango_after,1000);
+        //this.colision_callback(this.part4_on,this.part4_cango_after,3000);
+        this.part_4_colision_callback(3000);
 
 
         this.part5 = new CheckPoint(new Vector2(5.8,9.67),new Vector2(3,7.66));
-        this.part5_after = new CheckPoint(new Vector2(5.8,-12.7),new Vector2(3,9.6));
+        this.part5_after = new CheckPoint(new Vector2(5.8,12.7),new Vector2(3,9.6));
         this.part5_cango_after = { value: false }
         this.part5_on = { value: false }
-        this.colision_callback(this.part5_on,this.part5_cango_after,1000,this.stop_blink_train);
-
+        //this.colision_callback(this.part5_on,this.part5_cango_after,3000,this.stop_blink_train);
+        this.part_5_colision_callback(3000,this.stop_blink_train);
 
 
 
         //coords for the line
-        this.coord = [[-11.35,-8.90],
-                [-11.3,-14.07],
-                [-9.94,-15.59],
-                [-8.64,-16.11],
-                [-7.16,-16.18],
-                [1.57,-16.24],
-                [2.51,-15.88],
-                [2.97,-14.85],
-                [4.17,-13.96],
-                [2.78,-12.92],
-                [2.78,-4.19],
-                [2.31,-3.30],
-                [1.22,-3.03],
-                [-8.54,-3.03],
-                [-8.58,2.311],
-                [0.77,2.37],
-                [1.80,2.42],
-                [2.63,2.98],
-                [2.89,3.96],
-                [2.88,15.16],
-                [5.90,15.16],
-                [5.87,0.49],
-                [-4.61,0.49],
-                [-4.61,-1.22],
-                [2.75,-1.18],
-                [4.25,-1.18],
-                [4.25,-4.84],
-                [4.81,-5.73],
-                [5.80,-6.20],
-                [5.69,-20.58],
-                [-4.5,-20.58],
-                [-4.5,-17.51],
-                [-8.68,-17.46],
-                [-9.98,-17.13],
-                [-11.22,-16.45],
-                [-12.23,-15.43],
-                [-13.05,-14.09],
-                [-13.01,-8.94]];
+        this.coord = [        
+        [-11.57,15.86],
+        [-11.57,14.00],
+        [-11.92,12.80],
+        [-11.92,-2.35],
+
+        [-11.35,-8.90],
+        [-11.3,-14.07],
+        [-9.94,-15.59],
+        [-8.64,-16.11],
+        [-7.16,-16.18],
+        [1.57,-16.24],
+        [2.51,-15.88],
+        [2.97,-14.85],
+        [4.17,-13.96],
+        [2.78,-12.92],
+        [2.78,-4.19],
+        [2.31,-3.30],
+        [1.22,-3.03],
+        [-8.54,-3.03],
+        [-8.58,2.311],
+        [0.77,2.37],
+        [1.80,2.42],
+        [2.63,2.98],
+        [2.89,3.96],
+        [2.88,15.16],
+        [5.90,15.16],
+        [5.87,0.49],
+        [-4.61,0.49],
+        [-4.61,-1.22],
+        [2.75,-1.18],
+        [4.25,-1.18],
+        [4.25,-4.84],
+        [4.81,-5.73],
+        [5.80,-6.20],
+        [5.69,-20.58],
+        [-4.5,-20.58],
+        [-4.5,-17.51],
+        [-8.68,-17.46],
+        [-9.98,-17.13],
+        [-11.22,-16.45],
+        [-12.23,-15.43],
+        [-13.05,-14.09],
+        [-13.01,-8.94],
+    
+        [-12.40,-2.31],
+        [-12.40,12.80],
+        [-12.69,14.00],
+        [-12.74,15.85]
+];
 
         this.arrayX = [];
         this.arrayY = [];
@@ -137,6 +155,16 @@ export class Track {
     
 
     }
+
+
+    get_done()
+    {
+        return this.lost;
+    }
+
+    
+
+
 
     async stop_blink_zebra()
     {
@@ -245,80 +273,84 @@ export class Track {
     }
 
 
-    init_track()
+    async init_track()
     {
+        //this.train_blink = false;
+        //this.zebra_blink = false;
+        await this.stop_blink_train();
+        await this.stop_blink_zebra();
+        await this.sleep(100);
 
-/*
-        this.change_color(this.zebra_l,this.red);
-        this.change_color(this.zebra_r,this.red);
+        console.log("init_track")
+        this.part1_cango_after = { value: false }
+        this.part1_on = { value: false }
+        this.part2_cango_after = { value: false }
+        this.part2_on = { value: false }
+        this.part3_cango_after = { value: false }
+        this.part3_on = { value: false }
+        this.part4_cango_after = { value: false }
+        this.part4_on = { value: false }
+        this.part5_cango_after = { value: false }
+        this.part5_on = { value: false }
+        this.zebra_blink = false;
+        this.traffic_state = 0;
+        this.train_blink = false;
+        this.lost = false;
 
-        this.change_color(this.traffic_r,this.red);
-        this.change_color(this.traffic_g,this.black);
-        this.change_color(this.traffic_y,this.black);
-
-        this.change_color(this.train_l,this.red);
-        this.change_color(this.train_r,this.red);
-*/
-        this.blink_zebra();
-        this.trun_traffic_red();
-        this.blink_train();
-
-
+        await this.blink_zebra();
+        await this.trun_traffic_red();
+        await this.blink_train();
     }
 
 
-    update(scooter_pos)
+    update(scooter_pos,scooter_yaw)
     {
-        //console.log(this.part1.is_in(scooter_pos));
-        //console.log(this.is_in_track(scooter_pos,this.arrayX,this.arrayY));
 
         //can opti the code a lot here
+        this.scooter_yaw = scooter_yaw;
+
         this.part1_on.value =this.part1.is_in(scooter_pos); 
         this.part2_on.value =this.part2.is_in(scooter_pos); 
         this.part3_on.value =this.part3.is_in(scooter_pos); 
         this.part4_on.value =this.part4.is_in(scooter_pos); 
         this.part5_on.value =this.part5.is_in(scooter_pos); 
 
-        /*
-        console.log("part1_on ="+this.part1_on.value);
-        console.log("part1_cango = "+this.part1_cango_after.value);
-        console.log("====");
-        */
-
-
-
         
-
-        /*
         if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY))
         {
             console.log("LOST");
+            this.lost = true;
         }
-        */
-
+        
         if(this.part1_after.is_in(scooter_pos) && !this.part1_cango_after.value)
         {
             console.log("LOST PART1");
+            this.lost = true;
         }
 
-        if(this.part2_after.is_in(scooter_pos) && !this.part3_cango_after.value)
+        if(this.part2_after.is_in(scooter_pos) && !this.part2_cango_after.value)
         {
             console.log("LOST PART2");
+            this.lost = true;
         }
-
-        if(this.part3_after.is_in(scooter_pos) && !this.part4_cango_after.value)
+        if(this.part3_after.is_in(scooter_pos) && !this.part3_cango_after.value)
         {
             console.log("LOST PART3");
+            this.lost = true;
         }
-
-        if(this.part4_after.is_in(scooter_pos) && !this.part5_cango_after.value)
+        if(this.part4_after.is_in(scooter_pos) && !this.part4_cango_after.value)
         {
             console.log("LOST PART4");
+            this.lost = true;
         }
+
+
+        console.log(this.part5_after.is_in(scooter_pos))
 
         if(this.part5_after.is_in(scooter_pos) && !this.part5_cango_after.value)
         {
             console.log("LOST PART5");
+            this.lost = true;
         }
         
     }
@@ -327,44 +359,6 @@ export class Track {
 
 
 
-
-
-    async colision_callback(boolean_flag_object,boolean_result_object,time_needed_ms,function_ = null)
-    {
-        boolean_result_object.value = false; 
-
-        while(true)
-        {   
-            var var_counter = 0;
-            console.log("IS IN=",boolean_flag_object.value);
-            while(boolean_flag_object.value)
-            {
-                console.log("IS IN=",boolean_flag_object.value);
-                console.log("var_counter=",var_counter);
-                var_counter++;
-                await this.sleep(1000);
-                if(var_counter*100>=time_needed_ms)
-                {
-                    console.log("breaking");
-                    break;
-                }
-            }
-            //if we break and th boolean is true, we can say it's good now 
-            if(boolean_flag_object.value)
-            {
-                console.log("setting");
-                if(function_)
-                {
-                    function_(this);
-                }
-                boolean_result_object.value = true; 
-            }
-            //else we just try again
-            //delay to not kill the computer
-            await this.sleep(1000);
-        }
-        
-    }
 
 
 
@@ -377,11 +371,8 @@ export class Track {
 
         var x = point.x;
         var y = -point.z;
-        
         //console.log('x='+x);
         //console.log('y='+y);
-
-
         var i, j=cornersX.length-1 ;
         var odd = false;
     
@@ -393,7 +384,6 @@ export class Track {
                 && (pX[i]<=x || pX[j]<=x)) {
                 odd ^= (pX[i] + (y-pY[i])*(pX[j]-pX[i])/(pY[j]-pY[i])) < x; 
             }
-    
             j=i; 
         }
     
@@ -403,7 +393,203 @@ export class Track {
 
 
 
+    async part_1_colision_callback(time_needed_ms,function_ = null)
+    {
+        this.part1_cango_after.value = false; 
+        while(true)
+        {   
+            var var_counter = 0;
+            while(this.part1_on.value)
+            {
+                var_counter++;
+                await this.sleep(1000);
+                if(var_counter*1000>=time_needed_ms)
+                {
+                    //console.log("breaking");
+                    break;
+                }
+            }
+            //if we break and th boolean is true, we can say it's good now 
+            if(this.part1_on.value)
+            {
+                if(function_)
+                {
+                    function_(this);
+                }
+                this.part1_cango_after.value = true; 
+            }
+            //else we just try again
+            //delay to not kill the computer
+            await this.sleep(1000);
+        }
+    }
+
+
+
+
+
+
+
+    async part_2_colision_callback(time_needed_ms,function_ = null)
+    {
+        this.part2_cango_after.value = false; 
+        while(true)
+        {   
+            var var_counter = 0;
+            while(this.part2_on.value)
+            {
+
+                var_counter++;
+                console.log(var_counter);
+                await this.sleep(1000);
+                if(var_counter*1000>=time_needed_ms)
+                {
+                    break;
+                }
+            }
+            //if we break and th boolean is true, we can say it's good now 
+            if(this.part2_on.value)
+            {
+                if(function_)
+                {
+                    function_(this);
+                }
+                this.part2_cango_after.value = true; 
+            }
+            //else we just try again
+            //delay to not kill the computer
+            await this.sleep(1000);
+        }
+    }
+
+
+
+
+
+    async part_3_colision_callback(time_needed_ms,function_ = null)
+    {
+        this.part3_cango_after.value = false; 
+        while(true)
+        {   
+            var ori_Ok = this.scooter_yaw<1.8 && this.scooter_yaw>1.4;
+            var var_counter = 0;
+            while(this.part3_on.value && ori_Ok)
+            {
+                console.log(var_counter);
+
+                var_counter++;
+                await this.sleep(1000);
+                if(var_counter*1000>=time_needed_ms)
+                {
+                    break;
+                }
+            }
+            //if we break and th boolean is true, we can say it's good now 
+            if(this.part3_on.value && ori_Ok)
+            {
+                if(function_)
+                {
+                    function_(this);
+                }
+                this.part3_cango_after.value = true; 
+            }
+            //else we just try again
+            //delay to not kill the computer
+            await this.sleep(1000);
+        }
+    }
+
+
+    async part_4_colision_callback(time_needed_ms,function_ = null)
+    {
+        this.part4_cango_after.value = false; 
+        while(true)
+        {   
+            var var_counter = 0;
+            while(this.part4_on.value)
+            {
+                var_counter++;
+                await this.sleep(1000);
+                if(var_counter*1000>=time_needed_ms)
+                {
+                    break;
+                }
+            }
+            //if we break and th boolean is true, we can say it's good now 
+            if(this.part4_on.value)
+            {
+                //console.log("setting");
+                if(function_)
+                {
+                    function_(this);
+                }
+                this.part4_cango_after.value = true; 
+            }
+            //else we just try again
+            //delay to not kill the computer
+            await this.sleep(1000);
+        }
+    }
+
+
+
+
+
+
+    async part_5_colision_callback(time_needed_ms,function_ = null)
+    {
+        this.part4_cango_after.value = false; 
+        while(true)
+        {   
+            console.log("=====");
+            console.log(this.part5_on.value);
+
+            var var_counter = 0;
+            while(this.part5_on.value)
+            {
+                var_counter++;
+                await this.sleep(1000);
+                if(var_counter*1000>=time_needed_ms)
+                {
+                    break;
+                }
+            }
+            //if we break and th boolean is true, we can say it's good now 
+            if(this.part5_on.value)
+            {
+                if(function_)
+                {
+                    function_(this);
+                }
+                this.part5_cango_after.value = true; 
+            }
+            //else we just try again
+            //delay to not kill the computer
+            await this.sleep(1000);
+        }
+    }
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export class CheckPoint
 {
@@ -428,3 +614,8 @@ export class CheckPoint
 
 
 }
+
+
+
+
+

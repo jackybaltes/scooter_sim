@@ -522,13 +522,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/zebra_light/zebra_body.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/zebra_light/zebra_body.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/zebra_light/zebra_body.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/zebra_light/zebra_body.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </collision>
   </link>
@@ -541,13 +541,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/zebra_light/right_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/zebra_light/right_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/zebra_light/right_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/zebra_light/right_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </collision>
   </link>
@@ -560,28 +560,28 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/zebra_light/left_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/zebra_light/left_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/zebra_light/left_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/zebra_light/left_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </collision>
   </link>
   <joint name="Rigid4_zebra" type="fixed">
-    <origin rpy="1.57 0 1.57" xyz="-13.505 -15 1"/>
+    <origin rpy="1.57 0 1.57" xyz="-13.505 -15 2"/>
     <parent link="world"/>
     <child link="body_1"/>
   </joint>
   <joint name="Rigid5_zebra" type="fixed">
-    <origin rpy="0 0 1.57" xyz="-13.565 -15.005 0.875"/>
+    <origin rpy="0 0 1.57" xyz="-13.625 -15.005 1.75"/>
     <parent link="world"/>
     <child link="right_1"/>
   </joint>
   <joint name="Rigid6_zebra" type="fixed">
-    <origin rpy="0 0 1.57" xyz="-13.415 -15.005 0.72"/>
+    <origin rpy="0 0 1.57" xyz="-13.325 -15.005 1.44"/>
     <parent link="world"/>
     <child link="left_1"/>
   </joint>
@@ -597,13 +597,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0025 -0.0025 -0.003"/>
       <geometry>
-        <mesh filename="../meshes/train_cross_light/base_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/train_cross_light/base_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.0025 -0.0025 -0.003"/>
       <geometry>
-        <mesh filename="../meshes/train_cross_light/base_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/train_cross_light/base_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </collision>
   </link>
@@ -616,13 +616,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0025 -0.0055 -0.0015"/>
       <geometry>
-        <mesh filename="../meshes/train_cross_light/left_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/train_cross_light/left_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.0025 -0.0055 -0.0015"/>
       <geometry>
-        <mesh filename="../meshes/train_cross_light/left_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/train_cross_light/left_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </collision>
   </link>
@@ -635,13 +635,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0025 -0.0055 -0.0015"/>
       <geometry>
-        <mesh filename="../meshes/train_cross_light/right_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/train_cross_light/right_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.0025 -0.0055 -0.0015"/>
       <geometry>
-        <mesh filename="../meshes/train_cross_light/right_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/train_cross_light/right_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </collision>
   </link>
@@ -672,13 +672,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/traffic_light/base_link.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/traffic_light/base_link.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="../meshes/traffic_light/base_link.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/traffic_light/base_link.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </collision>
   </link>
@@ -691,13 +691,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/traffic_light/yellow_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/traffic_light/yellow_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/traffic_light/yellow_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/traffic_light/yellow_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </collision>
   </link>
@@ -710,13 +710,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/traffic_light/green_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/traffic_light/green_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/traffic_light/green_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/traffic_light/green_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </collision>
   </link>
@@ -729,13 +729,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/traffic_light/red_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/traffic_light/red_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/traffic_light/red_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/traffic_light/red_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </collision>
   </link>
@@ -748,39 +748,431 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/traffic_light/body_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/traffic_light/body_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/traffic_light/body_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="../meshes/traffic_light/body_1.stl" scale="0.002 0.002 0.002"/>
       </geometry>
     </collision>
   </link>
   <joint name="Rigid1_traffic" type="fixed">
-    <origin rpy="1.57 0 3.14" xyz="7 -17 0.75"/>
+    <origin rpy="1.57 0 3.14" xyz="7 -17 1.5"/>
     <parent link="world"/>
     <child link="yellow_1_traffic"/>
   </joint>
   <joint name="Rigid2_traffic" type="fixed">
-    <origin rpy="1.57 0 3.14" xyz="7 -17 0.75"/>
+    <origin rpy="1.57 0 3.14" xyz="7 -17 1.5"/>
     <parent link="world"/>
     <child link="green_1_traffic"/>
   </joint>
   <joint name="Rigid3_traffic" type="fixed">
-    <origin rpy="1.57 0 3.14 " xyz="7 -17 0.75"/>
+    <origin rpy="1.57 0 3.14 " xyz="7 -17 1.5"/>
     <parent link="world"/>
     <child link="red_1_traffic"/>
   </joint>
   <joint name="Rigid4_traffic" type="fixed">
-    <origin rpy="1.57 0 3.14" xyz="7 -17 0.75"/>
+    <origin rpy="1.57 0 3.14" xyz="7 -17 1.5"/>
     <parent link="world"/>
     <child link="body_1_traffic"/>
   </joint>
   <joint name="Rigid5_traffic" type="fixed">
-    <origin rpy="1.57 0 3.14" xyz="7 -17 0.75"/>
+    <origin rpy="1.57 0 3.14" xyz="7 -17 1.5"/>
     <parent link="world"/>
     <child link="base_link_traffic"/>
   </joint>
+
+
+
+
+
+  <link name="pylon_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+  
+  <link name="pylon_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <link name="pylon_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="pylon_4">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="pylon_5">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="pylon_6">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+
+  <link name="pylon_7">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <link name="pylon_8">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="pylon_9">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <link name="pylon_10">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+
+  <link name="pylon_11">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <link name="pylon_12">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="pylon_13">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="255 204 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint name="Rigid1_pylon1" type="fixed">
+    <origin rpy="0 0 2.5" xyz="-13.25 -16.3 0"/>
+    <parent link="world"/>
+    <child link="pylon_1"/>
+  </joint>
+  <joint name="Rigid1_pylon2" type="fixed">
+    <origin rpy="0 0 2.7" xyz="-11.5 -17.3 0"/>
+    <parent link="world"/>
+    <child link="pylon_2"/>
+  </joint>
+
+  <joint name="Rigid1_pylon3" type="fixed">
+    <origin rpy="0 0 3.0" xyz="-9.5 -17.9 0"/>
+    <parent link="world"/>
+    <child link="pylon_3"/>
+  </joint>
+
+  <joint name="Rigid1_pylon4" type="fixed">
+    <origin rpy="0 0 3.14" xyz="-7.4 -18 0"/>
+    <parent link="world"/>
+    <child link="pylon_4"/>
+  </joint>
+
+  <joint name="Rigid1_pylon5" type="fixed">
+    <origin rpy="0 0 2.7" xyz="-5.4 -18.5 0"/>
+    <parent link="world"/>
+    <child link="pylon_5"/>
+  </joint>
+
+  <joint name="Rigid1_pylon6" type="fixed">
+    <origin rpy="0 0 2.7" xyz="-3.5 -19.4 0"/>
+    <parent link="world"/>
+    <child link="pylon_6"/>
+  </joint>
+
+  <joint name="Rigid1_pylon7" type="fixed">
+    <origin rpy="0 0 2.7" xyz="-1.6 -20.3 0"/>
+    <parent link="world"/>
+    <child link="pylon_7"/>
+  </joint>
+
+  <joint name="Rigid1_pylon8" type="fixed">
+    <origin rpy="0 0 3.14" xyz="0.35 -20.7 0"/>
+    <parent link="world"/>
+    <child link="pylon_8"/>
+  </joint>
+
+  <joint name="Rigid1_pylon9" type="fixed">
+    <origin rpy="0 0 3.14" xyz="2.5 -20.7 0"/>
+    <parent link="world"/>
+    <child link="pylon_9"/>
+  </joint>
+
+  <joint name="Rigid1_pylon10" type="fixed">
+    <origin rpy="0 0 3.14" xyz="4.7 -20.7 0"/>
+    <parent link="world"/>
+    <child link="pylon_10"/>
+  </joint>
+
+  <joint name="Rigid1_pylon11" type="fixed">
+    <origin rpy="0 0 4.7" xyz="6.1 -20 0"/>
+    <parent link="world"/>
+    <child link="pylon_11"/>
+  </joint>
+
+  <joint name="Rigid1_pylon12" type="fixed">
+    <origin rpy="0 0 4.7" xyz="6.1 -17.9 0"/>
+    <parent link="world"/>
+    <child link="pylon_12"/>
+  </joint>
+
+
+  <joint name="Rigid1_pylon13" type="fixed">
+    <origin rpy="0 0 4.7" xyz="6.1 -15.8 0"/>
+    <parent link="world"/>
+    <child link="pylon_13"/>
+  </joint>
+
+
 </robot>
