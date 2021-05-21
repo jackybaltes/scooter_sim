@@ -38998,12 +38998,12 @@
 	        this.part4_on.value =this.part4.is_in(scooter_pos); 
 	        this.part5_on.value =this.part5.is_in(scooter_pos); 
 
-	        /*
+	        
 	        if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY))
 	        {
 	            console.log("LOST");
 	            this.lost = true;
-	        }*/
+	        }
 	        
 	        if(this.part1_after.is_in(scooter_pos) && !this.part1_cango_after.value)
 	        {
