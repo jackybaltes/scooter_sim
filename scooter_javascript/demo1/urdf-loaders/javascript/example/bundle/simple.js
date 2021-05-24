@@ -30028,18 +30028,18 @@
 
 	// Parent directories, delimited by '/' or ':'. Currently unused, but must
 	// be matched to parse the rest of the track name.
-	const _directoryRe = /((?:WC+[\/:])*)/.source.replace( 'WC', _wordChar );
+	/((?:WC+[\/:])*)/.source.replace( 'WC', _wordChar );
 
 	// Target node. May contain word characters (a-zA-Z0-9_) and '.' or '-'.
-	const _nodeRe = /(WCOD+)?/.source.replace( 'WCOD', _wordCharOrDot );
+	/(WCOD+)?/.source.replace( 'WCOD', _wordCharOrDot );
 
 	// Object on target node, and accessor. May not contain reserved
 	// characters. Accessor may contain any character except closing bracket.
-	const _objectRe = /(?:\.(WC+)(?:\[(.+)\])?)?/.source.replace( 'WC', _wordChar );
+	/(?:\.(WC+)(?:\[(.+)\])?)?/.source.replace( 'WC', _wordChar );
 
 	// Property and accessor. May not contain reserved characters. Accessor may
 	// contain any non-bracket characters.
-	const _propertyRe = /\.(WC+)(?:\[(.+)\])?/.source.replace( 'WC', _wordChar );
+	/\.(WC+)(?:\[(.+)\])?/.source.replace( 'WC', _wordChar );
 
 	/**
 	 * Ref: https://en.wikipedia.org/wiki/Spherical_coordinate_system
@@ -30129,7 +30129,7 @@
 		depthWrite: false,
 		depthTest: false,
 	} );
-	const backgroundBox = new Mesh( new BoxGeometry(), backgroundMaterial );
+	new Mesh( new BoxGeometry(), backgroundMaterial );
 
 	//
 
@@ -38063,7 +38063,7 @@
 	}
 
 	// applies a rotation a threejs object in URDF order
-	function applyRotation(obj, rpy, additive = false) {
+	function applyRotation$1(obj, rpy, additive = false) {
 
 	    // if additive is true the rotation is applied in
 	    // addition to the existing rotation
@@ -38402,7 +38402,7 @@
 	            // Join the links
 	            parent.add(obj);
 	            obj.add(child);
-	            applyRotation(obj, rpy);
+	            applyRotation$1(obj, rpy);
 	            obj.position.set(xyz[0], xyz[1], xyz[2]);
 
 	            // Set up the rotate function
@@ -38646,7 +38646,7 @@
 
 	                    group.position.set(xyz[0], xyz[1], xyz[2]);
 	                    group.rotation.set(0, 0, 0);
-	                    applyRotation(group, rpy);
+	                    applyRotation$1(group, rpy);
 
 	                }
 
@@ -39298,6 +39298,59 @@
 
 	}
 
+	var ControlServer = /** @class */ (function () {
+	    function ControlServer(port) {
+	        this.port = port;
+	        this.waitForSocket();
+	    }
+	    ControlServer.prototype.init = function () {
+	        console.log("Creating ControlServer");
+	        this.socket = new WebSocket("ws://127.0.0.1:" + this.port);
+	        this.socket.onopen = this.createOnOpen();
+	        this.socket.onmessage = this.createOnMessage();
+	        this.socket.onclose = this.createOnClose();
+	        this.socket.onerror = this.createOnError();
+	    };
+	    ControlServer.prototype.createOnOpen = function () {
+	        return function (event) {
+	            console.log("[open] Connection established");
+	            console.log("Sending to server");
+	        };
+	    };
+	    ControlServer.prototype.createOnMessage = function () {
+	        return function (event) {
+	            console.log("[message] Data received from server: " + event.data);
+	        };
+	    };
+	    ControlServer.prototype.createOnClose = function () {
+	        var cs = this;
+	        return function (event) {
+	            if (event.wasClean) {
+	                console.log("[close] Connection closed cleanly, code=" + event.code + " reason=" + event.reason);
+	            }
+	            else {
+	                // e.g. server process killed or network down
+	                // event.code is usually 1006 in this case
+	                console.log('[close] Connection died');
+	            }
+	            cs.init();
+	        };
+	    };
+	    ControlServer.prototype.createOnError = function () {
+	        return function (error) {
+	            console.log("[error] " + error.message);
+	        };
+	    };
+	    ControlServer.prototype.waitForSocket = function () {
+	        console.log("Waiting for socket on localhost port " + this.port + " to become available");
+	        var cs = this;
+	        setTimeout(function () {
+	            cs.init();
+	        }, 1000);
+	    };
+	    return ControlServer;
+	}());
+
 	let scene, camera, renderer, track, scooter, controls;
 
 	let spawn_x =-12.2;
@@ -39403,6 +39456,7 @@
 	    document.addEventListener("keydown",user_imput_down);
 	    document.addEventListener("keyup",user_imput_up);
 
+	    new ControlServer(8878);
 	}
 
 	function onResize() {
@@ -39479,10 +39533,10 @@
 	    {
 	        phi=0.8;
 	    }
-	    applyRotation$1(scooter,[phi,scooter_yaw_rotation,0]);
+	    applyRotation(scooter,[phi,scooter_yaw_rotation,0]);
 	}
 
-	function applyRotation$1(obj, rpy, additive = false) {
+	function applyRotation(obj, rpy, additive = false) {
 	    var tempQuaternion = new Quaternion();
 	    var tempEuler = new Euler();
 	    // if additive is true the rotation is applied in

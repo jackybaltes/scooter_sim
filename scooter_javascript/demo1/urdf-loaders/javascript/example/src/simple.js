@@ -22,7 +22,7 @@ import {
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import URDFLoader from '../../src/URDFLoader.js';
 import {Track} from './track.js';
-
+import {ControlServer} from './server.ts';
 
 let scene, camera, renderer, track, scooter, controls;
 
@@ -146,6 +146,7 @@ function init() {
     document.addEventListener("keydown",user_imput_down);
     document.addEventListener("keyup",user_imput_up);
 
+    const contolServer = new ControlServer(8878);
 }
 
 function onResize() {

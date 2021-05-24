@@ -1,5 +1,6 @@
 import path from 'path';
 import resolve from '@rollup/plugin-node-resolve';
+import typescript from '@rollup/plugin-typescript';
 
 const files = {
     URDFLoader: 'URDFLoader.js',
@@ -34,8 +35,16 @@ export default [
                 file: outputPath,
                 sourcemap: true,
 
-                globals: path => /^three/.test(path) ? 'THREE' : null,
+                globals: {
+                    //path => /^three/.test(path) ? 'THREE' : null,
+                    'URDFLoader' : 'URDFLoader',
+                    'URDFViewer' : 'URDFViewer',
+                    'three' : 'THREE',
+                    'three/examples/jsm/loaders/STLLoader.js' : 'STLLoader_js',
+                    'three/examples/jsm/loaders/ColladaLoader.js' : 'ColladaLoader_js',
+                    'three/examples/jsm/controls/OrbitControls.js' : 'OrbitControls_js',
 
+                },
             },
 
         };
@@ -44,25 +53,30 @@ export default [
     // examples
     {
         input: './example/src/index.js',
-        plugins: [resolve()],
+        plugins: [
+            resolve(),
+            typescript()
+        ],
         output: {
             file: './example/bundle/index.js',
             format: 'iife',
             sourcemap: true,
         },
     },
-    {
-        input: './example/src/vr.js',
-        plugins: [resolve()],
-        output: {
-            file: './example/bundle/vr.js',
-            format: 'iife',
-            sourcemap: true,
-        },
-    },
+    // {
+    //     input: './example/src/vr.js',
+    //     plugins: [resolve()],
+    //     output: {
+    //         file: './example/bundle/vr.js',
+    //         format: 'iife',
+    //         sourcemap: true,
+    //     },
+    // },
     {
         input: './example/src/simple.js',
-        plugins: [resolve()],
+        plugins: [  resolve(),
+                    typescript()
+                ],
         output: {
             file: './example/bundle/simple.js',
             format: 'iife',

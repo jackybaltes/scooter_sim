@@ -1,12 +1,12 @@
 {
-  "name": "urdf-loader",
-  "version": "0.10.2",
-  "description": "URDF Loader for THREE.js and webcomponent viewer",
+  "name": "scooter-game",
+  "version": "0.0.1",
+  "description": "Scooter Game for FIRA 2021 SDE",
   "main": "src/URDFLoader.js",
   "type": "module",
   "scripts": {
     "start": "concurrently --kill-others \"rollup -c -w\" \"cd .. && static-server\"",
-    "build": "rollup -c",
+    "build": "tsc && rollup -c",
     "test": "jest",
     "lint": "eslint \"./src/*.js\" \"./test/*.js\" && tsc -p tsconfig.json --noEmit"
   },

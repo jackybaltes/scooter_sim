@@ -32141,7 +32141,7 @@
 		depthWrite: false,
 		depthTest: false,
 	} );
-	const backgroundBox = new Mesh( new BoxGeometry(), backgroundMaterial );
+	new Mesh( new BoxGeometry(), backgroundMaterial );
 
 	//
 

@@ -8,6 +8,7 @@
         "types": []
     },
     "files": [
-        "src/URDFLoader.d.ts"
+        "src/URDFLoader.d.ts",
+        "example/src/server.ts"
     ]
 }
