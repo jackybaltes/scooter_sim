@@ -39319,7 +39319,14 @@
 	    };
 	    ControlServer.prototype.createOnMessage = function () {
 	        return function (event) {
-	            console.log("[message] Data received from server: " + event.data);
+	            //console.log(`[message] Data received from server: ${event.data}`); 
+	            var js = JSON.parse(event.data);
+	            console.log("parsed json " + js + " " + ("steering" in js));
+	            if ("steering" in js) {
+	                var steering_angle = js["steering"][0];
+	                var velocity = js["steering"][1];
+	                console.log("steering angle " + steering_angle + " vel " + velocity);
+	            }
 	        };
 	    };
 	    ControlServer.prototype.createOnClose = function () {
@@ -39347,6 +39354,9 @@
 	        setTimeout(function () {
 	            cs.init();
 	        }, 1000);
+	    };
+	    ControlServer.prototype.send = function (data) {
+	        this.socket.send(data);
 	    };
 	    return ControlServer;
 	}());
@@ -39456,7 +39466,15 @@
 	    document.addEventListener("keydown",user_imput_down);
 	    document.addEventListener("keyup",user_imput_up);
 
-	    new ControlServer(8878);
+	    const controlServer = new ControlServer(8878);
+	    let count = 0;
+	    setInterval( function () {
+	        let msg = `State message ${count}`;  
+	        console.log( `Trying to send message ${msg}`);
+	        controlServer.send( msg ); 
+	        count++; }
+	    , 5000 );
+	    
 	}
 
 	function onResize() {

@@ -146,7 +146,15 @@ function init() {
     document.addEventListener("keydown",user_imput_down);
     document.addEventListener("keyup",user_imput_up);
 
-    const contolServer = new ControlServer(8878);
+    const controlServer = new ControlServer(8878);
+    let count = 0;
+    setInterval( function () {
+        let msg = `State message ${count}`;  
+        console.log( `Trying to send message ${msg}`);
+        controlServer.send( msg ); 
+        count++; }
+    , 5000 );
+    
 }
 
 function onResize() {
