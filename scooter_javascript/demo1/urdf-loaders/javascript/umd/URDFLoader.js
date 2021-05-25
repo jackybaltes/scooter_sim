@@ -4,28 +4,6 @@
     (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.URDFLoader = factory(global.THREE, global.STLLoader_js, global.ColladaLoader_js));
 }(this, (function (THREE, STLLoader_js, ColladaLoader_js) { 'use strict';
 
-    function _interopNamespace(e) {
-        if (e && e.__esModule) return e;
-        var n = Object.create(null);
-        if (e) {
-            Object.keys(e).forEach(function (k) {
-                if (k !== 'default') {
-                    var d = Object.getOwnPropertyDescriptor(e, k);
-                    Object.defineProperty(n, k, d.get ? d : {
-                        enumerable: true,
-                        get: function () {
-                            return e[k];
-                        }
-                    });
-                }
-            });
-        }
-        n['default'] = e;
-        return Object.freeze(n);
-    }
-
-    var THREE__namespace = /*#__PURE__*/_interopNamespace(THREE);
-
     class URDFBase extends THREE.Object3D {
 
         constructor(...args) {
@@ -447,8 +425,8 @@
 
     */
 
-    const tempQuaternion = new THREE__namespace.Quaternion();
-    const tempEuler = new THREE__namespace.Euler();
+    const tempQuaternion = new THREE.Quaternion();
+    const tempEuler = new THREE.Euler();
 
     // take a vector "x y z" and process it into
     // an array [x, y, z]
@@ -479,7 +457,7 @@
 
         constructor(manager) {
 
-            this.manager = manager || THREE__namespace.DefaultLoadingManager;
+            this.manager = manager || THREE.DefaultLoadingManager;
             this.loadMeshCb = this.defaultMeshLoader.bind(this);
             this.parseVisual = true;
             this.parseCollision = false;
@@ -507,7 +485,7 @@
             // Check if a full URI is specified before
             // prepending the package info
             const manager = this.manager;
-            const workingPath = THREE__namespace.LoaderUtils.extractUrlBase(urdf);
+            const workingPath = THREE.LoaderUtils.extractUrlBase(urdf);
             const urdfPath = this.manager.resolveURL(urdf);
 
             manager.itemStart(urdfPath);
@@ -808,7 +786,7 @@
                 if (axisNode) {
 
                     const axisXYZ = axisNode.getAttribute('xyz').split(/\s+/g).map(num => parseFloat(num));
-                    obj.axis = new THREE__namespace.Vector3(axisXYZ[0], axisXYZ[1], axisXYZ[2]);
+                    obj.axis = new THREE.Vector3(axisXYZ[0], axisXYZ[1], axisXYZ[2]);
                     obj.axis.normalize();
 
                 }
@@ -880,7 +858,7 @@
             function processMaterial(node) {
 
                 const matNodes = [ ...node.children ];
-                const material = new THREE__namespace.MeshPhongMaterial();
+                const material = new THREE.MeshPhongMaterial();
 
                 material.name = node.getAttribute('name') || '';
                 matNodes.forEach(n => {
@@ -906,7 +884,7 @@
                         const filename = n.getAttribute('filename');
                         if (filename) {
 
-                            const loader = new THREE__namespace.TextureLoader(manager);
+                            const loader = new THREE.TextureLoader(manager);
                             const filePath = resolvePath(filename);
                             material.map = loader.load(filePath);
 
@@ -943,7 +921,7 @@
 
                 } else {
 
-                    material = new THREE__namespace.MeshPhongMaterial();
+                    material = new THREE.MeshPhongMaterial();
 
                 }
 
@@ -980,7 +958,7 @@
 
                                     } else if (obj) {
 
-                                        if (obj instanceof THREE__namespace.Mesh) {
+                                        if (obj instanceof THREE.Mesh) {
 
                                             obj.material = material;
 
@@ -1001,8 +979,8 @@
 
                         } else if (geoType === 'box') {
 
-                            const primitiveModel = new THREE__namespace.Mesh();
-                            primitiveModel.geometry = new THREE__namespace.BoxBufferGeometry(1, 1, 1);
+                            const primitiveModel = new THREE.Mesh();
+                            primitiveModel.geometry = new THREE.BoxBufferGeometry(1, 1, 1);
                             primitiveModel.material = material;
 
                             const size = processTuple(n.children[0].getAttribute('size'));
@@ -1012,8 +990,8 @@
 
                         } else if (geoType === 'sphere') {
 
-                            const primitiveModel = new THREE__namespace.Mesh();
-                            primitiveModel.geometry = new THREE__namespace.SphereBufferGeometry(1, 30, 30);
+                            const primitiveModel = new THREE.Mesh();
+                            primitiveModel.geometry = new THREE.SphereBufferGeometry(1, 30, 30);
                             primitiveModel.material = material;
 
                             const radius = parseFloat(n.children[0].getAttribute('radius')) || 0;
@@ -1023,8 +1001,8 @@
 
                         } else if (geoType === 'cylinder') {
 
-                            const primitiveModel = new THREE__namespace.Mesh();
-                            primitiveModel.geometry = new THREE__namespace.CylinderBufferGeometry(1, 1, 1, 30);
+                            const primitiveModel = new THREE.Mesh();
+                            primitiveModel.geometry = new THREE.CylinderBufferGeometry(1, 1, 1, 30);
                             primitiveModel.material = material;
 
                             const radius = parseFloat(n.children[0].getAttribute('radius')) || 0;
@@ -1064,7 +1042,7 @@
 
                 const loader = new STLLoader_js.STLLoader(manager);
                 loader.load(path, geom => {
-                    const mesh = new THREE__namespace.Mesh(geom, new THREE__namespace.MeshPhongMaterial());
+                    const mesh = new THREE.Mesh(geom, new THREE.MeshPhongMaterial());
                     done(mesh);
                 });
 

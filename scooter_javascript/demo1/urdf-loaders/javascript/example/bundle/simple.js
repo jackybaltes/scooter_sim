@@ -30028,18 +30028,18 @@
 
 	// Parent directories, delimited by '/' or ':'. Currently unused, but must
 	// be matched to parse the rest of the track name.
-	/((?:WC+[\/:])*)/.source.replace( 'WC', _wordChar );
+	const _directoryRe = /((?:WC+[\/:])*)/.source.replace( 'WC', _wordChar );
 
 	// Target node. May contain word characters (a-zA-Z0-9_) and '.' or '-'.
-	/(WCOD+)?/.source.replace( 'WCOD', _wordCharOrDot );
+	const _nodeRe = /(WCOD+)?/.source.replace( 'WCOD', _wordCharOrDot );
 
 	// Object on target node, and accessor. May not contain reserved
 	// characters. Accessor may contain any character except closing bracket.
-	/(?:\.(WC+)(?:\[(.+)\])?)?/.source.replace( 'WC', _wordChar );
+	const _objectRe = /(?:\.(WC+)(?:\[(.+)\])?)?/.source.replace( 'WC', _wordChar );
 
 	// Property and accessor. May not contain reserved characters. Accessor may
 	// contain any non-bracket characters.
-	/\.(WC+)(?:\[(.+)\])?/.source.replace( 'WC', _wordChar );
+	const _propertyRe = /\.(WC+)(?:\[(.+)\])?/.source.replace( 'WC', _wordChar );
 
 	/**
 	 * Ref: https://en.wikipedia.org/wiki/Spherical_coordinate_system
@@ -30129,7 +30129,7 @@
 		depthWrite: false,
 		depthTest: false,
 	} );
-	new Mesh( new BoxGeometry(), backgroundMaterial );
+	const backgroundBox = new Mesh( new BoxGeometry(), backgroundMaterial );
 
 	//
 
@@ -38063,7 +38063,7 @@
 	}
 
 	// applies a rotation a threejs object in URDF order
-	function applyRotation$1(obj, rpy, additive = false) {
+	function applyRotation(obj, rpy, additive = false) {
 
 	    // if additive is true the rotation is applied in
 	    // addition to the existing rotation
@@ -38402,7 +38402,7 @@
 	            // Join the links
 	            parent.add(obj);
 	            obj.add(child);
-	            applyRotation$1(obj, rpy);
+	            applyRotation(obj, rpy);
 	            obj.position.set(xyz[0], xyz[1], xyz[2]);
 
 	            // Set up the rotate function
@@ -38646,7 +38646,7 @@
 
 	                    group.position.set(xyz[0], xyz[1], xyz[2]);
 	                    group.rotation.set(0, 0, 0);
-	                    applyRotation$1(group, rpy);
+	                    applyRotation(group, rpy);
 
 	                }
 
@@ -39300,6 +39300,8 @@
 
 	var ControlServer = /** @class */ (function () {
 	    function ControlServer(port) {
+	        this.steering_angle = 0.0;
+	        this.velocity = 0.0;
 	        this.port = port;
 	        this.waitForSocket();
 	    }
@@ -39318,14 +39320,19 @@
 	        };
 	    };
 	    ControlServer.prototype.createOnMessage = function () {
+	        var cs = this;
 	        return function (event) {
 	            //console.log(`[message] Data received from server: ${event.data}`); 
 	            var js = JSON.parse(event.data);
-	            console.log("parsed json " + js + " " + ("steering" in js));
+	            console.log("parsed json 2 " + js + " " + ("steering" in js));
 	            if ("steering" in js) {
-	                var steering_angle = js["steering"][0];
-	                var velocity = js["steering"][1];
-	                console.log("steering angle " + steering_angle + " vel " + velocity);
+	                cs.steering_angle = js["steering"][0] * 1.5; // make turns larger
+	                cs.velocity = js["steering"][1] / 4; // slow it down by a factor of 3
+	                console.log("steering angle " + cs.steering_angle + " vel " + cs.velocity);
+	            }
+	            else {
+	                cs.velocity = 0.0;
+	                cs.steering_angle = 0.0;
 	            }
 	        };
 	    };
@@ -39390,7 +39397,7 @@
 	const a = b/2;
 	const g= 9.806;
 
-
+	let controlServer = new ControlServer(8878);
 
 	init();
 	render();
@@ -39466,14 +39473,19 @@
 	    document.addEventListener("keydown",user_imput_down);
 	    document.addEventListener("keyup",user_imput_up);
 
-	    const controlServer = new ControlServer(8878);
 	    let count = 0;
 	    setInterval( function () {
 	        let msg = `State message ${count}`;  
 	        console.log( `Trying to send message ${msg}`);
 	        controlServer.send( msg ); 
 	        count++; }
+
 	    , 5000 );
+
+	    // setInterval( function() {
+	    //     velocity = controlServer.velocity;
+	    //     steering_angle = controlServer.steering_angle;
+	    // }, 30);
 	    
 	}
 
@@ -39491,6 +39503,9 @@
 	    requestAnimationFrame(render);
 	    renderer.render(scene, camera);
 
+
+	    velocity = controlServer.velocity;
+	    steering_angle = controlServer.steering_angle;
 
 	    steer_keyboard();
 
@@ -39551,10 +39566,10 @@
 	    {
 	        phi=0.8;
 	    }
-	    applyRotation(scooter,[phi,scooter_yaw_rotation,0]);
+	    applyRotation$1(scooter,[phi,scooter_yaw_rotation,0]);
 	}
 
-	function applyRotation(obj, rpy, additive = false) {
+	function applyRotation$1(obj, rpy, additive = false) {
 	    var tempQuaternion = new Quaternion();
 	    var tempEuler = new Euler();
 	    // if additive is true the rotation is applied in

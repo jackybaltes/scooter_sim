@@ -267,8 +267,8 @@
 	let _seed = 1234567;
 
 
-	const DEG2RAD$1 = Math.PI / 180;
-	const RAD2DEG$1 = 180 / Math.PI;
+	const DEG2RAD = Math.PI / 180;
+	const RAD2DEG = 180 / Math.PI;
 
 	// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
 	function generateUUID() {
@@ -403,13 +403,13 @@
 
 	function degToRad( degrees ) {
 
-		return degrees * DEG2RAD$1;
+		return degrees * DEG2RAD;
 
 	}
 
 	function radToDeg( radians ) {
 
-		return radians * RAD2DEG$1;
+		return radians * RAD2DEG;
 
 	}
 
@@ -489,8 +489,8 @@
 
 	var MathUtils = /*#__PURE__*/Object.freeze({
 		__proto__: null,
-		DEG2RAD: DEG2RAD$1,
-		RAD2DEG: RAD2DEG$1,
+		DEG2RAD: DEG2RAD,
+		RAD2DEG: RAD2DEG,
 		generateUUID: generateUUID,
 		clamp: clamp,
 		euclideanModulo: euclideanModulo,
@@ -11584,7 +11584,7 @@
 			/** see {@link http://www.bobatkins.com/photography/technical/field_of_view.html} */
 			const vExtentSlope = 0.5 * this.getFilmHeight() / focalLength;
 
-			this.fov = RAD2DEG$1 * 2 * Math.atan( vExtentSlope );
+			this.fov = RAD2DEG * 2 * Math.atan( vExtentSlope );
 			this.updateProjectionMatrix();
 
 		}
@@ -11594,7 +11594,7 @@
 		 */
 		getFocalLength() {
 
-			const vExtentSlope = Math.tan( DEG2RAD$1 * 0.5 * this.fov );
+			const vExtentSlope = Math.tan( DEG2RAD * 0.5 * this.fov );
 
 			return 0.5 * this.getFilmHeight() / vExtentSlope;
 
@@ -11602,8 +11602,8 @@
 
 		getEffectiveFOV() {
 
-			return RAD2DEG$1 * 2 * Math.atan(
-				Math.tan( DEG2RAD$1 * 0.5 * this.fov ) / this.zoom );
+			return RAD2DEG * 2 * Math.atan(
+				Math.tan( DEG2RAD * 0.5 * this.fov ) / this.zoom );
 
 		}
 
@@ -11701,7 +11701,7 @@
 		updateProjectionMatrix() {
 
 			const near = this.near;
-			let top = near * Math.tan( DEG2RAD$1 * 0.5 * this.fov ) / this.zoom;
+			let top = near * Math.tan( DEG2RAD * 0.5 * this.fov ) / this.zoom;
 			let height = 2 * top;
 			let width = this.aspect * height;
 			let left = - 0.5 * width;
@@ -30579,7 +30579,7 @@
 
 			const camera = this.camera;
 
-			const fov = RAD2DEG$1 * 2 * light.angle * this.focus;
+			const fov = RAD2DEG * 2 * light.angle * this.focus;
 			const aspect = this.mapSize.width / this.mapSize.height;
 			const far = light.distance || camera.far;
 
@@ -32052,7 +32052,7 @@
 		depthWrite: false,
 		depthTest: false,
 	} );
-	new Mesh( new BoxGeometry(), backgroundMaterial );
+	const backgroundBox = new Mesh( new BoxGeometry(), backgroundMaterial );
 
 	//
 
@@ -46657,8 +46657,8 @@
 	const controlsel = document.getElementById('controls');
 	const controlsToggle = document.getElementById('toggle-controls');
 	const animToggle = document.getElementById('do-animate');
-	const DEG2RAD = Math.PI / 180;
-	const RAD2DEG = 1 / DEG2RAD;
+	const DEG2RAD$1 = Math.PI / 180;
+	const RAD2DEG$1 = 1 / DEG2RAD$1;
 	let sliders = {};
 
 	// Global Functions
@@ -46781,7 +46781,7 @@
 	                let degVal = joint.angle;
 
 	                if (joint.jointType === 'revolute' || joint.jointType === 'continuous') {
-	                    degVal *= RAD2DEG;
+	                    degVal *= RAD2DEG$1;
 	                }
 
 	                if (Math.abs(degVal) > 1) {
@@ -46799,14 +46799,14 @@
 	                    slider.min = -6.28;
 	                    slider.max = 6.28;
 
-	                    input.min = -6.28 * RAD2DEG;
-	                    input.max = 6.28 * RAD2DEG;
+	                    input.min = -6.28 * RAD2DEG$1;
+	                    input.max = 6.28 * RAD2DEG$1;
 	                } else {
 	                    slider.min = joint.limit.lower;
 	                    slider.max = joint.limit.upper;
 
-	                    input.min = joint.limit.lower * RAD2DEG;
-	                    input.max = joint.limit.upper * RAD2DEG;
+	                    input.min = joint.limit.lower * RAD2DEG$1;
+	                    input.max = joint.limit.upper * RAD2DEG$1;
 	                }
 	            };
 
@@ -46829,7 +46829,7 @@
 	            });
 
 	            input.addEventListener('change', () => {
-	                viewer.setJointValue(joint.name, input.value * DEG2RAD);
+	                viewer.setJointValue(joint.name, input.value * DEG2RAD$1);
 	                li.update();
 	            });
 
@@ -46920,9 +46920,9 @@
 	        const offset = i * Math.PI / 3;
 	        const ratio = Math.max(0, Math.sin(time + offset));
 
-	        viewer.setJointValue(`HP${ i }`, MathUtils.lerp(30, 0, ratio) * DEG2RAD);
-	        viewer.setJointValue(`KP${ i }`, MathUtils.lerp(90, 150, ratio) * DEG2RAD);
-	        viewer.setJointValue(`AP${ i }`, MathUtils.lerp(-30, -60, ratio) * DEG2RAD);
+	        viewer.setJointValue(`HP${ i }`, MathUtils.lerp(30, 0, ratio) * DEG2RAD$1);
+	        viewer.setJointValue(`KP${ i }`, MathUtils.lerp(90, 150, ratio) * DEG2RAD$1);
+	        viewer.setJointValue(`AP${ i }`, MathUtils.lerp(-30, -60, ratio) * DEG2RAD$1);
 
 	        viewer.setJointValue(`TC${ i }A`, MathUtils.lerp(0, 0.065, ratio));
 	        viewer.setJointValue(`TC${ i }B`, MathUtils.lerp(0, 0.065, ratio));

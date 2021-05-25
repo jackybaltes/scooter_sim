@@ -70,7 +70,7 @@ var D = m*a*h;
 
 let log_flag = false
 
-
+let controlServer = new ControlServer(8878);
 
 init();
 render();
@@ -146,14 +146,19 @@ function init() {
     document.addEventListener("keydown",user_imput_down);
     document.addEventListener("keyup",user_imput_up);
 
-    const controlServer = new ControlServer(8878);
     let count = 0;
     setInterval( function () {
         let msg = `State message ${count}`;  
         console.log( `Trying to send message ${msg}`);
         controlServer.send( msg ); 
         count++; }
+
     , 5000 );
+
+    // setInterval( function() {
+    //     velocity = controlServer.velocity;
+    //     steering_angle = controlServer.steering_angle;
+    // }, 30);
     
 }
 
@@ -171,6 +176,9 @@ function render() {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
 
+
+    velocity = controlServer.velocity;
+    steering_angle = controlServer.steering_angle;
 
     steer_keyboard();
 
