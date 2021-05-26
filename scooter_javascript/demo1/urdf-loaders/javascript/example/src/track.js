@@ -8,8 +8,11 @@ export class Track {
 
     constructor(track_threejs,render)
     {
+        this.scooter_obj_blinker_state = false;
 
+        this.start_score = 100;
         this.lost=false;
+        this.message = "";
 
         //idk why but javascript need this else it doesn't feel good 
         this.stop_blink_zebra = this.stop_blink_zebra.bind(this);
@@ -35,7 +38,6 @@ export class Track {
         //Parsin the track to find visuals
         this.zebra_l = this.track_.links["left_1"].children[0].children[0].material
         this.zebra_r = this.track_.links["right_1"].children[0].children[0].material
-
         this.traffic_r = this.track_.links["red_1_traffic"].children[0].children[0].material
         this.traffic_g = this.track_.links["green_1_traffic"].children[0].children[0].material
         this.traffic_y = this.track_.links["yellow_1_traffic"].children[0].children[0].material
@@ -82,7 +84,7 @@ export class Track {
         this.part_4_colision_callback(3000);
 
 
-        this.part5 = new CheckPoint(new Vector2(5.8,9.67),new Vector2(3,7.66));
+        this.part5 = new  CheckPoint(new Vector2(5.8,9.67),new Vector2(3,7.66));
         this.part5_after = new CheckPoint(new Vector2(5.8,12.7),new Vector2(3,9.6));
         this.part5_cango_after = { value: false }
         this.part5_on = { value: false }
@@ -91,13 +93,38 @@ export class Track {
 
 
 
+        this.part0 = new CheckPoint(new Vector2(-10,12.7),new Vector2(-13.8,-2.35)); 
+        this.part0_after = new CheckPoint(new Vector2(-10.7,-2.4),new Vector2(-14.8,-7.57)); 
+
+        this.part0_on = { value: false }
+        this.part0_cango_after = { value: false }
+        //this.colision_callback(this.part5_on,this.part5_cango_after,3000,this.stop_blink_train);
+        this.part_0_colision_callback(7000);
+
+
+
+
+        this.part35 = new CheckPoint(new Vector2(4.15,-5.29),new Vector2(2.84,-12.94)); 
+        this.part35_on = { value: false }
+        this.part_35_colision_callback();
+
+
+
+
+        this.part0_failled = false;
+        this.part1_failled = false;
+        this.part2_failled = false;
+        this.part3_failled = false;
+        this.part35_failled = false;
+        this.part4_failled = false;
+        this.part5_failled = false;
+        this.line_failled = false;
         //coords for the line
         this.coord = [        
         [-11.57,15.86],
         [-11.57,14.00],
         [-11.92,12.80],
         [-11.92,-2.35],
-
         [-11.35,-8.90],
         [-11.3,-14.07],
         [-9.94,-15.59],
@@ -136,12 +163,11 @@ export class Track {
         [-12.23,-15.43],
         [-13.05,-14.09],
         [-13.01,-8.94],
-    
         [-12.40,-2.31],
         [-12.40,12.80],
         [-12.69,14.00],
         [-12.74,15.85]
-];
+        ];
 
         this.arrayX = [];
         this.arrayY = [];
@@ -159,7 +185,7 @@ export class Track {
 
     get_done()
     {
-        return this.lost;
+        return this.lost || this.get_done<0;
     }
 
     
@@ -168,6 +194,7 @@ export class Track {
 
     async stop_blink_zebra()
     {
+        console.log("STOP blink_zebra called => "+ this.zebra_blink)
         this.zebra_blink = false;
         this.change_color(this.zebra_l,this.black);
         this.change_color(this.zebra_r,this.black);
@@ -176,9 +203,11 @@ export class Track {
 
     async blink_zebra()
     {
-    
+
+        console.log("blink_zebra called => "+ this.zebra_blink)
         if(!this.zebra_blink)
         {
+            console.log("blink_zebra started")
             this.zebra_blink = true;
             while(this.zebra_blink)
             {
@@ -189,7 +218,10 @@ export class Track {
                 this.change_color(this.zebra_r,this.red);
                 await this.sleep(500);
             }
-            this.zebra_blink = false;
+        }
+        else
+        {
+            console.log("blink_zebra already started")
         }
         
     }
@@ -273,84 +305,105 @@ export class Track {
     }
 
 
-    async init_track()
+    init_track()
     {
         //this.train_blink = false;
         //this.zebra_blink = false;
-        await this.stop_blink_train();
-        await this.stop_blink_zebra();
-        await this.sleep(100);
+        //this.stop_blink_train();
+        //this.stop_blink_zebra();
+        //this.sleep(1000);
 
-        console.log("init_track")
+        console.log("=======init_track===========")
+        this.part0_cango_after = { value: false }
+        this.part0_on = { value: false }
         this.part1_cango_after = { value: false }
         this.part1_on = { value: false }
         this.part2_cango_after = { value: false }
         this.part2_on = { value: false }
         this.part3_cango_after = { value: false }
         this.part3_on = { value: false }
+        this.part35_on = { value: false }
         this.part4_cango_after = { value: false }
         this.part4_on = { value: false }
         this.part5_cango_after = { value: false }
         this.part5_on = { value: false }
-        this.zebra_blink = false;
-        this.traffic_state = 0;
-        this.train_blink = false;
+        
+        //this.zebra_blink = false;
+        //this.traffic_state = 0;
+        //this.train_blink = false;
         this.lost = false;
 
-        await this.blink_zebra();
-        await this.trun_traffic_red();
-        await this.blink_train();
+        this.blink_zebra();
+        this.trun_traffic_red();
+        this.blink_train();
     }
 
 
-    update(scooter_pos,scooter_yaw)
+    update(scooter_pos,scooter_yaw,blinker_left_state)
     {
-
+        this.scooter_obj_blinker_state = blinker_left_state
         //can opti the code a lot here
         this.scooter_yaw = scooter_yaw;
 
+        this.part0_on.value =this.part0.is_in(scooter_pos); 
         this.part1_on.value =this.part1.is_in(scooter_pos); 
         this.part2_on.value =this.part2.is_in(scooter_pos); 
         this.part3_on.value =this.part3.is_in(scooter_pos); 
+        this.part35_on.value = this.part35.is_in(scooter_pos); 
         this.part4_on.value =this.part4.is_in(scooter_pos); 
         this.part5_on.value =this.part5.is_in(scooter_pos); 
 
         
         if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY))
         {
-            console.log("LOST");
             this.lost = true;
+            this.line_failled = true;
+            this.message = "You went of track !"
         }
         
+        
+        if(this.part0_after.is_in(scooter_pos) && !this.part0_cango_after.value)
+        {
+            this.lost = true;
+            this.line_failled = true;
+            this.message = "You have to stay 7 sec on the line !"
+        }
+
         if(this.part1_after.is_in(scooter_pos) && !this.part1_cango_after.value)
         {
-            console.log("LOST PART1");
-            this.lost = true;
+            this.part1_failled = true;
+            this.message = "Wait before the Zebra crossing !"
+
+            
         }
 
         if(this.part2_after.is_in(scooter_pos) && !this.part2_cango_after.value)
         {
-            console.log("LOST PART2");
-            this.lost = true;
+            this.part2_failled = true;
+            this.message = "Wait for the traffic light to turn green";
+
+
         }
         if(this.part3_after.is_in(scooter_pos) && !this.part3_cango_after.value)
         {
-            console.log("LOST PART3");
-            this.lost = true;
+            this.part3_failled = true;
+            this.message = "Wait a bit inside the rectangle";
+
+
         }
         if(this.part4_after.is_in(scooter_pos) && !this.part4_cango_after.value)
         {
-            console.log("LOST PART4");
-            this.lost = true;
+            this.part4_failled = true;
+            this.message = "You need to stop before crossing"
+
         }
 
 
-        console.log(this.part5_after.is_in(scooter_pos))
-
         if(this.part5_after.is_in(scooter_pos) && !this.part5_cango_after.value)
         {
-            console.log("LOST PART5");
-            this.lost = true;
+            this.part5_failled = true;
+            this.message = "Got hit by a train"
+
         }
         
     }
@@ -359,8 +412,43 @@ export class Track {
 
 
 
+    getscore()
+    {
+        var curent_score = this.start_score;
+        if(this.part1_failled)
+        {
+            curent_score-=32;
+        }
+        if(this.part2_failled)
+        {
+            curent_score-=32;
+        }
+        if(this.part3_failled)
+        {
+            curent_score-=32;
+        }
+        if(this.part35_failled)
+        {
+            curent_score-=32;
+        }
+        if(this.part4_failled)
+        {
+            curent_score-=32;
+        }
+        if(this.part5_failled)
+        {
+            curent_score-=32;
+        }
 
 
+        return curent_score
+    }
+
+
+    getMessage()
+    {
+        return this.message
+    }
 
 
 
@@ -371,8 +459,6 @@ export class Track {
 
         var x = point.x;
         var y = -point.z;
-        //console.log('x='+x);
-        //console.log('y='+y);
         var i, j=cornersX.length-1 ;
         var odd = false;
     
@@ -401,17 +487,23 @@ export class Track {
             var var_counter = 0;
             while(this.part1_on.value)
             {
+
+                if(!this.part0_cango_after.value)
+                {
+                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
+                }    
+
                 var_counter++;
                 await this.sleep(1000);
                 if(var_counter*1000>=time_needed_ms)
                 {
-                    //console.log("breaking");
                     break;
                 }
             }
             //if we break and th boolean is true, we can say it's good now 
             if(this.part1_on.value)
             {
+                this.message = "You can go";
                 if(function_)
                 {
                     function_(this);
@@ -438,9 +530,12 @@ export class Track {
             var var_counter = 0;
             while(this.part2_on.value)
             {
+                if(!this.part2_cango_after.value)
+                {
+                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
+                }
 
                 var_counter++;
-                console.log(var_counter);
                 await this.sleep(1000);
                 if(var_counter*1000>=time_needed_ms)
                 {
@@ -450,12 +545,14 @@ export class Track {
             //if we break and th boolean is true, we can say it's good now 
             if(this.part2_on.value)
             {
+                this.message = "You can go";
                 if(function_)
                 {
                     function_(this);
                 }
                 this.part2_cango_after.value = true; 
             }
+            
             //else we just try again
             //delay to not kill the computer
             await this.sleep(1000);
@@ -472,11 +569,28 @@ export class Track {
         while(true)
         {   
             var ori_Ok = this.scooter_yaw<1.8 && this.scooter_yaw>1.4;
+            
+            if(this.part3_on.value)
+            {
+                if(ori_Ok)
+                {
+                    this.message = "Your orientation is good !";
+
+                }
+                else
+                {
+                    this.message = "You should be perpendicular to the line";
+                }
+            }
+
             var var_counter = 0;
             while(this.part3_on.value && ori_Ok)
             {
-                console.log(var_counter);
-
+                
+                if(!this.part3_cango_after.value)
+                {
+                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
+                }    
                 var_counter++;
                 await this.sleep(1000);
                 if(var_counter*1000>=time_needed_ms)
@@ -487,6 +601,8 @@ export class Track {
             //if we break and th boolean is true, we can say it's good now 
             if(this.part3_on.value && ori_Ok)
             {
+                this.message = "you can go now";
+
                 if(function_)
                 {
                     function_(this);
@@ -508,6 +624,11 @@ export class Track {
             var var_counter = 0;
             while(this.part4_on.value)
             {
+                if(!this.part4_cango_after.value)
+                {
+                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
+                }    
+
                 var_counter++;
                 await this.sleep(1000);
                 if(var_counter*1000>=time_needed_ms)
@@ -518,7 +639,8 @@ export class Track {
             //if we break and th boolean is true, we can say it's good now 
             if(this.part4_on.value)
             {
-                //console.log("setting");
+                this.message = "you can go now";
+
                 if(function_)
                 {
                     function_(this);
@@ -541,12 +663,15 @@ export class Track {
         this.part4_cango_after.value = false; 
         while(true)
         {   
-            console.log("=====");
-            console.log(this.part5_on.value);
-
             var var_counter = 0;
             while(this.part5_on.value)
             {
+
+                if(!this.part5_cango_after.value)
+                {
+                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
+                }    
+
                 var_counter++;
                 await this.sleep(1000);
                 if(var_counter*1000>=time_needed_ms)
@@ -557,6 +682,8 @@ export class Track {
             //if we break and th boolean is true, we can say it's good now 
             if(this.part5_on.value)
             {
+                this.message = "you can go now";
+
                 if(function_)
                 {
                     function_(this);
@@ -570,6 +697,52 @@ export class Track {
     }
 
 
+
+    async part_0_colision_callback(time_needed_ms,function_ = null)
+    {
+        this.part0_cango_after.value = false; 
+        while(true)
+        {   
+            var var_counter = 0;
+            while(this.part0_on.value)
+            {
+                if(!this.part0_cango_after.value)
+                {
+                    this.message = var_counter+" seconds | (min 7 seconds)";
+                }
+
+                var_counter++;
+                await this.sleep(1000);
+                if(var_counter*1000>=time_needed_ms)
+                {
+                    this.part0_cango_after.value = true
+                    this.message = "you lasted more than 7 sec !";
+                    break;
+                }
+            }
+            //delay to not kill the computer
+            await this.sleep(100);
+        }        
+    }
+
+
+
+
+
+    async part_35_colision_callback()
+    {
+        while(true)
+        {   
+            if(this.part35_on.value && !this.scooter_obj_blinker_state)
+            {
+                this.part35_failled = true;
+                this.message = "you can't change line without using the blinker";
+                break;
+            }
+            //delay to not kill the computer
+            await this.sleep(100);
+        }        
+    }
 
 
 
@@ -602,13 +775,6 @@ export class CheckPoint
 
     is_in(point)
     {
-        //console.log(point)
-        //console.log(this.top_left.x>point.x)
-        //console.log(this.bottom_right.x<point.x)
-        //console.log(this.top_left.y > -point.z)
-        //console.log(this.bottom_right.y<-point.z)
-        //console.log('=====')
-
         return this.top_left.x>point.x && this.bottom_right.x<point.x && this.top_left.y > -point.z &&this.bottom_right.y <-point.z;
     }
 

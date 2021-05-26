@@ -38691,8 +38691,11 @@
 
 	    constructor(track_threejs,render)
 	    {
+	        this.scooter_obj_blinker_state = false;
 
+	        this.start_score = 100;
 	        this.lost=false;
+	        this.message = "";
 
 	        //idk why but javascript need this else it doesn't feel good 
 	        this.stop_blink_zebra = this.stop_blink_zebra.bind(this);
@@ -38718,7 +38721,6 @@
 	        //Parsin the track to find visuals
 	        this.zebra_l = this.track_.links["left_1"].children[0].children[0].material;
 	        this.zebra_r = this.track_.links["right_1"].children[0].children[0].material;
-
 	        this.traffic_r = this.track_.links["red_1_traffic"].children[0].children[0].material;
 	        this.traffic_g = this.track_.links["green_1_traffic"].children[0].children[0].material;
 	        this.traffic_y = this.track_.links["yellow_1_traffic"].children[0].children[0].material;
@@ -38765,7 +38767,7 @@
 	        this.part_4_colision_callback(3000);
 
 
-	        this.part5 = new CheckPoint(new Vector2(5.8,9.67),new Vector2(3,7.66));
+	        this.part5 = new  CheckPoint(new Vector2(5.8,9.67),new Vector2(3,7.66));
 	        this.part5_after = new CheckPoint(new Vector2(5.8,12.7),new Vector2(3,9.6));
 	        this.part5_cango_after = { value: false };
 	        this.part5_on = { value: false };
@@ -38774,13 +38776,38 @@
 
 
 
+	        this.part0 = new CheckPoint(new Vector2(-10,12.7),new Vector2(-13.8,-2.35)); 
+	        this.part0_after = new CheckPoint(new Vector2(-10.7,-2.4),new Vector2(-14.8,-7.57)); 
+
+	        this.part0_on = { value: false };
+	        this.part0_cango_after = { value: false };
+	        //this.colision_callback(this.part5_on,this.part5_cango_after,3000,this.stop_blink_train);
+	        this.part_0_colision_callback(7000);
+
+
+
+
+	        this.part35 = new CheckPoint(new Vector2(4.15,-5.29),new Vector2(2.84,-12.94)); 
+	        this.part35_on = { value: false };
+	        this.part_35_colision_callback();
+
+
+
+
+	        this.part0_failled = false;
+	        this.part1_failled = false;
+	        this.part2_failled = false;
+	        this.part3_failled = false;
+	        this.part35_failled = false;
+	        this.part4_failled = false;
+	        this.part5_failled = false;
+	        this.line_failled = false;
 	        //coords for the line
 	        this.coord = [        
 	        [-11.57,15.86],
 	        [-11.57,14.00],
 	        [-11.92,12.80],
 	        [-11.92,-2.35],
-
 	        [-11.35,-8.90],
 	        [-11.3,-14.07],
 	        [-9.94,-15.59],
@@ -38819,12 +38846,11 @@
 	        [-12.23,-15.43],
 	        [-13.05,-14.09],
 	        [-13.01,-8.94],
-	    
 	        [-12.40,-2.31],
 	        [-12.40,12.80],
 	        [-12.69,14.00],
 	        [-12.74,15.85]
-	];
+	        ];
 
 	        this.arrayX = [];
 	        this.arrayY = [];
@@ -38842,7 +38868,7 @@
 
 	    get_done()
 	    {
-	        return this.lost;
+	        return this.lost || this.get_done<0;
 	    }
 
 	    
@@ -38851,6 +38877,7 @@
 
 	    async stop_blink_zebra()
 	    {
+	        console.log("STOP blink_zebra called => "+ this.zebra_blink);
 	        this.zebra_blink = false;
 	        this.change_color(this.zebra_l,this.black);
 	        this.change_color(this.zebra_r,this.black);
@@ -38859,9 +38886,11 @@
 
 	    async blink_zebra()
 	    {
-	    
+
+	        console.log("blink_zebra called => "+ this.zebra_blink);
 	        if(!this.zebra_blink)
 	        {
+	            console.log("blink_zebra started");
 	            this.zebra_blink = true;
 	            while(this.zebra_blink)
 	            {
@@ -38872,7 +38901,10 @@
 	                this.change_color(this.zebra_r,this.red);
 	                await this.sleep(500);
 	            }
-	            this.zebra_blink = false;
+	        }
+	        else
+	        {
+	            console.log("blink_zebra already started");
 	        }
 	        
 	    }
@@ -38956,84 +38988,105 @@
 	    }
 
 
-	    async init_track()
+	    init_track()
 	    {
 	        //this.train_blink = false;
 	        //this.zebra_blink = false;
-	        await this.stop_blink_train();
-	        await this.stop_blink_zebra();
-	        await this.sleep(100);
+	        //this.stop_blink_train();
+	        //this.stop_blink_zebra();
+	        //this.sleep(1000);
 
-	        console.log("init_track");
+	        console.log("=======init_track===========");
+	        this.part0_cango_after = { value: false };
+	        this.part0_on = { value: false };
 	        this.part1_cango_after = { value: false };
 	        this.part1_on = { value: false };
 	        this.part2_cango_after = { value: false };
 	        this.part2_on = { value: false };
 	        this.part3_cango_after = { value: false };
 	        this.part3_on = { value: false };
+	        this.part35_on = { value: false };
 	        this.part4_cango_after = { value: false };
 	        this.part4_on = { value: false };
 	        this.part5_cango_after = { value: false };
 	        this.part5_on = { value: false };
-	        this.zebra_blink = false;
-	        this.traffic_state = 0;
-	        this.train_blink = false;
+	        
+	        //this.zebra_blink = false;
+	        //this.traffic_state = 0;
+	        //this.train_blink = false;
 	        this.lost = false;
 
-	        await this.blink_zebra();
-	        await this.trun_traffic_red();
-	        await this.blink_train();
+	        this.blink_zebra();
+	        this.trun_traffic_red();
+	        this.blink_train();
 	    }
 
 
-	    update(scooter_pos,scooter_yaw)
+	    update(scooter_pos,scooter_yaw,blinker_left_state)
 	    {
-
+	        this.scooter_obj_blinker_state = blinker_left_state;
 	        //can opti the code a lot here
 	        this.scooter_yaw = scooter_yaw;
 
+	        this.part0_on.value =this.part0.is_in(scooter_pos); 
 	        this.part1_on.value =this.part1.is_in(scooter_pos); 
 	        this.part2_on.value =this.part2.is_in(scooter_pos); 
 	        this.part3_on.value =this.part3.is_in(scooter_pos); 
+	        this.part35_on.value = this.part35.is_in(scooter_pos); 
 	        this.part4_on.value =this.part4.is_in(scooter_pos); 
 	        this.part5_on.value =this.part5.is_in(scooter_pos); 
 
 	        
 	        if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY))
 	        {
-	            console.log("LOST");
 	            this.lost = true;
+	            this.line_failled = true;
+	            this.message = "You went of track !";
 	        }
 	        
+	        
+	        if(this.part0_after.is_in(scooter_pos) && !this.part0_cango_after.value)
+	        {
+	            this.lost = true;
+	            this.line_failled = true;
+	            this.message = "You have to stay 7 sec on the line !";
+	        }
+
 	        if(this.part1_after.is_in(scooter_pos) && !this.part1_cango_after.value)
 	        {
-	            console.log("LOST PART1");
-	            this.lost = true;
+	            this.part1_failled = true;
+	            this.message = "Wait before the Zebra crossing !";
+
+	            
 	        }
 
 	        if(this.part2_after.is_in(scooter_pos) && !this.part2_cango_after.value)
 	        {
-	            console.log("LOST PART2");
-	            this.lost = true;
+	            this.part2_failled = true;
+	            this.message = "Wait for the traffic light to turn green";
+
+
 	        }
 	        if(this.part3_after.is_in(scooter_pos) && !this.part3_cango_after.value)
 	        {
-	            console.log("LOST PART3");
-	            this.lost = true;
+	            this.part3_failled = true;
+	            this.message = "Wait a bit inside the rectangle";
+
+
 	        }
 	        if(this.part4_after.is_in(scooter_pos) && !this.part4_cango_after.value)
 	        {
-	            console.log("LOST PART4");
-	            this.lost = true;
+	            this.part4_failled = true;
+	            this.message = "You need to stop before crossing";
+
 	        }
 
 
-	        console.log(this.part5_after.is_in(scooter_pos));
-
 	        if(this.part5_after.is_in(scooter_pos) && !this.part5_cango_after.value)
 	        {
-	            console.log("LOST PART5");
-	            this.lost = true;
+	            this.part5_failled = true;
+	            this.message = "Got hit by a train";
+
 	        }
 	        
 	    }
@@ -39042,8 +39095,43 @@
 
 
 
+	    getscore()
+	    {
+	        var curent_score = this.start_score;
+	        if(this.part1_failled)
+	        {
+	            curent_score-=32;
+	        }
+	        if(this.part2_failled)
+	        {
+	            curent_score-=32;
+	        }
+	        if(this.part3_failled)
+	        {
+	            curent_score-=32;
+	        }
+	        if(this.part35_failled)
+	        {
+	            curent_score-=32;
+	        }
+	        if(this.part4_failled)
+	        {
+	            curent_score-=32;
+	        }
+	        if(this.part5_failled)
+	        {
+	            curent_score-=32;
+	        }
 
 
+	        return curent_score
+	    }
+
+
+	    getMessage()
+	    {
+	        return this.message
+	    }
 
 
 
@@ -39054,8 +39142,6 @@
 
 	        var x = point.x;
 	        var y = -point.z;
-	        //console.log('x='+x);
-	        //console.log('y='+y);
 	        var i, j=cornersX.length-1 ;
 	        var odd = false;
 	    
@@ -39084,17 +39170,23 @@
 	            var var_counter = 0;
 	            while(this.part1_on.value)
 	            {
+
+	                if(!this.part0_cango_after.value)
+	                {
+	                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
+	                }    
+
 	                var_counter++;
 	                await this.sleep(1000);
 	                if(var_counter*1000>=time_needed_ms)
 	                {
-	                    //console.log("breaking");
 	                    break;
 	                }
 	            }
 	            //if we break and th boolean is true, we can say it's good now 
 	            if(this.part1_on.value)
 	            {
+	                this.message = "You can go";
 	                if(function_)
 	                {
 	                    function_(this);
@@ -39121,9 +39213,12 @@
 	            var var_counter = 0;
 	            while(this.part2_on.value)
 	            {
+	                if(!this.part2_cango_after.value)
+	                {
+	                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
+	                }
 
 	                var_counter++;
-	                console.log(var_counter);
 	                await this.sleep(1000);
 	                if(var_counter*1000>=time_needed_ms)
 	                {
@@ -39133,12 +39228,14 @@
 	            //if we break and th boolean is true, we can say it's good now 
 	            if(this.part2_on.value)
 	            {
+	                this.message = "You can go";
 	                if(function_)
 	                {
 	                    function_(this);
 	                }
 	                this.part2_cango_after.value = true; 
 	            }
+	            
 	            //else we just try again
 	            //delay to not kill the computer
 	            await this.sleep(1000);
@@ -39155,11 +39252,28 @@
 	        while(true)
 	        {   
 	            var ori_Ok = this.scooter_yaw<1.8 && this.scooter_yaw>1.4;
+	            
+	            if(this.part3_on.value)
+	            {
+	                if(ori_Ok)
+	                {
+	                    this.message = "Your orientation is good !";
+
+	                }
+	                else
+	                {
+	                    this.message = "You should be perpendicular to the line";
+	                }
+	            }
+
 	            var var_counter = 0;
 	            while(this.part3_on.value && ori_Ok)
 	            {
-	                console.log(var_counter);
-
+	                
+	                if(!this.part3_cango_after.value)
+	                {
+	                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
+	                }    
 	                var_counter++;
 	                await this.sleep(1000);
 	                if(var_counter*1000>=time_needed_ms)
@@ -39170,6 +39284,8 @@
 	            //if we break and th boolean is true, we can say it's good now 
 	            if(this.part3_on.value && ori_Ok)
 	            {
+	                this.message = "you can go now";
+
 	                if(function_)
 	                {
 	                    function_(this);
@@ -39191,6 +39307,11 @@
 	            var var_counter = 0;
 	            while(this.part4_on.value)
 	            {
+	                if(!this.part4_cango_after.value)
+	                {
+	                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
+	                }    
+
 	                var_counter++;
 	                await this.sleep(1000);
 	                if(var_counter*1000>=time_needed_ms)
@@ -39201,7 +39322,8 @@
 	            //if we break and th boolean is true, we can say it's good now 
 	            if(this.part4_on.value)
 	            {
-	                //console.log("setting");
+	                this.message = "you can go now";
+
 	                if(function_)
 	                {
 	                    function_(this);
@@ -39224,12 +39346,15 @@
 	        this.part4_cango_after.value = false; 
 	        while(true)
 	        {   
-	            console.log("=====");
-	            console.log(this.part5_on.value);
-
 	            var var_counter = 0;
 	            while(this.part5_on.value)
 	            {
+
+	                if(!this.part5_cango_after.value)
+	                {
+	                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
+	                }    
+
 	                var_counter++;
 	                await this.sleep(1000);
 	                if(var_counter*1000>=time_needed_ms)
@@ -39240,6 +39365,8 @@
 	            //if we break and th boolean is true, we can say it's good now 
 	            if(this.part5_on.value)
 	            {
+	                this.message = "you can go now";
+
 	                if(function_)
 	                {
 	                    function_(this);
@@ -39253,6 +39380,52 @@
 	    }
 
 
+
+	    async part_0_colision_callback(time_needed_ms,function_ = null)
+	    {
+	        this.part0_cango_after.value = false; 
+	        while(true)
+	        {   
+	            var var_counter = 0;
+	            while(this.part0_on.value)
+	            {
+	                if(!this.part0_cango_after.value)
+	                {
+	                    this.message = var_counter+" seconds | (min 7 seconds)";
+	                }
+
+	                var_counter++;
+	                await this.sleep(1000);
+	                if(var_counter*1000>=time_needed_ms)
+	                {
+	                    this.part0_cango_after.value = true;
+	                    this.message = "you lasted more than 7 sec !";
+	                    break;
+	                }
+	            }
+	            //delay to not kill the computer
+	            await this.sleep(100);
+	        }        
+	    }
+
+
+
+
+
+	    async part_35_colision_callback()
+	    {
+	        while(true)
+	        {   
+	            if(this.part35_on.value && !this.scooter_obj_blinker_state)
+	            {
+	                this.part35_failled = true;
+	                this.message = "you can't change line without using the blinker";
+	                break;
+	            }
+	            //delay to not kill the computer
+	            await this.sleep(100);
+	        }        
+	    }
 
 
 
@@ -39285,27 +39458,258 @@
 
 	    is_in(point)
 	    {
-	        //console.log(point)
-	        //console.log(this.top_left.x>point.x)
-	        //console.log(this.bottom_right.x<point.x)
-	        //console.log(this.top_left.y > -point.z)
-	        //console.log(this.bottom_right.y<-point.z)
-	        //console.log('=====')
-
 	        return this.top_left.x>point.x && this.bottom_right.x<point.x && this.top_left.y > -point.z &&this.bottom_right.y <-point.z;
 	    }
 
 
 	}
 
-	let scene, camera, renderer, track, scooter, controls;
+	class Timer {
 
-	let spawn_x =-12.2;
-	let spawn_y =0.94;
-	let spawn_z =-15;
-
+	    constructor()
+	    {
 
 
+	    this.timerDisplay = document.querySelector('.timer');
+
+	    this.startTime;
+	    this.updatedTime;
+	    this.difference;
+	    this.tInterval;
+	    this.savedTime;
+	    this.paused = 0;
+	    this.running = 0;
+
+	    }
+
+	    startTimer(){
+	        if(!this.running)
+	        {
+	            this.startTime = new Date().getTime();
+	            this.tInterval = setInterval(this.getShowTime, 1);// change 1 to 1000 above to run script every second instead of every millisecond. one other change will be needed in the getShowTime() function below for this to work. see comment there.   
+	            this.paused = 0;
+	            this.running = 1;
+	        }
+	    }
+
+	    pauseTimer(){
+	        if (!this.difference); else if (!this.paused) {
+	            clearInterval(this.tInterval);
+	            this.savedTime = this.difference;
+	            this.paused = 1;
+	            this.running = 0;
+	        } 
+	    }
+
+
+	    resetTimer()
+	    {
+	        clearInterval(this.tInterval);
+	        this.savedTime = 0;
+	        this.difference = 0;
+	        this.paused = 0;
+	        this.running = 0;
+	    }
+
+	    getShowTime()
+	    {
+	        this.updatedTime = new Date().getTime();
+	        if (this.savedTime){
+	            this.difference = (this.updatedTime - this.startTime) + this.savedTime;
+	        } else {
+	            this.difference =  this.updatedTime - this.startTime;
+	        }
+	        // var days = Math.floor(difference / (1000 * 60 * 60 * 24));
+	        var hours = Math.floor((this.difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+	        var minutes = Math.floor((this.difference % (1000 * 60 * 60)) / (1000 * 60));
+	        var seconds = Math.floor((this.difference % (1000 * 60)) / 1000);
+	        var milliseconds = Math.floor((this.difference % (1000 * 60)) / 100);hours = (hours < 10) ? "0" + hours : hours;
+	        minutes = (minutes < 10) ? "0" + minutes : minutes;
+	        seconds = (seconds < 10) ? "0" + seconds : seconds;
+	        milliseconds = (milliseconds < 100) ? (milliseconds < 10) ? "00" + milliseconds : "0" + milliseconds : milliseconds;
+	        
+	        if(isNaN(minutes))
+	        {
+	            minutes = "00";
+
+	        }
+	        if(isNaN(seconds))
+	        {
+	            seconds = "00";
+	        }
+
+	        if(isNaN(milliseconds))
+	        {
+	            milliseconds = "00";
+	        }
+
+	        return minutes + ':' + seconds + ':' + milliseconds;
+	    }
+
+
+	}
+
+	class Robot{
+
+	    constructor(robot_three)
+	    {   
+	        this.scooter = robot_three;
+	        this.velocity = 0.0; //m/s
+	        this.scooter_yaw_rotation = 0.0;
+	        this.max_x_velocity = 1;
+	        this.min_x_velocity = 0;
+	        this.steering_angle = 0.0;
+	        this.max_steering_angle = 0.6;
+	        this.min_steering_angle = -0.6;
+	        this.m = 125; //mass of scooter + robot in kg
+	        this.h = 0.98; // height of the center of mass
+	        this.b = 1.184012; //inter wheel distance=
+	        this.a = this.b/2;
+	        this.g= 9.806;
+	        this.J = this.m*Math.pow(this.h,2); //aprox
+	        this.D = this.m*this.a*this.h;
+	        this.spawn_x =-12.2;
+	        this.spawn_y =0.94;
+	        this.spawn_z =-15;
+
+	        this.orange= new Color(255,69,0);
+	        this.red= new Color(255,0,0);
+	        this.green= new Color(0,255,0);
+	        this.black= new Color(0,0,0);
+
+	        this.blinker_l = this.scooter.links["blinker_left"].children[0].children[0].material;
+	        this.blinker_r = this.scooter.links["blinker_right"].children[0].children[0].material;
+	        this.stop_light = this.scooter.links["stop_light"].children[0].children[0].material;
+	        this.sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+
+	        this.blinking_left = false;
+	        this.blinking_right = false;
+
+	    }
+
+
+
+	    init_position()
+	    {
+	        this.scooter.position.x = this.spawn_x;
+	        this.scooter.position.y = this.spawn_y;
+	        this.scooter.position.z = this.spawn_z;
+	        this.scooter.rotation.y = -Math.PI/2;
+	        this.scooter_yaw_rotation = -Math.PI/2;
+	        this.steering_angle =0.0;
+	        this.velocity =0.0;
+	    }
+
+
+	    change_color(obj,color)
+	    {
+	        obj.color.set(color);
+	        obj.emissive.set(color);
+	        obj.specular.set(color);
+	        obj.needsUpdate = true;
+	    }
+
+
+
+	    get_wheel_position()
+	    {
+
+	        var point_x = this.a*Math.cos(-this.scooter_yaw_rotation);
+	        var point_y = this.a*Math.sin(-this.scooter_yaw_rotation);
+	        var wheel_position = new Vector3(this.scooter.position.x+point_x,this.scooter.position.y,this.scooter.position.z+point_y);
+	        return wheel_position
+	    }
+
+
+
+	    get_position()
+	    {
+	        return this.scooter.position
+	    }
+
+
+
+	    transfer_function_steer_to_tilt(s)
+	    {
+	        return ((this.a*this.velocity)/(this.b*this.h)) * ( (s+(this.velocity/this.a) )/( (Math.pow(s,2)-(this.g/this.h))  ));
+	    }
+
+
+
+
+	    stop_signal()
+	    {
+	        this.change_color(this.stop_light,this.red);
+	    }
+
+	    go_signal()
+	    {
+	        this.change_color(this.stop_light,this.black);
+	    }
+
+
+	    async stop_blink()
+	    {
+	        this.blinking_left = false;
+	        this.blinking_right = false;
+
+	        this.change_color(this.blinker_l,this.black);
+	        this.change_color(this.blinker_r,this.black);
+	    }
+
+
+	    async blink_right()
+	    {
+	        if(!this.blinking_right)
+	        {
+	            this.blinking_right = true;
+	            while(this.blinking_right)
+	            {
+	                this.change_color(this.blinker_r,this.black);
+	                this.change_color(this.blinker_l,this.black);
+
+	                await this.sleep(500);
+	                this.change_color(this.blinker_r,this.orange);
+	                this.change_color(this.blinker_l,this.black);
+
+	                await this.sleep(500);
+	            }
+	        }        
+	    }
+
+
+	    async blink_left()
+	    {
+	        if(!this.blinking_left)
+	        {
+	            this.blinking_left = true;
+	            while(this.blinking_left)
+	            {
+	                this.change_color(this.blinker_l,this.black);
+	                this.change_color(this.blinker_r,this.black);
+
+	                await this.sleep(500);
+	                this.change_color(this.blinker_l,this.orange);
+	                this.change_color(this.blinker_r,this.black);
+	                await this.sleep(500);
+	            }
+	        }        
+	    }
+
+
+
+
+	}
+
+	let curent_score = 100;
+	let best_score = 999;
+
+	let score_element = document.getElementById("score");
+	let comment_element = document.getElementById("comment");
+	let timer_element = document.getElementById("timer");
+	let stopwatch;
+
+	let scene, camera, renderer, track, scooter_three,scooter_obj, controls;
 
 	let a_up=true;
 	let d_up=true;
@@ -39314,19 +39718,6 @@
 
 	let test_track;
 	let scooter_loaded =false;
-
-	let velocity = 0.0; //m/s
-	let scooter_yaw_rotation = 0.0;
-	const max_x_velocity = 1;
-	const min_x_velocity = 0;
-	let steering_angle = 0.0;
-	const max_steering_angle = 0.5235;
-	const min_steering_angle = -0.5235;
-	const h = 0.98; // height of the center of mass
-	const b = 1.184012; //inter wheel distance=
-	const a = b/2;
-	const g= 9.806;
-
 
 
 	init();
@@ -39341,6 +39732,11 @@
 
 
 	function init() {
+
+
+
+	    score_element.innerHTML = "caca";
+	    stopwatch = new Timer();
 
 	    scene = new Scene();
 	    scene.background = new Color(0x92fffb);
@@ -39372,15 +39768,11 @@
 	    const manager = new LoadingManager();
 	    const loader = new URDFLoader(manager);
 	    loader.load('../../urdf/thormang3/urdf/all.urdf', result => {
-	        scooter = result;
+	        scooter_three = result;
 	    });
 	    manager.onLoad = () => {
-	        scooter.position.x = spawn_x;
-	        scooter.position.y = spawn_y;
-	        scooter.position.z = spawn_z;
-	        scooter.rotation.y = -Math.PI/2;
-	        scooter_yaw_rotation = -Math.PI/2;
-	        scene.add(scooter);
+	        scene.add(scooter_three);
+	        scooter_obj = new Robot(scooter_three);
 	        scooter_loaded = true;
 	    };
 	    
@@ -39397,6 +39789,7 @@
 	        test_track.init_track();
 	        
 	    };
+	    
 	    
 	    onResize();
 	    window.addEventListener('resize', onResize);
@@ -39419,34 +39812,49 @@
 	    requestAnimationFrame(render);
 	    renderer.render(scene, camera);
 
-
-	    steer_keyboard();
-
-	    if(test_track)
+	    if(scooter_loaded)
 	    {
+
+	        steer_keyboard();
+	    }
+
+	    timer_element.innerHTML = stopwatch.getShowTime();
+
+	    if(test_track && scooter_loaded)
+	    {
+	        test_track.update(scooter_obj.get_wheel_position(),scooter_obj.scooter_yaw_rotation,scooter_obj.blinking_left);
+	        score_element.innerHTML = "SCORE : "+curent_score+"  |  BEST : "+best_score;
+	        comment_element.innerHTML = "COMMENTS : <br><br>"+test_track.getMessage();
+	    
+
+	        curent_score = test_track.getscore();
+	        
 	        if(test_track.get_done())
 	        {
+	            stopwatch.resetTimer();
+	            stopwatch.startTimer();
 	            test_track.init_track();
-	            scooter.position.x = spawn_x;
-	            scooter.position.y = spawn_y;
-	            scooter.position.z = spawn_z;
-	            scooter.rotation.y = -Math.PI/2;
-	            scooter_yaw_rotation = -Math.PI/2;
-	            steering_angle =0.0;
-	            velocity =0.0;
-
+	            scooter_obj.init_position();
 	        }
+	        
 	    }
+
 
 	    if(scooter_loaded)
 	    {
+
 	        physics();
 	        var cam_dist = 10;
-	        var camdist_x = cam_dist*Math.cos(-scooter_yaw_rotation);
-	        var camdist_y = cam_dist*Math.sin(-scooter_yaw_rotation);
-	        camera.position.set(scooter.position.x-camdist_x, scooter.position.y+5, scooter.position.z-camdist_y);
-	        camera.lookAt(scooter.position.x, scooter.position.y, scooter.position.z);
+	        var camdist_x = cam_dist*Math.cos(-scooter_obj.scooter_yaw_rotation);
+	        var camdist_y = cam_dist*Math.sin(-scooter_obj.scooter_yaw_rotation);
+	        camera.position.set(scooter_obj.get_position().x-camdist_x, scooter_obj.get_position().y+5, scooter_obj.get_position().z-camdist_y);
+	        camera.lookAt(scooter_obj.get_position().x, scooter_obj.get_position().y, scooter_obj.get_position().z);
 	    }
+
+
+
+	    //UI update
+
 
 	}
 
@@ -39454,22 +39862,15 @@
 
 	function physics() 
 	{   
-	    if(test_track)
-	    {
-	        var point_x = a*Math.cos(-scooter_yaw_rotation);
-	        var point_y = a*Math.sin(-scooter_yaw_rotation);
-	        var wheel_position = new Vector3(scooter.position.x+point_x,scooter.position.y,scooter.position.z+point_y);
-	        test_track.update(wheel_position,scooter_yaw_rotation);
-	    }
 	    //Velocity of the scooter on the X axis
-	    var yaw_velocity = velocity*steering_angle/b;
-	    scooter_yaw_rotation+=yaw_velocity;
-	    var x_vel = velocity*Math.cos(scooter_yaw_rotation+Math.PI/2);
-	    var y_vel = velocity*Math.sin(scooter_yaw_rotation+Math.PI/2);
-	    scooter.position.x += y_vel;
-	    scooter.position.z += x_vel;
-	    scooter.setJointValue("steering_joint",steering_angle);
-	    var phi = transfer_function_steer_to_tilt(steering_angle)-transfer_function_steer_to_tilt(0);
+	    var yaw_velocity = scooter_obj.velocity*scooter_obj.steering_angle/scooter_obj.b;
+	    scooter_obj.scooter_yaw_rotation+=yaw_velocity;
+	    var x_vel = scooter_obj.velocity*Math.cos(scooter_obj.scooter_yaw_rotation+Math.PI/2);
+	    var y_vel = scooter_obj.velocity*Math.sin(scooter_obj.scooter_yaw_rotation+Math.PI/2);
+	    scooter_obj.scooter.position.x += y_vel;
+	    scooter_obj.scooter.position.z += x_vel;
+	    scooter_obj.scooter.setJointValue("steering_joint",scooter_obj.steering_angle);
+	    var phi = scooter_obj.transfer_function_steer_to_tilt(scooter_obj.steering_angle)-scooter_obj.transfer_function_steer_to_tilt(0);
 	    phi = phi*100;
 	    if(phi<-0.8)
 	    {
@@ -39479,7 +39880,7 @@
 	    {
 	        phi=0.8;
 	    }
-	    applyRotation$1(scooter,[phi,scooter_yaw_rotation,0]);
+	    applyRotation$1(scooter_three,[phi,scooter_obj.scooter_yaw_rotation,0]);
 	}
 
 	function applyRotation$1(obj, rpy, additive = false) {
@@ -39493,13 +39894,6 @@
 	    tempQuaternion.multiply(obj.quaternion);
 	    obj.quaternion.copy(tempQuaternion);
 	}
-
-	//take stearing and convert it to the tilt
-	function transfer_function_steer_to_tilt(s)
-	{
-	    return ((a*velocity)/(b*h)) * ( (s+(velocity/a) )/( (Math.pow(s,2)-(g/h))  ));
-	}
-
 
 
 
@@ -39518,30 +39912,37 @@
 
 	    if(!w_up)
 	    {
-	        velocity += vel_update;
+	        scooter_obj.velocity += vel_update;
+	        scooter_obj.go_signal();
 	    }
 	    else if(!s_up)
 	    {
-	        velocity -= vel_update;
+	        scooter_obj.velocity -= vel_update;
+	        scooter_obj.stop_signal();
 	    }
+	    else
+	    {
+	        scooter_obj.go_signal(); 
+	    }
+
 	    if(!a_up)
 	    {
-	        steering_angle+=steer_update;
+	        scooter_obj.steering_angle+=steer_update;
 	    }
 	    else if(!d_up)
 	    {
-	        steering_angle-=steer_update;
+	        scooter_obj.steering_angle-=steer_update;
 	    }
 
 	    if(a_up && d_up)
 	    {
-	        if(steering_angle>=0.05)
+	        if(scooter_obj.steering_angle>=0.05)
 	        {
-	            steering_angle-=0.05;
+	            scooter_obj.steering_angle-=0.05;
 	        }
-	        else if(steering_angle<=-0.05)
+	        else if(scooter_obj.steering_angle<=-0.05)
 	        {
-	            steering_angle+=0.05;
+	            scooter_obj.steering_angle+=0.05;
 	        }
 	    }
 	    check_angles();
@@ -39550,6 +39951,7 @@
 
 	function user_imput_up(event)
 	{
+	    stopwatch.startTimer();
 	    if(event.key == "w")
 	    {
 	        w_up = true;
@@ -39557,6 +39959,8 @@
 	    else if(event.key == "s")
 	    {
 	        s_up = true;
+	        
+
 	    }
 	    if(event.key == "a")
 	    {
@@ -39566,6 +39970,39 @@
 	    {
 	        d_up=true;
 	    }
+
+
+	    if(event.key == "q")
+	    {
+
+	        if(!scooter_obj.blinking_left)
+	        {
+	            scooter_obj.stop_blink();
+	            scooter_obj.blink_left();
+	        }else
+	        {
+	            scooter_obj.stop_blink();
+	        }
+
+	    
+	    }
+	    else if(event.key == "e")
+	    {
+	        
+	        if(!scooter_obj.blinking_right)
+	        {
+	            scooter_obj.stop_blink();
+	            scooter_obj.blink_right();
+	        }else
+	        {
+	            scooter_obj.stop_blink();
+	        }
+
+	    }
+
+
+
+
 	}
 
 
@@ -39598,22 +40035,22 @@
 	function check_angles()
 	{
 	    //controls
-	    if( velocity<min_x_velocity)
+	    if( scooter_obj.velocity<scooter_obj.min_x_velocity)
 	    {
-	        velocity = min_x_velocity;
+	        scooter_obj.velocity = scooter_obj.min_x_velocity;
 	    }
-	    else if( velocity>max_x_velocity)
+	    else if( scooter_obj.velocity>scooter_obj.max_x_velocity)
 	    {
-	        velocity = max_x_velocity;
+	        scooter_obj.velocity = scooter_obj.max_x_velocity;
 	    }
 
-	    if( steering_angle<min_steering_angle)
+	    if( scooter_obj.steering_angle<scooter_obj.min_steering_angle)
 	    {
-	        steering_angle = min_steering_angle;
+	        scooter_obj.steering_angle = scooter_obj.min_steering_angle;
 	    }
-	    else if( steering_angle>max_steering_angle)
+	    else if( scooter_obj.steering_angle>scooter_obj.max_steering_angle)
 	    {
-	        steering_angle = max_steering_angle;
+	        scooter_obj.steering_angle = scooter_obj.max_steering_angle;
 	    }
 	}
 
