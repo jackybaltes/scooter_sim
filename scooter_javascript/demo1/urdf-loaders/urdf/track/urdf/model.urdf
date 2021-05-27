@@ -797,7 +797,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -806,7 +806,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
@@ -820,7 +820,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -829,7 +829,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
@@ -844,7 +844,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -853,7 +853,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
@@ -867,7 +867,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -876,7 +876,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
@@ -890,7 +890,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -899,7 +899,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
@@ -913,7 +913,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -922,7 +922,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
@@ -938,7 +938,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -947,7 +947,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
@@ -962,7 +962,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -971,7 +971,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
@@ -985,7 +985,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -994,7 +994,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
@@ -1009,7 +1009,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -1018,7 +1018,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
@@ -1034,7 +1034,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -1043,7 +1043,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
@@ -1058,7 +1058,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -1067,7 +1067,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
@@ -1081,7 +1081,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
       <material name="orange">
         <color rgba="255 204 0 1"/>
@@ -1090,7 +1090,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="../meshes/pylons/pylon.stl" scale="4 4 4"/>
+        <mesh filename="../meshes/pylons/test_pylon.dae" scale="4 4 4"/>
       </geometry>
     </collision>
   </link>
