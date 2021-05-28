@@ -38686,114 +38686,99 @@
 
 	}
 
-	class Track {
-
-
-	    constructor(track_threejs,render)
-	    {
-	        this.scooter_obj_blinker_state = false;
-
-	        this.start_score = 100;
-	        this.lost=false;
-	        this.message = "";
-
-	        //idk why but javascript need this else it doesn't feel good 
-	        this.stop_blink_zebra = this.stop_blink_zebra.bind(this);
-	        this.stop_blink_train = this.stop_blink_train.bind(this);
-
-	        this.trun_traffic_green = this.trun_traffic_green.bind(this);
-	        this.trun_traffic_red = this.trun_traffic_red.bind(this);
-
-
-	        this.sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
-
-
-	        this.render =render;
-	        // x = -12.4
-	        // y =0.94
+	var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+	    }
+	};
+	var Track = /** @class */ (function () {
+	    function Track(track_threejs, render) {
+	        this.sleep = function (milliseconds) { return new Promise(function (resolve) { return setTimeout(resolve, milliseconds); }); };
+	        this.render = render;
 	        this.track_ = track_threejs; // the track described as a threeJS object
+	        this.scooter_obj_blinker_state = false;
+	        this.start_score = 100;
+	        this.lost = false;
+	        this.message = "";
 	        this.zebra_blink = false;
 	        this.traffic_state = 0;
 	        this.train_blink = false;
 	        this.scooter_yaw = 0;
-
-
-	        //Parsin the track to find visuals
 	        this.zebra_l = this.track_.links["left_1"].children[0].children[0].material;
 	        this.zebra_r = this.track_.links["right_1"].children[0].children[0].material;
 	        this.traffic_r = this.track_.links["red_1_traffic"].children[0].children[0].material;
 	        this.traffic_g = this.track_.links["green_1_traffic"].children[0].children[0].material;
 	        this.traffic_y = this.track_.links["yellow_1_traffic"].children[0].children[0].material;
-
 	        this.train_l = this.track_.links["left_1_train"].children[0].children[0].material;
 	        this.train_r = this.track_.links["right_1_train"].children[0].children[0].material;
-
-	        this.orange= new Color(255,69,0);
-	        this.red= new Color(255,0,0);
-	        this.green= new Color(0,255,0);
-	        this.black= new Color(0,0,0);
-
-	        //crosswalk
-	        this.part1 = new CheckPoint(new Vector2(-11.4,-9),new Vector2(-12.8,-12));
-	        this.part1_after = new CheckPoint(new Vector2(-11.4,-12.2),new Vector2(-12.8,-14.23));
-	        //this.part1_cango_after = new Boolean(false);
-	        //this.part1_on = new Boolean(false);
-	        this.part1_cango_after = { value: false };
-	        this.part1_on = { value: false };
-	        this.part_1_colision_callback(3000,this.stop_blink_zebra);
-
+	        this.orange = new Color(255, 69, 0);
+	        this.red = new Color(255, 0, 0);
+	        this.green = new Color(0, 255, 0);
+	        this.black = new Color(0, 0, 0);
+	        //idk why but javascript need this else it doesn't feel good 
+	        this.stop_blink_zebra = this.stop_blink_zebra.bind(this);
+	        this.stop_blink_train = this.stop_blink_train.bind(this);
+	        this.trun_traffic_green = this.trun_traffic_green.bind(this);
+	        this.trun_traffic_red = this.trun_traffic_red.bind(this);
+	        this.part1 = new CheckPoint(new Vector2(-11.4, -9), new Vector2(-12.8, -12));
+	        this.part1_after = new CheckPoint(new Vector2(-11.4, -12.2), new Vector2(-12.8, -14.23));
+	        this.part1_cango_after = false;
+	        this.part1_on = false;
 	        //Traffic light
-	        this.part2 = new CheckPoint(new Vector2(-4.5,-16.2),new Vector2(-6,-17.4));
-	        this.part2_after = new CheckPoint(new Vector2(-3,-16.2),new Vector2(-4.5,-17.4));
-	        this.part2_cango_after = { value: false };
-	        this.part2_on = { value: false };
-	        //this.colision_callback(this.part2_on,this.part2_cango_after,3000,this.trun_traffic_green);
-	        this.part_2_colision_callback(3000,this.trun_traffic_green);
-
+	        this.part2 = new CheckPoint(new Vector2(-4.5, -16.2), new Vector2(-6, -17.4));
+	        this.part2_after = new CheckPoint(new Vector2(-3, -16.2), new Vector2(-4.5, -17.4));
+	        this.part2_cango_after = false;
+	        this.part2_on = false;
 	        //position part
-	        this.part3 = new CheckPoint(new Vector2(5.7,-17.3),new Vector2(3,-20.4));
-	        this.part3_after = new CheckPoint(new Vector2(5.7,-14.8),new Vector2(3,-17.1));
-	        this.part3_cango_after = { value: false };
-	        this.part3_on = { value: false };
-	        //this.colision_callback(this.part3_on,this.part3_cango_after,3000);
-	        this.part_3_colision_callback(3000);
-
-
-	        this.part4 = new CheckPoint(new Vector2(2.65,2.44),new Vector2(-0.82,0.5));
-	        this.part4_after = new CheckPoint(new Vector2(5.7,3.2),new Vector2(0.81,0.61));
-	        this.part4_cango_after = { value: false };
-	        this.part4_on = { value: false };
-	        //this.colision_callback(this.part4_on,this.part4_cango_after,3000);
-	        this.part_4_colision_callback(3000);
-
-
-	        this.part5 = new  CheckPoint(new Vector2(5.8,9.67),new Vector2(3,7.66));
-	        this.part5_after = new CheckPoint(new Vector2(5.8,12.7),new Vector2(3,9.6));
-	        this.part5_cango_after = { value: false };
-	        this.part5_on = { value: false };
-	        //this.colision_callback(this.part5_on,this.part5_cango_after,3000,this.stop_blink_train);
-	        this.part_5_colision_callback(3000,this.stop_blink_train);
-
-
-
-	        this.part0 = new CheckPoint(new Vector2(-10,12.7),new Vector2(-13.8,-2.35)); 
-	        this.part0_after = new CheckPoint(new Vector2(-10.7,-2.4),new Vector2(-14.8,-7.57)); 
-
-	        this.part0_on = { value: false };
-	        this.part0_cango_after = { value: false };
-	        //this.colision_callback(this.part5_on,this.part5_cango_after,3000,this.stop_blink_train);
-	        this.part_0_colision_callback(7000);
-
-
-
-
-	        this.part35 = new CheckPoint(new Vector2(4.15,-5.29),new Vector2(2.84,-12.94)); 
-	        this.part35_on = { value: false };
-	        this.part_35_colision_callback();
-
-
-
-
+	        this.part3 = new CheckPoint(new Vector2(5.7, -17.3), new Vector2(3, -20.4));
+	        this.part3_after = new CheckPoint(new Vector2(5.7, -14.8), new Vector2(3, -17.1));
+	        this.part3_cango_after = false;
+	        this.part3_on = false;
+	        this.part4 = new CheckPoint(new Vector2(2.65, 2.44), new Vector2(-0.82, 0.5));
+	        this.part4_after = new CheckPoint(new Vector2(5.7, 3.2), new Vector2(0.81, 0.61));
+	        this.part4_cango_after = false;
+	        this.part4_on = false;
+	        this.part5 = new CheckPoint(new Vector2(5.8, 9.67), new Vector2(3, 7.66));
+	        this.part5_after = new CheckPoint(new Vector2(5.8, 12.7), new Vector2(3, 9.6));
+	        this.part5_cango_after = false;
+	        this.part5_on = false;
+	        this.part0 = new CheckPoint(new Vector2(-10, 12.7), new Vector2(-13.8, -2.35));
+	        this.part0_after = new CheckPoint(new Vector2(-10.7, -2.4), new Vector2(-14.8, -7.57));
+	        this.part0_on = false;
+	        this.part0_cango_after = false;
+	        this.part35 = new CheckPoint(new Vector2(4.15, -5.29), new Vector2(2.84, -12.94));
+	        this.part35_on = false;
 	        this.part0_failled = false;
 	        this.part1_failled = false;
 	        this.part2_failled = false;
@@ -38802,757 +38787,705 @@
 	        this.part4_failled = false;
 	        this.part5_failled = false;
 	        this.line_failled = false;
-	        //coords for the line
-	        this.coord = [        
-	        [-11.57,15.86],
-	        [-11.57,14.00],
-	        [-11.92,12.80],
-	        [-11.92,-2.35],
-	        [-11.35,-8.90],
-	        [-11.3,-14.07],
-	        [-9.94,-15.59],
-	        [-8.64,-16.11],
-	        [-7.16,-16.18],
-	        [1.57,-16.24],
-	        [2.51,-15.88],
-	        [2.97,-14.85],
-	        [4.17,-13.96],
-	        [2.78,-12.92],
-	        [2.78,-4.19],
-	        [2.31,-3.30],
-	        [1.22,-3.03],
-	        [-8.54,-3.03],
-	        [-8.58,2.311],
-	        [0.77,2.37],
-	        [1.80,2.42],
-	        [2.63,2.98],
-	        [2.89,3.96],
-	        [2.88,15.16],
-	        [5.90,15.16],
-	        [5.87,0.49],
-	        [-4.61,0.49],
-	        [-4.61,-1.22],
-	        [2.75,-1.18],
-	        [4.25,-1.18],
-	        [4.25,-4.84],
-	        [4.81,-5.73],
-	        [5.80,-6.20],
-	        [5.69,-20.58],
-	        [-4.5,-20.58],
-	        [-4.5,-17.51],
-	        [-8.68,-17.46],
-	        [-9.98,-17.13],
-	        [-11.22,-16.45],
-	        [-12.23,-15.43],
-	        [-13.05,-14.09],
-	        [-13.01,-8.94],
-	        [-12.40,-2.31],
-	        [-12.40,12.80],
-	        [-12.69,14.00],
-	        [-12.74,15.85]
-	        ];
-
+	        this.part_1_colision_callback(3000, this.stop_blink_zebra);
+	        this.part_2_colision_callback(3000, this.trun_traffic_green);
+	        this.part_3_colision_callback(3000);
+	        this.part_4_colision_callback(3000);
+	        this.part_5_colision_callback(3000, this.stop_blink_train);
+	        this.part_0_colision_callback(7000);
+	        this.part_35_colision_callback();
+	        this.coord = [[-11.57, 15.86], [-11.57, 14.00], [-11.92, 12.80], [-11.92, -2.35], [-11.35, -8.90], [-11.3, -14.07], [-9.94, -15.59], [-8.64, -16.11], [-7.16, -16.18], [1.57, -16.24], [2.51, -15.88], [2.97, -14.85], [4.17, -13.96], [2.78, -12.92], [2.78, -4.19], [2.31, -3.30], [1.22, -3.03], [-8.54, -3.03], [-8.58, 2.311], [0.77, 2.37], [1.80, 2.42], [2.63, 2.98], [2.89, 3.96], [2.88, 15.16], [5.90, 15.16], [5.87, 0.49], [-4.61, 0.49], [-4.61, -1.22], [2.75, -1.18], [4.25, -1.18], [4.25, -4.84], [4.81, -5.73], [5.80, -6.20], [5.69, -20.58], [-4.5, -20.58], [-4.5, -17.51], [-8.68, -17.46], [-9.98, -17.13], [-11.22, -16.45], [-12.23, -15.43], [-13.05, -14.09], [-13.01, -8.94], [-12.40, -2.31], [-12.40, 12.80], [-12.69, 14.00], [-12.74, 15.85]];
 	        this.arrayX = [];
 	        this.arrayY = [];
-	        for (let i = 0; i < this.coord.length; i++)
-	        {
+	        for (var i = 0; i < this.coord.length; i++) {
 	            this.arrayX.push(this.coord[i][0]);
 	            this.arrayY.push(this.coord[i][1]);
 	        }
-
-
-	    
-
 	    }
-
-
-	    get_done()
-	    {
-	        return this.lost || this.get_done<0;
-	    }
-
-	    
-
-
-
-	    async stop_blink_zebra()
-	    {
-	        console.log("STOP blink_zebra called => "+ this.zebra_blink);
-	        this.zebra_blink = false;
-	        this.change_color(this.zebra_l,this.black);
-	        this.change_color(this.zebra_r,this.black);
-	    }
-
-
-	    async blink_zebra()
-	    {
-
-	        console.log("blink_zebra called => "+ this.zebra_blink);
-	        if(!this.zebra_blink)
-	        {
-	            console.log("blink_zebra started");
-	            this.zebra_blink = true;
-	            while(this.zebra_blink)
-	            {
-	                this.change_color(this.zebra_l,this.black);
-	                this.change_color(this.zebra_r,this.black);
-	                await this.sleep(500);
-	                this.change_color(this.zebra_l,this.red);
-	                this.change_color(this.zebra_r,this.red);
-	                await this.sleep(500);
-	            }
-	        }
-	        else
-	        {
-	            console.log("blink_zebra already started");
-	        }
-	        
-	    }
-
-
-
-
-	    async stop_blink_train()
-	    {
-	        this.train_blink = false;
-	        this.change_color(this.train_l,this.black);
-	        this.change_color(this.train_r,this.black);
-	    }
-
-
-	    async blink_train()
-	    {
-	    
-	        if(!this.train_blink)
-	        {
-	            this.train_blink = true;
-	            while(this.train_blink)
-	            {
-	                this.change_color(this.train_l,this.black);
-	                this.change_color(this.train_r,this.black);
-	                await this.sleep(500);
-	                this.change_color(this.train_l,this.red);
-	                this.change_color(this.train_r,this.red);
-	                await this.sleep(500);
-	            }
-	            this.train_blink = false;
-	        }
-	        
-	    }
-
-
-
-	    async trun_traffic_red()
-	    {   
-	        //is green
-	        if(this.traffic_state ==2)
-	        {
-	            this.change_color(this.traffic_r,this.black);
-	            this.change_color(this.traffic_g,this.black);
-	            this.change_color(this.traffic_y,this.orange);
-	            
-	        }
-
-	        this.traffic_state = 0;
-	        this.change_color(this.traffic_r,this.red);
-	        this.change_color(this.traffic_g,this.black);
-	        this.change_color(this.traffic_y,this.black);
-	    }
-
-
-	    async trun_traffic_green()
-	    {   
-	        //is red
-	        if(this.traffic_state ==0)
-	        {
-	            this.change_color(this.traffic_r,this.black);
-	            this.change_color(this.traffic_g,this.black);
-	            this.change_color(this.traffic_y,this.orange);
-	            await this.sleep(1000);
-	        }
-	        this.traffic_state = 2;
-	        this.change_color(this.traffic_r,this.black);
-	        this.change_color(this.traffic_g,this.green);
-	        this.change_color(this.traffic_y,this.black);
-	    }
-
-
-
-	    change_color(obj,color)
-	    {
+	    Track.prototype.get_done = function () {
+	        return this.lost;
+	    };
+	    Track.prototype.stop_blink_zebra = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                this.zebra_blink = false;
+	                this.change_color(this.zebra_l, this.black);
+	                this.change_color(this.zebra_r, this.black);
+	                return [2 /*return*/];
+	            });
+	        });
+	    };
+	    Track.prototype.blink_zebra = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        if (!!this.zebra_blink) return [3 /*break*/, 4];
+	                        this.zebra_blink = true;
+	                        _a.label = 1;
+	                    case 1:
+	                        if (!this.zebra_blink) return [3 /*break*/, 4];
+	                        this.change_color(this.zebra_l, this.black);
+	                        this.change_color(this.zebra_r, this.black);
+	                        return [4 /*yield*/, this.sleep(500)];
+	                    case 2:
+	                        _a.sent();
+	                        this.change_color(this.zebra_l, this.red);
+	                        this.change_color(this.zebra_r, this.red);
+	                        return [4 /*yield*/, this.sleep(500)];
+	                    case 3:
+	                        _a.sent();
+	                        return [3 /*break*/, 1];
+	                    case 4: return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    Track.prototype.stop_blink_train = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                this.train_blink = false;
+	                this.change_color(this.train_l, this.black);
+	                this.change_color(this.train_r, this.black);
+	                return [2 /*return*/];
+	            });
+	        });
+	    };
+	    Track.prototype.blink_train = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        if (!!this.train_blink) return [3 /*break*/, 5];
+	                        this.train_blink = true;
+	                        _a.label = 1;
+	                    case 1:
+	                        if (!this.train_blink) return [3 /*break*/, 4];
+	                        this.change_color(this.train_l, this.black);
+	                        this.change_color(this.train_r, this.black);
+	                        return [4 /*yield*/, this.sleep(500)];
+	                    case 2:
+	                        _a.sent();
+	                        this.change_color(this.train_l, this.red);
+	                        this.change_color(this.train_r, this.red);
+	                        return [4 /*yield*/, this.sleep(500)];
+	                    case 3:
+	                        _a.sent();
+	                        return [3 /*break*/, 1];
+	                    case 4:
+	                        this.train_blink = false;
+	                        _a.label = 5;
+	                    case 5: return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    Track.prototype.trun_traffic_red = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                //is green
+	                if (this.traffic_state == 2) {
+	                    this.change_color(this.traffic_r, this.black);
+	                    this.change_color(this.traffic_g, this.black);
+	                    this.change_color(this.traffic_y, this.orange);
+	                }
+	                this.traffic_state = 0;
+	                this.change_color(this.traffic_r, this.red);
+	                this.change_color(this.traffic_g, this.black);
+	                this.change_color(this.traffic_y, this.black);
+	                return [2 /*return*/];
+	            });
+	        });
+	    };
+	    Track.prototype.trun_traffic_green = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        if (!(this.traffic_state == 0)) return [3 /*break*/, 2];
+	                        this.change_color(this.traffic_r, this.black);
+	                        this.change_color(this.traffic_g, this.black);
+	                        this.change_color(this.traffic_y, this.orange);
+	                        return [4 /*yield*/, this.sleep(1000)];
+	                    case 1:
+	                        _a.sent();
+	                        _a.label = 2;
+	                    case 2:
+	                        this.traffic_state = 2;
+	                        this.change_color(this.traffic_r, this.black);
+	                        this.change_color(this.traffic_g, this.green);
+	                        this.change_color(this.traffic_y, this.black);
+	                        return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    Track.prototype.change_color = function (obj, color) {
 	        obj.color.set(color);
 	        obj.emissive.set(color);
 	        obj.specular.set(color);
 	        obj.needsUpdate = true;
-
-	    }
-
-
-	    init_track()
-	    {
+	    };
+	    Track.prototype.init_track = function () {
 	        //this.train_blink = false;
 	        //this.zebra_blink = false;
 	        //this.stop_blink_train();
 	        //this.stop_blink_zebra();
 	        //this.sleep(1000);
-
-	        console.log("=======init_track===========");
-	        this.part0_cango_after = { value: false };
-	        this.part0_on = { value: false };
-	        this.part1_cango_after = { value: false };
-	        this.part1_on = { value: false };
-	        this.part2_cango_after = { value: false };
-	        this.part2_on = { value: false };
-	        this.part3_cango_after = { value: false };
-	        this.part3_on = { value: false };
-	        this.part35_on = { value: false };
-	        this.part4_cango_after = { value: false };
-	        this.part4_on = { value: false };
-	        this.part5_cango_after = { value: false };
-	        this.part5_on = { value: false };
-	        
+	        this.part0_cango_after = false;
+	        this.part0_on = false;
+	        this.part1_cango_after = false;
+	        this.part1_on = false;
+	        this.part2_cango_after = false;
+	        this.part2_on = false;
+	        this.part3_cango_after = false;
+	        this.part3_on = false;
+	        this.part35_on = false;
+	        this.part4_cango_after = false;
+	        this.part4_on = false;
+	        this.part5_cango_after = false;
+	        this.part5_on = false;
 	        //this.zebra_blink = false;
 	        //this.traffic_state = 0;
 	        //this.train_blink = false;
 	        this.lost = false;
-
 	        this.blink_zebra();
 	        this.trun_traffic_red();
 	        this.blink_train();
-	    }
-
-
-	    update(scooter_pos,scooter_yaw,blinker_left_state)
-	    {
+	    };
+	    Track.prototype.update = function (scooter_pos, scooter_yaw, blinker_left_state) {
 	        this.scooter_obj_blinker_state = blinker_left_state;
 	        //can opti the code a lot here
 	        this.scooter_yaw = scooter_yaw;
-
-	        this.part0_on.value =this.part0.is_in(scooter_pos); 
-	        this.part1_on.value =this.part1.is_in(scooter_pos); 
-	        this.part2_on.value =this.part2.is_in(scooter_pos); 
-	        this.part3_on.value =this.part3.is_in(scooter_pos); 
-	        this.part35_on.value = this.part35.is_in(scooter_pos); 
-	        this.part4_on.value =this.part4.is_in(scooter_pos); 
-	        this.part5_on.value =this.part5.is_in(scooter_pos); 
-
-	        
-	        if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY))
-	        {
+	        this.part0_on = this.part0.is_in(scooter_pos);
+	        this.part1_on = this.part1.is_in(scooter_pos);
+	        this.part2_on = this.part2.is_in(scooter_pos);
+	        this.part3_on = this.part3.is_in(scooter_pos);
+	        this.part35_on = this.part35.is_in(scooter_pos);
+	        this.part4_on = this.part4.is_in(scooter_pos);
+	        this.part5_on = this.part5.is_in(scooter_pos);
+	        if (!this.is_in_track(scooter_pos, this.arrayX, this.arrayY)) {
+	            console.log("OFF TRACK");
 	            this.lost = true;
 	            this.line_failled = true;
 	            this.message = "You went of track !";
 	        }
-	        
-	        
-	        if(this.part0_after.is_in(scooter_pos) && !this.part0_cango_after.value)
-	        {
+	        if (this.part0_after.is_in(scooter_pos) && !this.part0_cango_after) {
 	            this.lost = true;
 	            this.line_failled = true;
 	            this.message = "You have to stay 7 sec on the line !";
 	        }
-
-	        if(this.part1_after.is_in(scooter_pos) && !this.part1_cango_after.value)
-	        {
+	        if (this.part1_after.is_in(scooter_pos) && !this.part1_cango_after) {
 	            this.part1_failled = true;
 	            this.message = "Wait before the Zebra crossing !";
-
-	            
 	        }
-
-	        if(this.part2_after.is_in(scooter_pos) && !this.part2_cango_after.value)
-	        {
+	        if (this.part2_after.is_in(scooter_pos) && !this.part2_cango_after) {
 	            this.part2_failled = true;
 	            this.message = "Wait for the traffic light to turn green";
-
-
 	        }
-	        if(this.part3_after.is_in(scooter_pos) && !this.part3_cango_after.value)
-	        {
+	        if (this.part3_after.is_in(scooter_pos) && !this.part3_cango_after) {
 	            this.part3_failled = true;
 	            this.message = "Wait a bit inside the rectangle";
-
-
 	        }
-	        if(this.part4_after.is_in(scooter_pos) && !this.part4_cango_after.value)
-	        {
+	        if (this.part4_after.is_in(scooter_pos) && !this.part4_cango_after) {
 	            this.part4_failled = true;
 	            this.message = "You need to stop before crossing";
-
 	        }
-
-
-	        if(this.part5_after.is_in(scooter_pos) && !this.part5_cango_after.value)
-	        {
+	        if (this.part5_after.is_in(scooter_pos) && !this.part5_cango_after) {
 	            this.part5_failled = true;
 	            this.message = "Got hit by a train";
-
 	        }
-	        
-	    }
-
-
-
-
-
-	    getscore()
-	    {
+	    };
+	    Track.prototype.getscore = function () {
 	        var curent_score = this.start_score;
-	        if(this.part1_failled)
-	        {
-	            curent_score-=32;
+	        if (this.part1_failled) {
+	            curent_score -= 32;
 	        }
-	        if(this.part2_failled)
-	        {
-	            curent_score-=32;
+	        if (this.part2_failled) {
+	            curent_score -= 32;
 	        }
-	        if(this.part3_failled)
-	        {
-	            curent_score-=32;
+	        if (this.part3_failled) {
+	            curent_score -= 32;
 	        }
-	        if(this.part35_failled)
-	        {
-	            curent_score-=32;
+	        if (this.part35_failled) {
+	            curent_score -= 32;
 	        }
-	        if(this.part4_failled)
-	        {
-	            curent_score-=32;
+	        if (this.part4_failled) {
+	            curent_score -= 32;
 	        }
-	        if(this.part5_failled)
-	        {
-	            curent_score-=32;
+	        if (this.part5_failled) {
+	            curent_score -= 32;
 	        }
-
-
-	        return curent_score
-	    }
-
-
-	    getMessage()
-	    {
-	        return this.message
-	    }
-
-
-
-
-
-	    is_in_track(point,cornersX, cornersY)
-	    {
-
+	        return curent_score;
+	    };
+	    Track.prototype.getMessage = function () {
+	        return this.message;
+	    };
+	    Track.prototype.is_in_track = function (point, cornersX, cornersY) {
 	        var x = point.x;
 	        var y = -point.z;
-	        var i, j=cornersX.length-1 ;
+	        var i, j = cornersX.length - 1;
 	        var odd = false;
-	    
 	        var pX = cornersX;
 	        var pY = cornersY;
-	    
-	        for (i=0; i<cornersX.length; i++) {
-	            if ((pY[i]< y && pY[j]>=y ||  pY[j]< y && pY[i]>=y)
-	                && (pX[i]<=x || pX[j]<=x)) {
-	                odd ^= (pX[i] + (y-pY[i])*(pX[j]-pX[i])/(pY[j]-pY[i])) < x; 
+	        //this may not work in typescript
+	        for (i = 0; i < cornersX.length; i++) {
+	            if ((pY[i] < y && pY[j] >= y || pY[j] < y && pY[i] >= y) && (pX[i] <= x || pX[j] <= x)) {
+	                if ((pX[i] + (y - pY[i]) * (pX[j] - pX[i]) / (pY[j] - pY[i])) < x) {
+	                    odd = !odd;
+	                }
 	            }
-	            j=i; 
+	            j = i;
 	        }
-	    
-	        return odd==1;
+	        return odd;
+	    };
+	    Track.prototype.part_1_colision_callback = function (time_needed_ms, function_) {
+	        if (function_ === void 0) { function_ = null; }
+	        return __awaiter(this, void 0, void 0, function () {
+	            var var_counter;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        this.part1_cango_after = false;
+	                        _a.label = 1;
+	                    case 1:
+	                        var_counter = 0;
+	                        _a.label = 2;
+	                    case 2:
+	                        if (!this.part1_on) return [3 /*break*/, 4];
+	                        if (!this.part0_cango_after) {
+	                            this.message = "Wait " + ((time_needed_ms / 1000) - var_counter) + " seconds";
+	                        }
+	                        var_counter++;
+	                        return [4 /*yield*/, this.sleep(1000)];
+	                    case 3:
+	                        _a.sent();
+	                        if (var_counter * 1000 >= time_needed_ms) {
+	                            return [3 /*break*/, 4];
+	                        }
+	                        return [3 /*break*/, 2];
+	                    case 4:
+	                        //if we break and th boolean is true, we can say it's good now 
+	                        if (this.part1_on) {
+	                            this.message = "You can go";
+	                            if (function_) {
+	                                function_(this);
+	                            }
+	                            this.part1_cango_after = true;
+	                        }
+	                        //else we just try again
+	                        //delay to not kill the computer
+	                        return [4 /*yield*/, this.sleep(1000)];
+	                    case 5:
+	                        //else we just try again
+	                        //delay to not kill the computer
+	                        _a.sent();
+	                        return [3 /*break*/, 1];
+	                    case 6: return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    Track.prototype.part_2_colision_callback = function (time_needed_ms, function_) {
+	        if (function_ === void 0) { function_ = null; }
+	        return __awaiter(this, void 0, void 0, function () {
+	            var var_counter;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        this.part2_cango_after = false;
+	                        _a.label = 1;
+	                    case 1:
+	                        var_counter = 0;
+	                        _a.label = 2;
+	                    case 2:
+	                        if (!this.part2_on) return [3 /*break*/, 4];
+	                        if (!this.part2_cango_after) {
+	                            this.message = "Wait " + ((time_needed_ms / 1000) - var_counter) + " seconds";
+	                        }
+	                        var_counter++;
+	                        return [4 /*yield*/, this.sleep(1000)];
+	                    case 3:
+	                        _a.sent();
+	                        if (var_counter * 1000 >= time_needed_ms) {
+	                            return [3 /*break*/, 4];
+	                        }
+	                        return [3 /*break*/, 2];
+	                    case 4:
+	                        //if we break and th boolean is true, we can say it's good now 
+	                        if (this.part2_on) {
+	                            this.message = "You can go";
+	                            if (function_) {
+	                                function_(this);
+	                            }
+	                            this.part2_cango_after = true;
+	                        }
+	                        //else we just try again
+	                        //delay to not kill the computer
+	                        return [4 /*yield*/, this.sleep(1000)];
+	                    case 5:
+	                        //else we just try again
+	                        //delay to not kill the computer
+	                        _a.sent();
+	                        return [3 /*break*/, 1];
+	                    case 6: return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    Track.prototype.part_3_colision_callback = function (time_needed_ms, function_) {
+	        if (function_ === void 0) { function_ = null; }
+	        return __awaiter(this, void 0, void 0, function () {
+	            var ori_Ok, var_counter;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        this.part3_cango_after = false;
+	                        _a.label = 1;
+	                    case 1:
+	                        ori_Ok = this.scooter_yaw < 1.8 && this.scooter_yaw > 1.4;
+	                        if (this.part3_on) {
+	                            if (ori_Ok) {
+	                                this.message = "Your orientation is good !";
+	                            }
+	                            else {
+	                                this.message = "You should be perpendicular to the line";
+	                            }
+	                        }
+	                        var_counter = 0;
+	                        _a.label = 2;
+	                    case 2:
+	                        if (!(this.part3_on && ori_Ok)) return [3 /*break*/, 4];
+	                        if (!this.part3_cango_after) {
+	                            this.message = "Wait " + ((time_needed_ms / 1000) - var_counter) + " seconds";
+	                        }
+	                        var_counter++;
+	                        return [4 /*yield*/, this.sleep(1000)];
+	                    case 3:
+	                        _a.sent();
+	                        if (var_counter * 1000 >= time_needed_ms) {
+	                            return [3 /*break*/, 4];
+	                        }
+	                        return [3 /*break*/, 2];
+	                    case 4:
+	                        //if we break and th boolean is true, we can say it's good now 
+	                        if (this.part3_on && ori_Ok) {
+	                            this.message = "you can go now";
+	                            if (function_) {
+	                                function_(this);
+	                            }
+	                            this.part3_cango_after = true;
+	                        }
+	                        //else we just try again
+	                        //delay to not kill the computer
+	                        return [4 /*yield*/, this.sleep(1000)];
+	                    case 5:
+	                        //else we just try again
+	                        //delay to not kill the computer
+	                        _a.sent();
+	                        return [3 /*break*/, 1];
+	                    case 6: return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    Track.prototype.part_4_colision_callback = function (time_needed_ms, function_) {
+	        if (function_ === void 0) { function_ = null; }
+	        return __awaiter(this, void 0, void 0, function () {
+	            var var_counter;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        this.part4_cango_after = false;
+	                        _a.label = 1;
+	                    case 1:
+	                        var_counter = 0;
+	                        _a.label = 2;
+	                    case 2:
+	                        if (!this.part4_on) return [3 /*break*/, 4];
+	                        if (!this.part4_cango_after) {
+	                            this.message = "Wait " + ((time_needed_ms / 1000) - var_counter) + " seconds";
+	                        }
+	                        var_counter++;
+	                        return [4 /*yield*/, this.sleep(1000)];
+	                    case 3:
+	                        _a.sent();
+	                        if (var_counter * 1000 >= time_needed_ms) {
+	                            return [3 /*break*/, 4];
+	                        }
+	                        return [3 /*break*/, 2];
+	                    case 4:
+	                        //if we break and th boolean is true, we can say it's good now 
+	                        if (this.part4_on) {
+	                            this.message = "you can go now";
+	                            if (function_) {
+	                                function_(this);
+	                            }
+	                            this.part4_cango_after = true;
+	                        }
+	                        //else we just try again
+	                        //delay to not kill the computer
+	                        return [4 /*yield*/, this.sleep(1000)];
+	                    case 5:
+	                        //else we just try again
+	                        //delay to not kill the computer
+	                        _a.sent();
+	                        return [3 /*break*/, 1];
+	                    case 6: return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    Track.prototype.part_5_colision_callback = function (time_needed_ms, function_) {
+	        if (function_ === void 0) { function_ = null; }
+	        return __awaiter(this, void 0, void 0, function () {
+	            var var_counter;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        this.part4_cango_after = false;
+	                        _a.label = 1;
+	                    case 1:
+	                        var_counter = 0;
+	                        _a.label = 2;
+	                    case 2:
+	                        if (!this.part5_on) return [3 /*break*/, 4];
+	                        if (!this.part5_cango_after) {
+	                            this.message = "Wait " + ((time_needed_ms / 1000) - var_counter) + " seconds";
+	                        }
+	                        var_counter++;
+	                        return [4 /*yield*/, this.sleep(1000)];
+	                    case 3:
+	                        _a.sent();
+	                        if (var_counter * 1000 >= time_needed_ms) {
+	                            return [3 /*break*/, 4];
+	                        }
+	                        return [3 /*break*/, 2];
+	                    case 4:
+	                        //if we break and th boolean is true, we can say it's good now 
+	                        if (this.part5_on) {
+	                            this.message = "you can go now";
+	                            if (function_) {
+	                                function_(this);
+	                            }
+	                            this.part5_cango_after = true;
+	                        }
+	                        //else we just try again
+	                        //delay to not kill the computer
+	                        return [4 /*yield*/, this.sleep(1000)];
+	                    case 5:
+	                        //else we just try again
+	                        //delay to not kill the computer
+	                        _a.sent();
+	                        return [3 /*break*/, 1];
+	                    case 6: return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    Track.prototype.part_0_colision_callback = function (time_needed_ms, function_) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            var var_counter;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        this.part0_cango_after = false;
+	                        _a.label = 1;
+	                    case 1:
+	                        var_counter = 0;
+	                        _a.label = 2;
+	                    case 2:
+	                        if (!this.part0_on) return [3 /*break*/, 4];
+	                        if (!this.part0_cango_after) {
+	                            this.message = var_counter + " seconds | (min 7 seconds)";
+	                        }
+	                        var_counter++;
+	                        return [4 /*yield*/, this.sleep(1000)];
+	                    case 3:
+	                        _a.sent();
+	                        if (var_counter * 1000 >= time_needed_ms) {
+	                            this.part0_cango_after = true;
+	                            this.message = "you lasted more than 7 sec !";
+	                            return [3 /*break*/, 4];
+	                        }
+	                        return [3 /*break*/, 2];
+	                    case 4: 
+	                    //delay to not kill the computer
+	                    return [4 /*yield*/, this.sleep(100)];
+	                    case 5:
+	                        //delay to not kill the computer
+	                        _a.sent();
+	                        return [3 /*break*/, 1];
+	                    case 6: return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    Track.prototype.part_35_colision_callback = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        if (this.part35_on && !this.scooter_obj_blinker_state) {
+	                            this.part35_failled = true;
+	                            this.message = "you can't change line without using the blinker";
+	                            return [3 /*break*/, 2];
+	                        }
+	                        //delay to not kill the computer
+	                        return [4 /*yield*/, this.sleep(100)];
+	                    case 1:
+	                        //delay to not kill the computer
+	                        _a.sent();
+	                        return [3 /*break*/, 0];
+	                    case 2: return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    return Track;
+	}());
+	var CheckPoint = /** @class */ (function () {
+	    function CheckPoint(top_left, bottom_right) {
+	        this.top_left = top_left;
+	        this.bottom_right = bottom_right;
 	    }
+	    CheckPoint.prototype.is_in = function (point) {
+	        return this.top_left.x > point.x && this.bottom_right.x < point.x && this.top_left.y > -point.z && this.bottom_right.y < -point.z;
+	    };
+	    return CheckPoint;
+	}());
 
-
-
-
-	    async part_1_colision_callback(time_needed_ms,function_ = null)
-	    {
-	        this.part1_cango_after.value = false; 
-	        while(true)
-	        {   
-	            var var_counter = 0;
-	            while(this.part1_on.value)
-	            {
-
-	                if(!this.part0_cango_after.value)
-	                {
-	                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
-	                }    
-
-	                var_counter++;
-	                await this.sleep(1000);
-	                if(var_counter*1000>=time_needed_ms)
-	                {
-	                    break;
-	                }
-	            }
-	            //if we break and th boolean is true, we can say it's good now 
-	            if(this.part1_on.value)
-	            {
-	                this.message = "You can go";
-	                if(function_)
-	                {
-	                    function_(this);
-	                }
-	                this.part1_cango_after.value = true; 
-	            }
-	            //else we just try again
-	            //delay to not kill the computer
-	            await this.sleep(1000);
-	        }
+	var Timer = /** @class */ (function () {
+	    function Timer() {
+	        this.paused = 0;
+	        this.running = 0;
+	        this.paused = 0;
+	        this.running = 0;
 	    }
-
-
-
-
-
-
-
-	    async part_2_colision_callback(time_needed_ms,function_ = null)
-	    {
-	        this.part2_cango_after.value = false; 
-	        while(true)
-	        {   
-	            var var_counter = 0;
-	            while(this.part2_on.value)
-	            {
-	                if(!this.part2_cango_after.value)
-	                {
-	                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
-	                }
-
-	                var_counter++;
-	                await this.sleep(1000);
-	                if(var_counter*1000>=time_needed_ms)
-	                {
-	                    break;
-	                }
-	            }
-	            //if we break and th boolean is true, we can say it's good now 
-	            if(this.part2_on.value)
-	            {
-	                this.message = "You can go";
-	                if(function_)
-	                {
-	                    function_(this);
-	                }
-	                this.part2_cango_after.value = true; 
-	            }
-	            
-	            //else we just try again
-	            //delay to not kill the computer
-	            await this.sleep(1000);
-	        }
-	    }
-
-
-
-
-
-	    async part_3_colision_callback(time_needed_ms,function_ = null)
-	    {
-	        this.part3_cango_after.value = false; 
-	        while(true)
-	        {   
-	            var ori_Ok = this.scooter_yaw<1.8 && this.scooter_yaw>1.4;
-	            
-	            if(this.part3_on.value)
-	            {
-	                if(ori_Ok)
-	                {
-	                    this.message = "Your orientation is good !";
-
-	                }
-	                else
-	                {
-	                    this.message = "You should be perpendicular to the line";
-	                }
-	            }
-
-	            var var_counter = 0;
-	            while(this.part3_on.value && ori_Ok)
-	            {
-	                
-	                if(!this.part3_cango_after.value)
-	                {
-	                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
-	                }    
-	                var_counter++;
-	                await this.sleep(1000);
-	                if(var_counter*1000>=time_needed_ms)
-	                {
-	                    break;
-	                }
-	            }
-	            //if we break and th boolean is true, we can say it's good now 
-	            if(this.part3_on.value && ori_Ok)
-	            {
-	                this.message = "you can go now";
-
-	                if(function_)
-	                {
-	                    function_(this);
-	                }
-	                this.part3_cango_after.value = true; 
-	            }
-	            //else we just try again
-	            //delay to not kill the computer
-	            await this.sleep(1000);
-	        }
-	    }
-
-
-	    async part_4_colision_callback(time_needed_ms,function_ = null)
-	    {
-	        this.part4_cango_after.value = false; 
-	        while(true)
-	        {   
-	            var var_counter = 0;
-	            while(this.part4_on.value)
-	            {
-	                if(!this.part4_cango_after.value)
-	                {
-	                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
-	                }    
-
-	                var_counter++;
-	                await this.sleep(1000);
-	                if(var_counter*1000>=time_needed_ms)
-	                {
-	                    break;
-	                }
-	            }
-	            //if we break and th boolean is true, we can say it's good now 
-	            if(this.part4_on.value)
-	            {
-	                this.message = "you can go now";
-
-	                if(function_)
-	                {
-	                    function_(this);
-	                }
-	                this.part4_cango_after.value = true; 
-	            }
-	            //else we just try again
-	            //delay to not kill the computer
-	            await this.sleep(1000);
-	        }
-	    }
-
-
-
-
-
-
-	    async part_5_colision_callback(time_needed_ms,function_ = null)
-	    {
-	        this.part4_cango_after.value = false; 
-	        while(true)
-	        {   
-	            var var_counter = 0;
-	            while(this.part5_on.value)
-	            {
-
-	                if(!this.part5_cango_after.value)
-	                {
-	                    this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
-	                }    
-
-	                var_counter++;
-	                await this.sleep(1000);
-	                if(var_counter*1000>=time_needed_ms)
-	                {
-	                    break;
-	                }
-	            }
-	            //if we break and th boolean is true, we can say it's good now 
-	            if(this.part5_on.value)
-	            {
-	                this.message = "you can go now";
-
-	                if(function_)
-	                {
-	                    function_(this);
-	                }
-	                this.part5_cango_after.value = true; 
-	            }
-	            //else we just try again
-	            //delay to not kill the computer
-	            await this.sleep(1000);
-	        }
-	    }
-
-
-
-	    async part_0_colision_callback(time_needed_ms,function_ = null)
-	    {
-	        this.part0_cango_after.value = false; 
-	        while(true)
-	        {   
-	            var var_counter = 0;
-	            while(this.part0_on.value)
-	            {
-	                if(!this.part0_cango_after.value)
-	                {
-	                    this.message = var_counter+" seconds | (min 7 seconds)";
-	                }
-
-	                var_counter++;
-	                await this.sleep(1000);
-	                if(var_counter*1000>=time_needed_ms)
-	                {
-	                    this.part0_cango_after.value = true;
-	                    this.message = "you lasted more than 7 sec !";
-	                    break;
-	                }
-	            }
-	            //delay to not kill the computer
-	            await this.sleep(100);
-	        }        
-	    }
-
-
-
-
-
-	    async part_35_colision_callback()
-	    {
-	        while(true)
-	        {   
-	            if(this.part35_on.value && !this.scooter_obj_blinker_state)
-	            {
-	                this.part35_failled = true;
-	                this.message = "you can't change line without using the blinker";
-	                break;
-	            }
-	            //delay to not kill the computer
-	            await this.sleep(100);
-	        }        
-	    }
-
-
-
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	class CheckPoint
-	{
-	    constructor(top_left,bottom_right)
-	    {
-	        this.top_left=top_left;
-	        this.bottom_right=bottom_right;
-	    }
-
-
-	    is_in(point)
-	    {
-	        return this.top_left.x>point.x && this.bottom_right.x<point.x && this.top_left.y > -point.z &&this.bottom_right.y <-point.z;
-	    }
-
-
-	}
-
-	class Timer {
-
-	    constructor()
-	    {
-
-
-	    this.timerDisplay = document.querySelector('.timer');
-
-	    this.startTime;
-	    this.updatedTime;
-	    this.difference;
-	    this.tInterval;
-	    this.savedTime;
-	    this.paused = 0;
-	    this.running = 0;
-
-	    }
-
-	    startTimer(){
-	        if(!this.running)
-	        {
+	    Timer.prototype.startTimer = function () {
+	        if (!this.running) {
 	            this.startTime = new Date().getTime();
-	            this.tInterval = setInterval(this.getShowTime, 1);// change 1 to 1000 above to run script every second instead of every millisecond. one other change will be needed in the getShowTime() function below for this to work. see comment there.   
+	            this.tInterval = setInterval(this.getShowTime, 1); // change 1 to 1000 above to run script every second instead of every millisecond. one other change will be needed in the getShowTime() function below for this to work. see comment there.   
 	            this.paused = 0;
 	            this.running = 1;
 	        }
-	    }
-
-	    pauseTimer(){
-	        if (!this.difference); else if (!this.paused) {
+	    };
+	    Timer.prototype.pauseTimer = function () {
+	        if (!this.difference) ;
+	        else if (!this.paused) {
 	            clearInterval(this.tInterval);
 	            this.savedTime = this.difference;
 	            this.paused = 1;
 	            this.running = 0;
-	        } 
-	    }
-
-
-	    resetTimer()
-	    {
+	        }
+	    };
+	    Timer.prototype.resetTimer = function () {
 	        clearInterval(this.tInterval);
 	        this.savedTime = 0;
 	        this.difference = 0;
 	        this.paused = 0;
 	        this.running = 0;
-	    }
-
-	    getShowTime()
-	    {
+	    };
+	    Timer.prototype.getShowTime = function () {
 	        this.updatedTime = new Date().getTime();
-	        if (this.savedTime){
+	        if (this.savedTime) {
 	            this.difference = (this.updatedTime - this.startTime) + this.savedTime;
-	        } else {
-	            this.difference =  this.updatedTime - this.startTime;
+	        }
+	        else {
+	            this.difference = this.updatedTime - this.startTime;
 	        }
 	        // var days = Math.floor(difference / (1000 * 60 * 60 * 24));
 	        var hours = Math.floor((this.difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 	        var minutes = Math.floor((this.difference % (1000 * 60 * 60)) / (1000 * 60));
 	        var seconds = Math.floor((this.difference % (1000 * 60)) / 1000);
-	        var milliseconds = Math.floor((this.difference % (1000 * 60)) / 100);hours = (hours < 10) ? "0" + hours : hours;
-	        minutes = (minutes < 10) ? "0" + minutes : minutes;
-	        seconds = (seconds < 10) ? "0" + seconds : seconds;
-	        milliseconds = (milliseconds < 100) ? (milliseconds < 10) ? "00" + milliseconds : "0" + milliseconds : milliseconds;
-	        
-	        if(isNaN(minutes))
-	        {
-	            minutes = "00";
-
+	        var milliseconds = Math.floor((this.difference % (1000 * 60)) / 100);
+	        var hours_;
+	        var minutes_;
+	        var seconds_;
+	        var millisecond_;
+	        if (isNaN(hours)) {
+	            hours = 0;
 	        }
-	        if(isNaN(seconds))
-	        {
-	            seconds = "00";
+	        if (isNaN(minutes)) {
+	            minutes = 0;
 	        }
-
-	        if(isNaN(milliseconds))
-	        {
-	            milliseconds = "00";
+	        if (isNaN(seconds)) {
+	            seconds = 0;
 	        }
+	        if (isNaN(milliseconds)) {
+	            milliseconds = 0;
+	        }
+	        if (hours < 10) {
+	            hours_ = "0" + hours.toString();
+	        }
+	        else {
+	            hours_ = hours.toString();
+	        }
+	        if (minutes < 10) {
+	            minutes_ = "0" + minutes.toString();
+	        }
+	        else {
+	            minutes_ = minutes.toString();
+	        }
+	        if (seconds < 10) {
+	            seconds_ = "0" + seconds.toString();
+	        }
+	        else {
+	            seconds_ = seconds.toString();
+	        }
+	        if (milliseconds < 100) {
+	            millisecond_ = "0" + milliseconds.toString();
+	        }
+	        else if (milliseconds < 10) {
+	            millisecond_ = "00" + milliseconds.toString();
+	        }
+	        else {
+	            millisecond_ = milliseconds.toString();
+	        }
+	        return minutes_ + ':' + seconds_ + ':' + millisecond_;
+	    };
+	    return Timer;
+	}());
 
-	        return minutes + ':' + seconds + ':' + milliseconds;
+	var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	var __generator$1 = (undefined && undefined.__generator) || function (thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
 	    }
-
-
-	}
-
-	class Robot{
-
-	    constructor(robot_three)
-	    {   
+	};
+	var Robot = /** @class */ (function () {
+	    function Robot(robot_three) {
+	        this.sleep = function (milliseconds) { return new Promise(function (resolve) { return setTimeout(resolve, milliseconds); }); };
 	        this.scooter = robot_three;
 	        this.velocity = 0.0; //m/s
 	        this.scooter_yaw_rotation = 0.0;
@@ -39564,180 +39497,163 @@
 	        this.m = 125; //mass of scooter + robot in kg
 	        this.h = 0.98; // height of the center of mass
 	        this.b = 1.184012; //inter wheel distance=
-	        this.a = this.b/2;
-	        this.g= 9.806;
-	        this.J = this.m*Math.pow(this.h,2); //aprox
-	        this.D = this.m*this.a*this.h;
-	        this.spawn_x =-12.2;
-	        this.spawn_y =0.94;
-	        this.spawn_z =-15;
-
-	        this.orange= new Color(255,69,0);
-	        this.red= new Color(255,0,0);
-	        this.green= new Color(0,255,0);
-	        this.black= new Color(0,0,0);
-
+	        this.a = this.b / 2;
+	        this.g = 9.806;
+	        this.J = this.m * Math.pow(this.h, 2); //aprox
+	        this.D = this.m * this.a * this.h;
+	        this.spawn_x = -12.2;
+	        this.spawn_y = 0.94;
+	        this.spawn_z = -15;
+	        this.orange = new Color(255, 69, 0);
+	        this.red = new Color(255, 0, 0);
+	        this.green = new Color(0, 255, 0);
+	        this.black = new Color(0, 0, 0);
 	        this.blinker_l = this.scooter.links["blinker_left"].children[0].children[0].material;
 	        this.blinker_r = this.scooter.links["blinker_right"].children[0].children[0].material;
 	        this.stop_light = this.scooter.links["stop_light"].children[0].children[0].material;
-	        this.sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
-
+	        this.sleep = function (milliseconds) { return new Promise(function (resolve) { return setTimeout(resolve, milliseconds); }); };
 	        this.blinking_left = false;
 	        this.blinking_right = false;
-
 	    }
-
-
-
-	    init_position()
-	    {
+	    Robot.prototype.init_position = function () {
 	        this.scooter.position.x = this.spawn_x;
 	        this.scooter.position.y = this.spawn_y;
 	        this.scooter.position.z = this.spawn_z;
-	        this.scooter.rotation.y = -Math.PI/2;
-	        this.scooter_yaw_rotation = -Math.PI/2;
-	        this.steering_angle =0.0;
-	        this.velocity =0.0;
-	    }
-
-
-	    change_color(obj,color)
-	    {
+	        this.scooter.rotation.y = -Math.PI / 2;
+	        this.scooter_yaw_rotation = -Math.PI / 2;
+	        this.steering_angle = 0.0;
+	        this.velocity = 0.0;
+	    };
+	    Robot.prototype.change_color = function (obj, color) {
 	        obj.color.set(color);
 	        obj.emissive.set(color);
 	        obj.specular.set(color);
 	        obj.needsUpdate = true;
-	    }
+	    };
+	    Robot.prototype.get_wheel_position = function () {
+	        var point_x = this.a * Math.cos(-this.scooter_yaw_rotation);
+	        var point_y = this.a * Math.sin(-this.scooter_yaw_rotation);
+	        var wheel_position = new Vector3(this.scooter.position.x + point_x, this.scooter.position.y, this.scooter.position.z + point_y);
+	        return wheel_position;
+	    };
+	    Robot.prototype.get_position = function () {
+	        return this.scooter.position;
+	    };
+	    Robot.prototype.transfer_function_steer_to_tilt = function (s) {
+	        return ((this.a * this.velocity) / (this.b * this.h)) * ((s + (this.velocity / this.a)) / ((Math.pow(s, 2) - (this.g / this.h))));
+	    };
+	    Robot.prototype.stop_signal = function () {
+	        this.change_color(this.stop_light, this.red);
+	    };
+	    Robot.prototype.go_signal = function () {
+	        this.change_color(this.stop_light, this.black);
+	    };
+	    Robot.prototype.stop_blink = function () {
+	        return __awaiter$1(this, void 0, void 0, function () {
+	            return __generator$1(this, function (_a) {
+	                this.blinking_left = false;
+	                this.blinking_right = false;
+	                this.change_color(this.blinker_l, this.black);
+	                this.change_color(this.blinker_r, this.black);
+	                return [2 /*return*/];
+	            });
+	        });
+	    };
+	    Robot.prototype.blink_right = function () {
+	        return __awaiter$1(this, void 0, void 0, function () {
+	            return __generator$1(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        if (!!this.blinking_right) return [3 /*break*/, 4];
+	                        this.blinking_right = true;
+	                        _a.label = 1;
+	                    case 1:
+	                        if (!this.blinking_right) return [3 /*break*/, 4];
+	                        this.change_color(this.blinker_r, this.black);
+	                        this.change_color(this.blinker_l, this.black);
+	                        return [4 /*yield*/, this.sleep(500)];
+	                    case 2:
+	                        _a.sent();
+	                        this.change_color(this.blinker_r, this.orange);
+	                        this.change_color(this.blinker_l, this.black);
+	                        return [4 /*yield*/, this.sleep(500)];
+	                    case 3:
+	                        _a.sent();
+	                        return [3 /*break*/, 1];
+	                    case 4: return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    Robot.prototype.blink_left = function () {
+	        return __awaiter$1(this, void 0, void 0, function () {
+	            return __generator$1(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        if (!!this.blinking_left) return [3 /*break*/, 4];
+	                        this.blinking_left = true;
+	                        _a.label = 1;
+	                    case 1:
+	                        if (!this.blinking_left) return [3 /*break*/, 4];
+	                        this.change_color(this.blinker_l, this.black);
+	                        this.change_color(this.blinker_r, this.black);
+	                        return [4 /*yield*/, this.sleep(500)];
+	                    case 2:
+	                        _a.sent();
+	                        this.change_color(this.blinker_l, this.orange);
+	                        this.change_color(this.blinker_r, this.black);
+	                        return [4 /*yield*/, this.sleep(500)];
+	                    case 3:
+	                        _a.sent();
+	                        return [3 /*break*/, 1];
+	                    case 4: return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    return Robot;
+	}());
 
-
-
-	    get_wheel_position()
-	    {
-
-	        var point_x = this.a*Math.cos(-this.scooter_yaw_rotation);
-	        var point_y = this.a*Math.sin(-this.scooter_yaw_rotation);
-	        var wheel_position = new Vector3(this.scooter.position.x+point_x,this.scooter.position.y,this.scooter.position.z+point_y);
-	        return wheel_position
-	    }
-
-
-
-	    get_position()
-	    {
-	        return this.scooter.position
-	    }
-
-
-
-	    transfer_function_steer_to_tilt(s)
-	    {
-	        return ((this.a*this.velocity)/(this.b*this.h)) * ( (s+(this.velocity/this.a) )/( (Math.pow(s,2)-(this.g/this.h))  ));
-	    }
-
-
-
-
-	    stop_signal()
-	    {
-	        this.change_color(this.stop_light,this.red);
-	    }
-
-	    go_signal()
-	    {
-	        this.change_color(this.stop_light,this.black);
-	    }
-
-
-	    async stop_blink()
-	    {
-	        this.blinking_left = false;
-	        this.blinking_right = false;
-
-	        this.change_color(this.blinker_l,this.black);
-	        this.change_color(this.blinker_r,this.black);
-	    }
-
-
-	    async blink_right()
-	    {
-	        if(!this.blinking_right)
-	        {
-	            this.blinking_right = true;
-	            while(this.blinking_right)
-	            {
-	                this.change_color(this.blinker_r,this.black);
-	                this.change_color(this.blinker_l,this.black);
-
-	                await this.sleep(500);
-	                this.change_color(this.blinker_r,this.orange);
-	                this.change_color(this.blinker_l,this.black);
-
-	                await this.sleep(500);
-	            }
-	        }        
-	    }
-
-
-	    async blink_left()
-	    {
-	        if(!this.blinking_left)
-	        {
-	            this.blinking_left = true;
-	            while(this.blinking_left)
-	            {
-	                this.change_color(this.blinker_l,this.black);
-	                this.change_color(this.blinker_r,this.black);
-
-	                await this.sleep(500);
-	                this.change_color(this.blinker_l,this.orange);
-	                this.change_color(this.blinker_r,this.black);
-	                await this.sleep(500);
-	            }
-	        }        
-	    }
-
-
-
-
-	}
-
-	let curent_score = 100;
-	let best_score = 999;
-
-	let score_element = document.getElementById("score");
-	let comment_element = document.getElementById("comment");
-	let timer_element = document.getElementById("timer");
-	let stopwatch;
-
-	let scene, camera, renderer, track, scooter_three,scooter_obj, controls;
-
-	let a_up=true;
-	let d_up=true;
-	let w_up=true;
-	let s_up=true;
-
-	let test_track;
-	let scooter_loaded =false;
-
-
+	//Score variables
+	var curent_score = 100;
+	var best_score = 999;
+	//elements to modify the html page
+	var score_element = document.getElementById("score");
+	var comment_element = document.getElementById("comment");
+	var timer_element = document.getElementById("timer");
+	//Stopwatch used to show the time and TODO: add some score
+	var stopwatch;
+	//ThreeJs scene
+	var scene;
+	var camera;
+	var renderer; //idk the type of this
+	//Objects ThreeJs of the track and robot
+	var track;
+	var scooter_three;
+	//Class used to controll the scooter
+	var test_track;
+	//Class used to controll the track
+	var scooter_obj;
+	//Booleans to check user imputs
+	var a_up = true;
+	var d_up = true;
+	var w_up = true;
+	var s_up = true;
+	var controls;
 	init();
 	render();
-
-
-	function render_no_physics()
-	{
+	//function used to render the scene but without aplying physics on the scooter
+	function render_no_physics() {
 	    requestAnimationFrame(render_no_physics);
 	    renderer.render(scene, camera);
 	}
-
-
+	//Scene initialisation
 	function init() {
-
-
-
-	    score_element.innerHTML = "caca";
+	    //setting the HTML elements
+	    score_element.innerHTML = "";
+	    //creating the stopwatch
 	    stopwatch = new Timer();
-
+	    //Making a basic scene with camera and lights
 	    scene = new Scene();
 	    scene.background = new Color(0x92fffb);
 	    camera = new PerspectiveCamera();
@@ -39748,308 +39664,204 @@
 	    //renderer.shadowMap.enabled = true;
 	    //renderer.shadowMap.type = PCFSoftShadowMap;
 	    document.body.appendChild(renderer.domElement);
-	    const directionalLight = new DirectionalLight(0xffffff, 1.0);
+	    var directionalLight = new DirectionalLight(0xffffff, 1.0);
 	    directionalLight.castShadow = true;
 	    directionalLight.shadow.mapSize.setScalar(1024);
-	    directionalLight.position.set(5, 30, 5);
+	    directionalLight.position.set(30, 100, 5);
+	    directionalLight.target.position.set(0, 0, 0);
+	    var ambientLight = new AmbientLight(0xffffff, 0.01);
+	    //ading the stuff to the scene
 	    scene.add(directionalLight);
-
-	    const ambientLight = new AmbientLight(0xffffff, 0.01);
 	    scene.add(ambientLight);
-
-
 	    controls = new OrbitControls(camera, renderer.domElement);
 	    controls.minDistance = 4;
 	    controls.target.y = 1;
 	    controls.update();
-
 	    // Load robot
-	    
-	    const manager = new LoadingManager();
-	    const loader = new URDFLoader(manager);
-	    loader.load('../../urdf/thormang3/urdf/all.urdf', result => {
+	    var manager = new LoadingManager();
+	    var loader = new URDFLoader(manager);
+	    loader.load('../../urdf/thormang3/urdf/all.urdf', function (result) {
 	        scooter_three = result;
 	    });
-	    manager.onLoad = () => {
+	    manager.onLoad = function () {
 	        scene.add(scooter_three);
 	        scooter_obj = new Robot(scooter_three);
-	        scooter_loaded = true;
+	        scooter_obj.init_position();
 	    };
-	    
-	    const manager2 = new LoadingManager();
-	    const loader2 = new URDFLoader(manager2);
-	    loader2.load('../../urdf/track/urdf/model.urdf', result => {
+	    var manager2 = new LoadingManager();
+	    var loader2 = new URDFLoader(manager2);
+	    loader2.load('../../urdf/track/urdf/model.urdf', function (result) {
 	        track = result;
 	    });
-	    
-	    manager2.onLoad = () => {
-	        track.rotation.x = - Math.PI/2;
+	    manager2.onLoad = function () {
+	        track.rotation.x = -Math.PI / 2;
 	        scene.add(track);
-	        test_track = new Track(track,render_no_physics);
+	        test_track = new Track(track, render_no_physics);
 	        test_track.init_track();
-	        
 	    };
-	    
-	    
 	    onResize();
 	    window.addEventListener('resize', onResize);
-	    document.addEventListener("keydown",user_imput_down);
-	    document.addEventListener("keyup",user_imput_up);
-
+	    document.addEventListener("keydown", user_imput_down);
+	    document.addEventListener("keyup", user_imput_up);
+	    console.log("FINISHED INIT");
 	}
-
 	function onResize() {
-
 	    renderer.setSize(window.innerWidth, window.innerHeight);
 	    renderer.setPixelRatio(window.devicePixelRatio);
-
 	    camera.aspect = window.innerWidth / window.innerHeight;
 	    camera.updateProjectionMatrix();
 	}
-
 	function render() {
-
 	    requestAnimationFrame(render);
 	    renderer.render(scene, camera);
-
-	    if(scooter_loaded)
-	    {
-
+	    if (scooter_obj) {
 	        steer_keyboard();
 	    }
-
 	    timer_element.innerHTML = stopwatch.getShowTime();
-
-	    if(test_track && scooter_loaded)
-	    {
-	        test_track.update(scooter_obj.get_wheel_position(),scooter_obj.scooter_yaw_rotation,scooter_obj.blinking_left);
-	        score_element.innerHTML = "SCORE : "+curent_score+"  |  BEST : "+best_score;
-	        comment_element.innerHTML = "COMMENTS : <br><br>"+test_track.getMessage();
-	    
-
+	    if (test_track && scooter_obj) {
+	        test_track.update(scooter_obj.get_wheel_position(), scooter_obj.scooter_yaw_rotation, scooter_obj.blinking_left);
+	        score_element.innerHTML = "SCORE : " + curent_score + "  |  BEST : " + best_score;
+	        comment_element.innerHTML = "COMMENTS : <br><br>" + test_track.getMessage();
 	        curent_score = test_track.getscore();
-	        
-	        if(test_track.get_done())
-	        {
+	        console.log(test_track.get_done());
+	        if (test_track.get_done()) {
 	            stopwatch.resetTimer();
 	            stopwatch.startTimer();
 	            test_track.init_track();
 	            scooter_obj.init_position();
 	        }
-	        
 	    }
-
-
-	    if(scooter_loaded)
-	    {
-
+	    if (scooter_obj) {
 	        physics();
 	        var cam_dist = 10;
-	        var camdist_x = cam_dist*Math.cos(-scooter_obj.scooter_yaw_rotation);
-	        var camdist_y = cam_dist*Math.sin(-scooter_obj.scooter_yaw_rotation);
-	        camera.position.set(scooter_obj.get_position().x-camdist_x, scooter_obj.get_position().y+5, scooter_obj.get_position().z-camdist_y);
+	        var camdist_x = cam_dist * Math.cos(-scooter_obj.scooter_yaw_rotation);
+	        var camdist_y = cam_dist * Math.sin(-scooter_obj.scooter_yaw_rotation);
+	        camera.position.set(scooter_obj.get_position().x - camdist_x, scooter_obj.get_position().y + 5, scooter_obj.get_position().z - camdist_y);
 	        camera.lookAt(scooter_obj.get_position().x, scooter_obj.get_position().y, scooter_obj.get_position().z);
 	    }
-
-
-
 	    //UI update
-
-
 	}
-
-
-
-	function physics() 
-	{   
+	function physics() {
 	    //Velocity of the scooter on the X axis
-	    var yaw_velocity = scooter_obj.velocity*scooter_obj.steering_angle/scooter_obj.b;
-	    scooter_obj.scooter_yaw_rotation+=yaw_velocity;
-	    var x_vel = scooter_obj.velocity*Math.cos(scooter_obj.scooter_yaw_rotation+Math.PI/2);
-	    var y_vel = scooter_obj.velocity*Math.sin(scooter_obj.scooter_yaw_rotation+Math.PI/2);
+	    var yaw_velocity = scooter_obj.velocity * scooter_obj.steering_angle / scooter_obj.b;
+	    scooter_obj.scooter_yaw_rotation += yaw_velocity;
+	    var x_vel = scooter_obj.velocity * Math.cos(scooter_obj.scooter_yaw_rotation + Math.PI / 2);
+	    var y_vel = scooter_obj.velocity * Math.sin(scooter_obj.scooter_yaw_rotation + Math.PI / 2);
 	    scooter_obj.scooter.position.x += y_vel;
 	    scooter_obj.scooter.position.z += x_vel;
-	    scooter_obj.scooter.setJointValue("steering_joint",scooter_obj.steering_angle);
-	    var phi = scooter_obj.transfer_function_steer_to_tilt(scooter_obj.steering_angle)-scooter_obj.transfer_function_steer_to_tilt(0);
-	    phi = phi*100;
-	    if(phi<-0.8)
-	    {
+	    scooter_obj.scooter.setJointValue("steering_joint", scooter_obj.steering_angle);
+	    var phi = scooter_obj.transfer_function_steer_to_tilt(scooter_obj.steering_angle) - scooter_obj.transfer_function_steer_to_tilt(0);
+	    phi = phi * 100;
+	    if (phi < -0.8) {
 	        phi = -0.8;
 	    }
-	    else if(phi>0.8)
-	    {
-	        phi=0.8;
+	    else if (phi > 0.8) {
+	        phi = 0.8;
 	    }
-	    applyRotation$1(scooter_three,[phi,scooter_obj.scooter_yaw_rotation,0]);
+	    applyRotation$1(scooter_three, [phi, scooter_obj.scooter_yaw_rotation, 0]);
 	}
-
-	function applyRotation$1(obj, rpy, additive = false) {
+	function applyRotation$1(obj, rpy, additive) {
+	    if (additive === void 0) { additive = false; }
 	    var tempQuaternion = new Quaternion();
 	    var tempEuler = new Euler();
 	    // if additive is true the rotation is applied in
 	    // addition to the existing rotation
-	    if (!additive) obj.rotation.set(0, 0, 0);
+	    if (!additive)
+	        obj.rotation.set(0, 0, 0);
 	    tempEuler.set(rpy[0], rpy[1], rpy[2], 'ZYX');
 	    tempQuaternion.setFromEuler(tempEuler);
 	    tempQuaternion.multiply(obj.quaternion);
 	    obj.quaternion.copy(tempQuaternion);
 	}
-
-
-
-
-
-
-
-
-
-
-	function steer_keyboard()
-	{
-
-	    const vel_update = 0.01;
-	    const steer_update = 0.1;
-
-	    if(!w_up)
-	    {
+	function steer_keyboard() {
+	    var vel_update = 0.01;
+	    var steer_update = 0.1;
+	    if (!w_up) {
 	        scooter_obj.velocity += vel_update;
 	        scooter_obj.go_signal();
 	    }
-	    else if(!s_up)
-	    {
+	    else if (!s_up) {
 	        scooter_obj.velocity -= vel_update;
 	        scooter_obj.stop_signal();
 	    }
-	    else
-	    {
-	        scooter_obj.go_signal(); 
+	    else {
+	        scooter_obj.go_signal();
 	    }
-
-	    if(!a_up)
-	    {
-	        scooter_obj.steering_angle+=steer_update;
+	    if (!a_up) {
+	        scooter_obj.steering_angle += steer_update;
 	    }
-	    else if(!d_up)
-	    {
-	        scooter_obj.steering_angle-=steer_update;
+	    else if (!d_up) {
+	        scooter_obj.steering_angle -= steer_update;
 	    }
-
-	    if(a_up && d_up)
-	    {
-	        if(scooter_obj.steering_angle>=0.05)
-	        {
-	            scooter_obj.steering_angle-=0.05;
+	    if (a_up && d_up) {
+	        if (scooter_obj.steering_angle >= 0.05) {
+	            scooter_obj.steering_angle -= 0.05;
 	        }
-	        else if(scooter_obj.steering_angle<=-0.05)
-	        {
-	            scooter_obj.steering_angle+=0.05;
+	        else if (scooter_obj.steering_angle <= -0.05) {
+	            scooter_obj.steering_angle += 0.05;
 	        }
 	    }
 	    check_angles();
 	}
-
-
-	function user_imput_up(event)
-	{
+	function user_imput_up(event) {
 	    stopwatch.startTimer();
-	    if(event.key == "w")
-	    {
+	    if (event.key == "w") {
 	        w_up = true;
 	    }
-	    else if(event.key == "s")
-	    {
+	    else if (event.key == "s") {
 	        s_up = true;
-	        
-
 	    }
-	    if(event.key == "a")
-	    {
-	        a_up=true;
+	    if (event.key == "a") {
+	        a_up = true;
 	    }
-	    else if(event.key == "d")
-	    {
-	        d_up=true;
+	    else if (event.key == "d") {
+	        d_up = true;
 	    }
-
-
-	    if(event.key == "q")
-	    {
-
-	        if(!scooter_obj.blinking_left)
-	        {
+	    if (event.key == "q") {
+	        if (!scooter_obj.blinking_left) {
 	            scooter_obj.stop_blink();
 	            scooter_obj.blink_left();
-	        }else
-	        {
+	        }
+	        else {
 	            scooter_obj.stop_blink();
 	        }
-
-	    
 	    }
-	    else if(event.key == "e")
-	    {
-	        
-	        if(!scooter_obj.blinking_right)
-	        {
+	    else if (event.key == "e") {
+	        if (!scooter_obj.blinking_right) {
 	            scooter_obj.stop_blink();
 	            scooter_obj.blink_right();
-	        }else
-	        {
+	        }
+	        else {
 	            scooter_obj.stop_blink();
 	        }
-
 	    }
-
-
-
-
 	}
-
-
-
-
-	function user_imput_down(event)
-	{
-
-	    if(event.key == "w")
-	    {
+	function user_imput_down(event) {
+	    if (event.key == "w") {
 	        w_up = false;
 	    }
-	    else if(event.key == "s")
-	    {
+	    else if (event.key == "s") {
 	        s_up = false;
 	    }
-	    if(event.key == "a")
-	    {
-	        a_up=false;
+	    if (event.key == "a") {
+	        a_up = false;
 	    }
-	    else if(event.key == "d")
-	    {
-	        d_up=false;
+	    else if (event.key == "d") {
+	        d_up = false;
 	    }
-	    
 	}
-
-
-
-	function check_angles()
-	{
+	function check_angles() {
 	    //controls
-	    if( scooter_obj.velocity<scooter_obj.min_x_velocity)
-	    {
+	    if (scooter_obj.velocity < scooter_obj.min_x_velocity) {
 	        scooter_obj.velocity = scooter_obj.min_x_velocity;
 	    }
-	    else if( scooter_obj.velocity>scooter_obj.max_x_velocity)
-	    {
+	    else if (scooter_obj.velocity > scooter_obj.max_x_velocity) {
 	        scooter_obj.velocity = scooter_obj.max_x_velocity;
 	    }
-
-	    if( scooter_obj.steering_angle<scooter_obj.min_steering_angle)
-	    {
+	    if (scooter_obj.steering_angle < scooter_obj.min_steering_angle) {
 	        scooter_obj.steering_angle = scooter_obj.min_steering_angle;
 	    }
-	    else if( scooter_obj.steering_angle>scooter_obj.max_steering_angle)
-	    {
+	    else if (scooter_obj.steering_angle > scooter_obj.max_steering_angle) {
 	        scooter_obj.steering_angle = scooter_obj.max_steering_angle;
 	    }
 	}
