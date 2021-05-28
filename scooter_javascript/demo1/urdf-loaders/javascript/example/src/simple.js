@@ -4,6 +4,9 @@ import URDFLoader from '../../src/URDFLoader.js';
 import { Track } from './track.js';
 import { Timer } from './timer.js';
 import { Robot } from './robot.js';
+import { ControlServer } from './server.js';
+//server for the app comunication
+var controlServer;
 //Score variables
 var curent_score = 100;
 var best_score = 999;
@@ -42,6 +45,8 @@ function render_no_physics() {
 }
 //Scene initialisation
 function init() {
+    //setting the server to port 8878
+    controlServer = new ControlServer(8878);
     //setting the HTML elements
     score_element.innerHTML = "";
     //creating the stopwatch
@@ -92,6 +97,13 @@ function init() {
         test_track = new Track(track, render_no_physics);
         test_track.init_track();
     };
+    var count = 0;
+    setInterval(function () {
+        var msg = "State message " + count;
+        console.log("Trying to send message " + msg);
+        controlServer.send(msg);
+        count++;
+    }, 5000);
     onResize();
     window.addEventListener('resize', onResize);
     document.addEventListener("keydown", user_imput_down);
@@ -107,6 +119,10 @@ function onResize() {
 function render() {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
+    if (controlServer.velocity != 0) {
+        scooter_obj.velocity = controlServer.velocity;
+        scooter_obj.steering_angle = controlServer.steering_angle;
+    }
     if (scooter_obj) {
         steer_keyboard();
     }
