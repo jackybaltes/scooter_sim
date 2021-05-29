@@ -9,7 +9,7 @@
     
     "files": [
         "src/URDFLoader.d.ts",
-        "example/src/server.ts"
+        "example/src/server.ts",
         "example/src/simple.ts",
         "example/src/track.ts",
         "example/src/robot.ts",
