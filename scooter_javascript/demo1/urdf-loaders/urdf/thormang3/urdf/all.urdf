@@ -1677,6 +1677,101 @@
     <dynamics damping="0.0" friction="0.0"/>
     <!-- <limit velocity="6.5" effort="1000" lower="${-pi*30/180}" upper="${pi*30/180}"/> -->
   </joint>
+
+
+
+
+
+
+
+  <link name="stop_light">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.26 0.085"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.26 0.085"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="blinker_left">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.09 0.085"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.09 0.085"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="blinker_right">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.09 0.085"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.09 0.085"/>
+      </geometry>
+    </visual>
+  </link>
+
+
+
+  <joint name="rigid1" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.52 0 0.67"/>
+    <parent link="body"/>
+    <child link="stop_light"/>
+  </joint>
+  <joint name="rigid2" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.49 0.15 0.67"/>
+    <parent link="body"/>
+    <child link="blinker_left"/>
+  </joint>
+  <joint name="rigid3" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.49 -0.15 0.67"/>
+    <parent link="body"/>
+    <child link="blinker_right"/>
+  </joint>
+
+
+
+
+
+
+
+
+
+
+
+
+
   <!-- Transmissions-->
   <transmission name="tran1">
     <type>transmission_interface/SimpleTransmission</type>

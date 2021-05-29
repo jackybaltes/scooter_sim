@@ -1,90 +1,57 @@
-import {
-    WebGLRenderer,
-    PerspectiveCamera,
-    Scene,
-    Mesh,
-    PlaneBufferGeometry,
-    ShadowMaterial,
-    MeshPhongMaterial,
-    DirectionalLight,
-    PCFSoftShadowMap,
-    sRGBEncoding,
-    Color,
-    AmbientLight,
-    Box3,
-    LoadingManager,
-    MathUtils,
-    Vector2,
-    Quaternion,
-    Vector3,
-    Euler,
-} from 'three';
+import { WebGLRenderer, PerspectiveCamera, Scene, DirectionalLight, Color, AmbientLight, LoadingManager, Quaternion, Euler, } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import URDFLoader from '../../src/URDFLoader.js';
-import {Track} from './track.js';
-import {ControlServer} from './server.ts';
-
-let scene, camera, renderer, track, scooter, controls;
-
-let spawn_x =-12.2;
-let spawn_y =0.94;
-let spawn_z =-15;
-
-
-
-
-let a_up=true;
-let d_up=true;
-let w_up=true;
-let s_up=true;
-
-let test_track;
-let scooter_loaded =false;
-
-let user_imput_done = false;
-let nb_user_imput = 0;
-
-let velocity = 0.0; //m/s
-let scooter_yaw_rotation = 0.0;
-const max_x_velocity = 1;
-const min_x_velocity = 0;
-let steering_angle = 0.0;
-const max_steering_angle = 0.5235;
-const min_steering_angle = -0.5235;
-
-const m = 125; //mass of scooter + robot in kg
-const h = 0.98; // height of the center of mass
-const b = 1.184012; //inter wheel distance=
-const a = b/2;
-const g= 9.806;
-/*
-const m_i = (1/12)*m
-const box_h = 1.5;
-const box_w = 0.6;
-const box_d = 1.5;
-*/
-
-var J = m*Math.pow(h,2); //aprox
-var D = m*a*h;
-
-
-let log_flag = false
-
-let controlServer = new ControlServer(8878);
-
+import { Track } from './track.js';
+import { Timer } from './timer.js';
+import { Robot } from './robot.js';
+import { ControlServer } from './server.js';
+//server for the app comunication
+var controlServer;
+//Score variables
+var curent_score = 100;
+var best_score = 999;
+//elements to modify the html page
+var score_element = document.getElementById("score");
+var comment_element = document.getElementById("comment");
+var timer_element = document.getElementById("timer");
+//Stopwatch used to show the time and TODO: add some score
+var stopwatch;
+//ThreeJs scene
+var scene;
+var camera;
+var renderer; //idk the type of this
+//Objects ThreeJs of the track and robot
+var track;
+var scooter_three;
+//Class used to controll the scooter
+var test_track;
+//Class used to controll the track
+var scooter_obj;
+//Booleans to check user imputs
+var a_up = true;
+var d_up = true;
+var w_up = true;
+var s_up = true;
+var user_imput_done = false;
+var nb_user_imput = 0;
+var log_flag = false;
+var controls;
 init();
 render();
-
-
-function render_no_physics()
-{
+//function used to render the scene but without aplying physics on the scooter
+function render_no_physics() {
     requestAnimationFrame(render_no_physics);
     renderer.render(scene, camera);
 }
-
-
+//Scene initialisation
 function init() {
-
+    //setting the server to port 8878
+    controlServer = new ControlServer(8878);
+    //setting the HTML elements
+    score_element.innerHTML = "";
+    //creating the stopwatch
+    stopwatch = new Timer();
+    //Making a basic scene with camera and lights
     scene = new Scene();
     scene.background = new Color(0x92fffb);
     camera = new PerspectiveCamera();
@@ -95,287 +62,217 @@ function init() {
     //renderer.shadowMap.enabled = true;
     //renderer.shadowMap.type = PCFSoftShadowMap;
     document.body.appendChild(renderer.domElement);
-    const directionalLight = new DirectionalLight(0xffffff, 1.0);
+    var directionalLight = new DirectionalLight(0xffffff, 1.0);
     directionalLight.castShadow = true;
     directionalLight.shadow.mapSize.setScalar(1024);
-    directionalLight.position.set(5, 30, 5);
+    directionalLight.position.set(30, 100, 5);
+    directionalLight.target.position.set(0, 0, 0);
+    var ambientLight = new AmbientLight(0xffffff, 0.01);
+    //ading the stuff to the scene
     scene.add(directionalLight);
-
-    const ambientLight = new AmbientLight(0xffffff, 0.01);
     scene.add(ambientLight);
-
-
     controls = new OrbitControls(camera, renderer.domElement);
     controls.minDistance = 4;
     controls.target.y = 1;
     controls.update();
-
     // Load robot
-    
-    const manager = new LoadingManager();
-    const loader = new URDFLoader(manager);
-    loader.load('../../urdf/thormang3/urdf/all.urdf', result => {
-        scooter = result;
+    var manager = new LoadingManager();
+    var loader = new URDFLoader(manager);
+    loader.load('../../urdf/thormang3/urdf/all.urdf', function (result) {
+        scooter_three = result;
     });
-    manager.onLoad = () => {
-        scooter.position.x = spawn_x;
-        scooter.position.y = spawn_y;
-        scooter.position.z = spawn_z;
-        scooter.rotation.y = -Math.PI/2;
-        scooter_yaw_rotation = -Math.PI/2;
-        scene.add(scooter);
-        scooter_loaded = true;
+    manager.onLoad = function () {
+        scene.add(scooter_three);
+        scooter_obj = new Robot(scooter_three);
+        scooter_obj.init_position();
     };
-    
-    const manager2 = new LoadingManager();
-    const loader2 = new URDFLoader(manager2);
-    loader2.load('../../urdf/track/urdf/model.urdf', result => {
+    var manager2 = new LoadingManager();
+    var loader2 = new URDFLoader(manager2);
+    loader2.load('../../urdf/track/urdf/model.urdf', function (result) {
         track = result;
     });
-    
-    manager2.onLoad = () => {
-        track.rotation.x = - Math.PI/2;
+    manager2.onLoad = function () {
+        track.rotation.x = -Math.PI / 2;
         scene.add(track);
-        test_track = new Track(track,render_no_physics);
-        test_track.init_track()
-        
+        test_track = new Track(track, render_no_physics);
+        test_track.init_track();
     };
-    
+    var count = 0;
+    setInterval(function () {
+        var msg = "State message " + count;
+        console.log("Trying to send message " + msg);
+        controlServer.send(msg);
+        count++;
+    }, 5000);
     onResize();
     window.addEventListener('resize', onResize);
-    document.addEventListener("keydown",user_imput_down);
-    document.addEventListener("keyup",user_imput_up);
-
-    let count = 0;
-    setInterval( function () {
-        let msg = `State message ${count}`;  
-        console.log( `Trying to send message ${msg}`);
-        controlServer.send( msg ); 
-        count++; }
-
-    , 5000 );
-
-    // setInterval( function() {
-    //     velocity = controlServer.velocity;
-    //     steering_angle = controlServer.steering_angle;
-    // }, 30);
-    
+    document.addEventListener("keydown", user_imput_down);
+    document.addEventListener("keyup", user_imput_up);
+    console.log("FINISHED INIT");
 }
-
 function onResize() {
-
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
-
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 }
-
 function render() {
-
     requestAnimationFrame(render);
     renderer.render(scene, camera);
-
-
-    velocity = controlServer.velocity;
-    steering_angle = controlServer.steering_angle;
-
-    steer_keyboard();
-
-    if(test_track)
-    {
-        if(test_track.get_done())
-        {
-            test_track.init_track()
-            scooter.position.x = spawn_x;
-            scooter.position.y = spawn_y;
-            scooter.position.z = spawn_z;
-            scooter.rotation.y = -Math.PI/2;
-            scooter_yaw_rotation = -Math.PI/2;
-            steering_angle =0.0;
-            velocity =0.0;
-
+    if (controlServer.velocity != 0) {
+        scooter_obj.velocity = controlServer.velocity;
+        scooter_obj.steering_angle = controlServer.steering_angle;
+    }
+    if (scooter_obj) {
+        steer_keyboard();
+    }
+    timer_element.innerHTML = stopwatch.getShowTime();
+    if (test_track && scooter_obj) {
+        test_track.update(scooter_obj.get_wheel_position(), scooter_obj.scooter_yaw_rotation, scooter_obj.blinking_left);
+        score_element.innerHTML = "SCORE : " + curent_score + "  |  BEST : " + best_score;
+        comment_element.innerHTML = "COMMENTS : <br><br>" + test_track.getMessage();
+        curent_score = test_track.getscore();
+        console.log(test_track.get_done());
+        if (test_track.get_done()) {
+            stopwatch.resetTimer();
+            stopwatch.startTimer();
+            test_track.init_track();
+            scooter_obj.init_position();
         }
     }
-
-    if(scooter_loaded)
-    {
+    if (scooter_obj) {
         physics();
         var cam_dist = 10;
-        var camdist_x = cam_dist*Math.cos(-scooter_yaw_rotation);
-        var camdist_y = cam_dist*Math.sin(-scooter_yaw_rotation);
-        camera.position.set(scooter.position.x-camdist_x, scooter.position.y+5, scooter.position.z-camdist_y);
-        camera.lookAt(scooter.position.x, scooter.position.y, scooter.position.z);
+        var camdist_x = cam_dist * Math.cos(-scooter_obj.scooter_yaw_rotation);
+        var camdist_y = cam_dist * Math.sin(-scooter_obj.scooter_yaw_rotation);
+        camera.position.set(scooter_obj.get_position().x - camdist_x, scooter_obj.get_position().y + 5, scooter_obj.get_position().z - camdist_y);
+        camera.lookAt(scooter_obj.get_position().x, scooter_obj.get_position().y, scooter_obj.get_position().z);
     }
-
+    //UI update
 }
-
-
-
-function physics() 
-{   
-    if(test_track)
-    {
-        var point_x = a*Math.cos(-scooter_yaw_rotation);
-        var point_y = a*Math.sin(-scooter_yaw_rotation);
-        var wheel_position = new Vector3(scooter.position.x+point_x,scooter.position.y,scooter.position.z+point_y)
-        test_track.update(wheel_position,scooter_yaw_rotation);
-    }
+function physics() {
     //Velocity of the scooter on the X axis
-    var yaw_velocity = velocity*steering_angle/b;
-    scooter_yaw_rotation+=yaw_velocity;
-    var x_vel = velocity*Math.cos(scooter_yaw_rotation+Math.PI/2);
-    var y_vel = velocity*Math.sin(scooter_yaw_rotation+Math.PI/2);
-    scooter.position.x += y_vel;
-    scooter.position.z += x_vel;
-    scooter.setJointValue("steering_joint",steering_angle);
-    var phi = transfer_function_steer_to_tilt(steering_angle)-transfer_function_steer_to_tilt(0);
-    phi = phi*100;
-    if(phi<-0.8)
-    {
+    var yaw_velocity = scooter_obj.velocity * scooter_obj.steering_angle / scooter_obj.b;
+    scooter_obj.scooter_yaw_rotation += yaw_velocity;
+    var x_vel = scooter_obj.velocity * Math.cos(scooter_obj.scooter_yaw_rotation + Math.PI / 2);
+    var y_vel = scooter_obj.velocity * Math.sin(scooter_obj.scooter_yaw_rotation + Math.PI / 2);
+    scooter_obj.scooter.position.x += y_vel;
+    scooter_obj.scooter.position.z += x_vel;
+    scooter_obj.scooter.setJointValue("steering_joint", scooter_obj.steering_angle);
+    var phi = scooter_obj.transfer_function_steer_to_tilt(scooter_obj.steering_angle) - scooter_obj.transfer_function_steer_to_tilt(0);
+    phi = phi * 100;
+    if (phi < -0.8) {
         phi = -0.8;
     }
-    else if(phi>0.8)
-    {
-        phi=0.8;
+    else if (phi > 0.8) {
+        phi = 0.8;
     }
-    applyRotation(scooter,[phi,scooter_yaw_rotation,0]);
+    applyRotation(scooter_three, [phi, scooter_obj.scooter_yaw_rotation, 0]);
 }
-
-function applyRotation(obj, rpy, additive = false) {
+function applyRotation(obj, rpy, additive) {
+    if (additive === void 0) { additive = false; }
     var tempQuaternion = new Quaternion();
     var tempEuler = new Euler();
     // if additive is true the rotation is applied in
     // addition to the existing rotation
-    if (!additive) obj.rotation.set(0, 0, 0);
+    if (!additive)
+        obj.rotation.set(0, 0, 0);
     tempEuler.set(rpy[0], rpy[1], rpy[2], 'ZYX');
     tempQuaternion.setFromEuler(tempEuler);
     tempQuaternion.multiply(obj.quaternion);
     obj.quaternion.copy(tempQuaternion);
 }
-
-//take stearing and convert it to the tilt
-function transfer_function_steer_to_tilt(s)
-{
-    return ((a*velocity)/(b*h)) * ( (s+(velocity/a) )/( (Math.pow(s,2)-(g/h))  ));
-}
-
-
-
-
-
-
-
-
-
-
-
-function steer_keyboard()
-{
-    
+function steer_keyboard() {
     nb_user_imput = 0;
     user_imput_done = true;
-
-    const vel_update = 0.01;
-    const steer_update = 0.1;
-
-    if(!w_up)
-    {
-        velocity += vel_update;
+    var vel_update = 0.01;
+    var steer_update = 0.1;
+    if (!w_up) {
+        scooter_obj.velocity += vel_update;
+        scooter_obj.go_signal();
     }
-    else if(!s_up)
-    {
-        velocity -= vel_update;
+    else if (!s_up) {
+        scooter_obj.velocity -= vel_update;
+        scooter_obj.stop_signal();
     }
-    if(!a_up)
-    {
-        steering_angle+=steer_update;
+    else {
+        scooter_obj.go_signal();
     }
-    else if(!d_up)
-    {
-        steering_angle-=steer_update;
+    if (!a_up) {
+        scooter_obj.steering_angle += steer_update;
     }
-
-    if(a_up && d_up)
-    {
-        if(steering_angle>=0.05)
-        {
-            steering_angle-=0.05;
+    else if (!d_up) {
+        scooter_obj.steering_angle -= steer_update;
+    }
+    if (a_up && d_up) {
+        if (scooter_obj.steering_angle >= 0.05) {
+            scooter_obj.steering_angle -= 0.05;
         }
-        else if(steering_angle<=-0.05)
-        {
-            steering_angle+=0.05;
+        else if (scooter_obj.steering_angle <= -0.05) {
+            scooter_obj.steering_angle += 0.05;
         }
     }
     check_angles();
 }
-
-
-function user_imput_up(event)
-{
-    if(event.key == "w")
-    {
+function user_imput_up(event) {
+    stopwatch.startTimer();
+    if (event.key == "w") {
         w_up = true;
     }
-    else if(event.key == "s")
-    {
+    else if (event.key == "s") {
         s_up = true;
     }
-    if(event.key == "a")
-    {
-        a_up=true;
+    if (event.key == "a") {
+        a_up = true;
     }
-    else if(event.key == "d")
-    {
-        d_up=true;
+    else if (event.key == "d") {
+        d_up = true;
+    }
+    if (event.key == "q") {
+        if (!scooter_obj.blinking_left) {
+            scooter_obj.stop_blink();
+            scooter_obj.blink_left();
+        }
+        else {
+            scooter_obj.stop_blink();
+        }
+    }
+    else if (event.key == "e") {
+        if (!scooter_obj.blinking_right) {
+            scooter_obj.stop_blink();
+            scooter_obj.blink_right();
+        }
+        else {
+            scooter_obj.stop_blink();
+        }
     }
 }
-
-
-
-
-function user_imput_down(event)
-{
-
-    if(event.key == "w")
-    {
+function user_imput_down(event) {
+    if (event.key == "w") {
         w_up = false;
     }
-    else if(event.key == "s")
-    {
+    else if (event.key == "s") {
         s_up = false;
     }
-    if(event.key == "a")
-    {
-        a_up=false;
+    if (event.key == "a") {
+        a_up = false;
     }
-    else if(event.key == "d")
-    {
-        d_up=false;
+    else if (event.key == "d") {
+        d_up = false;
     }
-    
 }
-
-
-
-function check_angles()
-{
+function check_angles() {
     //controls
-    if( velocity<min_x_velocity)
-    {
-        velocity = min_x_velocity;
+    if (scooter_obj.velocity < scooter_obj.min_x_velocity) {
+        scooter_obj.velocity = scooter_obj.min_x_velocity;
     }
-    else if( velocity>max_x_velocity)
-    {
-        velocity = max_x_velocity;
+    else if (scooter_obj.velocity > scooter_obj.max_x_velocity) {
+        scooter_obj.velocity = scooter_obj.max_x_velocity;
     }
-
-    if( steering_angle<min_steering_angle)
-    {
-        steering_angle = min_steering_angle;
+    if (scooter_obj.steering_angle < scooter_obj.min_steering_angle) {
+        scooter_obj.steering_angle = scooter_obj.min_steering_angle;
     }
-    else if( steering_angle>max_steering_angle)
-    {
-        steering_angle = max_steering_angle;
+    else if (scooter_obj.steering_angle > scooter_obj.max_steering_angle) {
+        scooter_obj.steering_angle = scooter_obj.max_steering_angle;
     }
 }

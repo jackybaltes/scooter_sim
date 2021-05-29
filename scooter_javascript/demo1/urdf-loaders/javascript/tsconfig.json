@@ -1,14 +1,18 @@
 {
-    "compilerOptions": {
-        "lib": [
-            "dom",
-            "es2015"
-        ],
-        "moduleResolution": "node",
-        "types": []
-    },
+    
+        "compilerOptions": {
+          "target": "es5",
+          "module": "es2015",
+          "moduleResolution": "node"
+        },
+
+    
     "files": [
         "src/URDFLoader.d.ts",
         "example/src/server.ts"
+        "example/src/simple.ts",
+        "example/src/track.ts",
+        "example/src/robot.ts",
+        "example/src/timer.ts"
     ]
 }
