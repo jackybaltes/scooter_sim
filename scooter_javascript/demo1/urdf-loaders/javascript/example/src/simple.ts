@@ -16,10 +16,7 @@ import {Track} from './track.js';
 import {Timer} from './timer.js';
 import {Robot} from './robot.js'
 import {ControlServer} from './server.js';
-
-
-
-
+import {TaiwanBear} from './taiwan_bear.js';
 
 
 //server for the app comunication
@@ -73,7 +70,6 @@ function render_no_physics()
     requestAnimationFrame(render_no_physics);
     renderer.render(scene, camera);
 }
-
 
 
 //Scene initialisation
@@ -140,7 +136,14 @@ function init() {
         
     };
     
+    const bear = new TaiwanBear( "pooh" );
 
+    bear.init().then( () => {
+        console.log("loaded taiwan bear Pooh", bear.model );
+        const m = bear.setup();
+        console.log("Pooh", m );
+        scene.add( m );
+    });
 
     let count = 0;
     setInterval( function () {
