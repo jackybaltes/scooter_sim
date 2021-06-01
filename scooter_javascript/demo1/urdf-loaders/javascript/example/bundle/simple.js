@@ -38945,6 +38945,14 @@
 	        this.part4_on = false;
 	        this.part5_cango_after = false;
 	        this.part5_on = false;
+	        this.part0_failled = false;
+	        this.part1_failled = false;
+	        this.part2_failled = false;
+	        this.part3_failled = false;
+	        this.part35_failled = false;
+	        this.part4_failled = false;
+	        this.part5_failled = false;
+	        this.line_failled = false;
 	        //this.zebra_blink = false;
 	        //this.traffic_state = 0;
 	        //this.train_blink = false;
@@ -38954,6 +38962,7 @@
 	        this.blink_train();
 	    };
 	    Track.prototype.update = function (scooter_pos, scooter_yaw, blinker_left_state, scooter_stoped) {
+	        this.scooter_vel = scooter_stoped;
 	        this.scooter_obj_blinker_state = blinker_left_state;
 	        //can opti the code a lot here
 	        this.scooter_yaw = scooter_yaw;
@@ -38969,9 +38978,8 @@
 	            this.line_failled = true;
 	            this.message = "You went of track !";
 	        }
-	        if (this.part0_after.is_in(scooter_pos) && !this.part0_cango_after && !scooter_stoped) {
+	        if ((this.part0_after.is_in(scooter_pos) && !this.part0_cango_after) || (this.part0_on && this.part0_failled)) {
 	            this.lost = true;
-	            this.line_failled = true;
 	            this.message = "You have to stay 7 sec on the line (without stoping)!";
 	        }
 	        if (this.part1_after.is_in(scooter_pos) && !this.part1_cango_after) {
@@ -39059,10 +39067,10 @@
 	                        }
 	                        */
 	                        var_counter++;
-	                        return [4 /*yield*/, this.sleep(1000)];
+	                        return [4 /*yield*/, this.sleep(100)];
 	                    case 3:
 	                        _a.sent();
-	                        if (var_counter * 1000 >= time_needed_ms) {
+	                        if (var_counter * 100 >= time_needed_ms) {
 	                            return [3 /*break*/, 4];
 	                        }
 	                        return [3 /*break*/, 2];
@@ -39305,13 +39313,17 @@
 	                    case 2:
 	                        if (!this.part0_on) return [3 /*break*/, 4];
 	                        if (!this.part0_cango_after) {
-	                            this.message = var_counter + " seconds | (min 7 seconds)";
+	                            this.message = (var_counter / 10) + " seconds | (min 7 seconds)";
+	                        }
+	                        if (this.scooter_vel) {
+	                            this.part0_failled = true;
+	                            return [3 /*break*/, 4];
 	                        }
 	                        var_counter++;
-	                        return [4 /*yield*/, this.sleep(1000)];
+	                        return [4 /*yield*/, this.sleep(100)];
 	                    case 3:
 	                        _a.sent();
-	                        if (var_counter * 1000 >= time_needed_ms) {
+	                        if (var_counter * 100 >= time_needed_ms) {
 	                            this.part0_cango_after = true;
 	                            this.message = "you lasted more than 7 sec !";
 	                            return [3 /*break*/, 4];
@@ -39820,7 +39832,7 @@
 	    }
 	    timer_element.innerHTML = stopwatch.getShowTime();
 	    if (test_track && scooter_obj) {
-	        console.log(scooter_obj.velocity);
+	        console.log(scooter_obj.velocity == 0);
 	        test_track.update(scooter_obj.get_wheel_position(), scooter_obj.scooter_yaw_rotation, scooter_obj.blinking_left, scooter_obj.velocity == 0);
 	        score_element.innerHTML = "SCORE : " + curent_score + "  |  BEST : " + best_score;
 	        comment_element.innerHTML = "COMMENTS : <br><br>" + test_track.getMessage();

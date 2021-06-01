@@ -196,7 +196,7 @@ function render() {
 
     if(test_track && scooter_obj)
     {
-        console.log(scooter_obj.velocity)
+        console.log(scooter_obj.velocity == 0)
         test_track.update(scooter_obj.get_wheel_position(),scooter_obj.scooter_yaw_rotation,scooter_obj.blinking_left,scooter_obj.velocity == 0);
         score_element.innerHTML = "SCORE : "+curent_score+"  |  BEST : "+best_score;
         comment_element.innerHTML = "COMMENTS : <br><br>"+test_track.getMessage();
