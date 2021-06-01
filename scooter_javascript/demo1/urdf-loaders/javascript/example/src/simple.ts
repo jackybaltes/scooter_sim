@@ -9,6 +9,7 @@ import {
     Quaternion,
     Object3D,
     Euler,
+    Clock,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import URDFLoader, { URDFRobot } from '../../src/URDFLoader.js';
@@ -16,7 +17,8 @@ import {Track} from './track.js';
 import {Timer} from './timer.js';
 import {Robot} from './robot.js'
 import {ControlServer} from './server.js';
-import {TaiwanBear} from './taiwan_bear.js';
+import {JBAnimation, TaiwanBear, TaiwanPolice} from './taiwan_bear.js';
+import { loadOptions } from '@babel/core';
 
 
 //server for the app comunication
@@ -140,9 +142,20 @@ function init() {
 
     bear.init().then( () => {
         console.log("loaded taiwan bear Pooh", bear.model );
-        const m = bear.setup();
+        const m = bear.home();
         console.log("Pooh", m );
+        //scene.add( m );
+        //updateables.push( bear );
+    });
+
+    const pol1 = new TaiwanPolice( "marry" );
+
+    pol1.init().then( () => {
+        console.log("loaded taiwan police Marry", pol1.model );
+        const m = pol1.home();
+        console.log("Police 1", m );
         scene.add( m );
+        updateables.push( pol1 );
     });
 
     let count = 0;
@@ -160,6 +173,8 @@ function init() {
     document.addEventListener("keydown",user_imput_down);
     document.addEventListener("keyup",user_imput_up);
 
+    updateables = new Array<JBAnimation>();
+    clock = new Clock();
 
     console.log("FINISHED INIT")
 
@@ -174,9 +189,25 @@ function onResize() {
     camera.updateProjectionMatrix();
 }
 
+let updateables : Array<JBAnimation>; 
+let clock : Clock; 
+
+function tick() {
+    const delta = clock.getDelta();
+    console.log(`tick: updateables ${updateables} ${delta}`);
+
+    for (const object of updateables) {
+      object.tick( delta );
+    }
+
+}
+
+
 function render() {
 
     requestAnimationFrame(render);
+    tick();
+
     renderer.render(scene, camera);
 
     
@@ -225,8 +256,8 @@ function render() {
         var cam_dist:number = 10;
         var camdist_x:number = cam_dist*Math.cos(-scooter_obj.scooter_yaw_rotation);
         var camdist_y:number = cam_dist*Math.sin(-scooter_obj.scooter_yaw_rotation);
-        camera.position.set(scooter_obj.get_position().x-camdist_x, scooter_obj.get_position().y+5, scooter_obj.get_position().z-camdist_y);
-        camera.lookAt(scooter_obj.get_position().x, scooter_obj.get_position().y, scooter_obj.get_position().z);
+        // camera.position.set(scooter_obj.get_position().x-camdist_x, scooter_obj.get_position().y+5, scooter_obj.get_position().z-camdist_y);
+        // camera.lookAt(scooter_obj.get_position().x, scooter_obj.get_position().y, scooter_obj.get_position().z);
     }
 
 
