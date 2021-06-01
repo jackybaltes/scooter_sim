@@ -16,15 +16,15 @@ export class Robot{
     public max_steering_angle:number;
     public min_steering_angle:number;
     protected m:number; //mass of scooter + robot in kg
-    protected h:number; // height of the center of mass
+    public h:number; // height of the center of mass
     public b:number; //inter wheel distance=
     protected a:number;
     protected g:number;
     protected J:number;//aprox
     protected D:number;
-    protected spawn_x:number;
-    protected spawn_y:number;
-    protected spawn_z:number;
+    public spawn_x:number;
+    public spawn_y:number;
+    public spawn_z:number;
 
     protected orange:Color;
     protected red:Color;
@@ -50,7 +50,7 @@ export class Robot{
         this.max_steering_angle = 0.6;
         this.min_steering_angle = -0.6;
         this.m = 125; //mass of scooter + robot in kg
-        this.h = 0.98; // height of the center of mass
+        this.h = 0.89; // height of the center of mass
         this.b = 1.184012; //inter wheel distance=
         this.a = this.b/2;
         this.g= 9.806;
@@ -84,7 +84,9 @@ export class Robot{
         this.scooter.position.z = this.spawn_z;
         this.scooter.rotation.y = -Math.PI/2;
         this.scooter_yaw_rotation = -Math.PI/2;
-        this.steering_angle =0.0;
+        var r :number  = (Math.random()-0.5)*2; //random -1 to 1
+        this.steering_angle = r/5;
+        //this.steering_angle = 0.0;
         this.velocity =0.0;
     }
 
@@ -120,6 +122,8 @@ export class Robot{
     transfer_function_steer_to_tilt(s)
     {
         return ((this.a*this.velocity)/(this.b*this.h)) * ( (s+(this.velocity/this.a) )/( (Math.pow(s,2)-(this.g/this.h))  ));
+
+        //return ((this.a*this.velocity)/(this.b*this.h)) * ( (s+(this.velocity/this.a) )/( (Math.pow(s,2)-(this.g/this.h))  ));
     }
 
 

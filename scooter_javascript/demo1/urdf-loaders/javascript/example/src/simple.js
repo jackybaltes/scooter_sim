@@ -5,6 +5,13 @@ import { Track } from './track.js';
 import { Timer } from './timer.js';
 import { Robot } from './robot.js';
 import { ControlServer } from './server.js';
+var test = 0.0;
+var g = 9.8;
+var phi_vel = 0.001;
+var max_phi = 0.5;
+var phi = 0.0;
+var prev_rx = 0;
+var prev_ry = 0;
 //server for the app comunication
 var controlServer;
 //Score variables
@@ -32,9 +39,6 @@ var a_up = true;
 var d_up = true;
 var w_up = true;
 var s_up = true;
-var user_imput_done = false;
-var nb_user_imput = 0;
-var log_flag = false;
 var controls;
 init();
 render();
@@ -108,7 +112,6 @@ function init() {
     window.addEventListener('resize', onResize);
     document.addEventListener("keydown", user_imput_down);
     document.addEventListener("keyup", user_imput_up);
-    console.log("FINISHED INIT");
 }
 function onResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -128,16 +131,20 @@ function render() {
     }
     timer_element.innerHTML = stopwatch.getShowTime();
     if (test_track && scooter_obj) {
-        test_track.update(scooter_obj.get_wheel_position(), scooter_obj.scooter_yaw_rotation, scooter_obj.blinking_left);
+        console.log(scooter_obj.velocity);
+        test_track.update(scooter_obj.get_wheel_position(), scooter_obj.scooter_yaw_rotation, scooter_obj.blinking_left, scooter_obj.velocity == 0);
         score_element.innerHTML = "SCORE : " + curent_score + "  |  BEST : " + best_score;
         comment_element.innerHTML = "COMMENTS : <br><br>" + test_track.getMessage();
         curent_score = test_track.getscore();
-        console.log(test_track.get_done());
-        if (test_track.get_done()) {
+        if (test_track.get_done() || phi >= max_phi || phi <= -max_phi) {
             stopwatch.resetTimer();
             stopwatch.startTimer();
             test_track.init_track();
             scooter_obj.init_position();
+            phi = 0.0;
+            phi_vel = 0.001;
+            prev_rx = 0;
+            prev_ry = 0;
         }
     }
     if (scooter_obj) {
@@ -152,21 +159,60 @@ function render() {
 }
 function physics() {
     //Velocity of the scooter on the X axis
+    if (scooter_obj.velocity != 0) {
+        if (scooter_obj.steering_angle < 0) {
+            var r = Math.random() * -1; //random -1 to 1
+            scooter_obj.steering_angle = scooter_obj.steering_angle + r / 100;
+        }
+        else {
+            var r = Math.random(); //random -1 to 1
+            scooter_obj.steering_angle = scooter_obj.steering_angle + r / 100;
+        }
+    }
     var yaw_velocity = scooter_obj.velocity * scooter_obj.steering_angle / scooter_obj.b;
     scooter_obj.scooter_yaw_rotation += yaw_velocity;
     var x_vel = scooter_obj.velocity * Math.cos(scooter_obj.scooter_yaw_rotation + Math.PI / 2);
     var y_vel = scooter_obj.velocity * Math.sin(scooter_obj.scooter_yaw_rotation + Math.PI / 2);
+    scooter_obj.scooter.setJointValue("steering_joint", scooter_obj.steering_angle);
     scooter_obj.scooter.position.x += y_vel;
     scooter_obj.scooter.position.z += x_vel;
-    scooter_obj.scooter.setJointValue("steering_joint", scooter_obj.steering_angle);
-    var phi = scooter_obj.transfer_function_steer_to_tilt(scooter_obj.steering_angle) - scooter_obj.transfer_function_steer_to_tilt(0);
-    phi = phi * 100;
-    if (phi < -0.8) {
-        phi = -0.8;
+    phi = scooter_obj.transfer_function_steer_to_tilt(scooter_obj.steering_angle) - scooter_obj.transfer_function_steer_to_tilt(0);
+    phi = phi * 1000 * scooter_obj.velocity;
+    if (scooter_obj.steering_angle > 0 && phi_vel > 0) {
+        phi_vel *= 1 + scooter_obj.velocity;
     }
-    else if (phi > 0.8) {
-        phi = 0.8;
+    else if (scooter_obj.steering_angle > 0 && phi_vel < 0) {
+        phi_vel += 0.01;
     }
+    else if (scooter_obj.steering_angle < 0 && phi_vel > 0) {
+        phi_vel -= 0.01;
+    }
+    else if (scooter_obj.steering_angle < 0 && phi_vel < 0) {
+        phi_vel = -Math.abs(phi_vel) * (1 + scooter_obj.velocity); //-Math.abs(phi_vel)*1.1;
+    }
+    if (phi_vel > 0.8) {
+        phi_vel = 0.8;
+    }
+    if (phi_vel < -0.8) {
+        phi_vel = -0.8;
+    }
+    phi += phi_vel;
+    if (phi < -max_phi) {
+        phi = -max_phi;
+    }
+    else if (phi > max_phi) {
+        phi = max_phi;
+    }
+    if (test != phi) {
+        var delta = test - phi;
+        var a = Math.sin(phi) * (scooter_obj.h);
+        var _a = rotate_around(0, 0, 0, a, -(scooter_obj.scooter_yaw_rotation + (Math.PI / 2))), rx = _a[0], ry = _a[1];
+        scooter_obj.scooter.position.x -= ry - prev_ry;
+        scooter_obj.scooter.position.z -= rx - prev_rx;
+        prev_rx = rx;
+        prev_ry = ry;
+    }
+    test = phi;
     applyRotation(scooter_three, [phi, scooter_obj.scooter_yaw_rotation, 0]);
 }
 function applyRotation(obj, rpy, additive) {
@@ -182,11 +228,13 @@ function applyRotation(obj, rpy, additive) {
     tempQuaternion.multiply(obj.quaternion);
     obj.quaternion.copy(tempQuaternion);
 }
+function rotate_around(cx, cy, x, y, radians) {
+    var cos = Math.cos(radians), sin = Math.sin(radians), nx = (cos * (x - cx)) + (sin * (y - cy)) + cx, ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+    return [nx, ny];
+}
 function steer_keyboard() {
-    nb_user_imput = 0;
-    user_imput_done = true;
     var vel_update = 0.01;
-    var steer_update = 0.1;
+    var steer_update = 0.05;
     if (!w_up) {
         scooter_obj.velocity += vel_update;
         scooter_obj.go_signal();
@@ -204,14 +252,18 @@ function steer_keyboard() {
     else if (!d_up) {
         scooter_obj.steering_angle -= steer_update;
     }
-    if (a_up && d_up) {
-        if (scooter_obj.steering_angle >= 0.05) {
-            scooter_obj.steering_angle -= 0.05;
-        }
-        else if (scooter_obj.steering_angle <= -0.05) {
-            scooter_obj.steering_angle += 0.05;
-        }
-    }
+    // if(a_up && d_up && scooter_obj.velocity != 0)
+    // {
+    //     var update :number = 0.05;
+    //     if(scooter_obj.steering_angle>=update)
+    //     {
+    //         scooter_obj.steering_angle-=update;
+    //     }
+    //     else if(scooter_obj.steering_angle<=-update)
+    //     {
+    //         scooter_obj.steering_angle+=update;
+    //     }
+    // }
     check_angles();
 }
 function user_imput_up(event) {

@@ -266,7 +266,7 @@ var Track = /** @class */ (function () {
         this.trun_traffic_red();
         this.blink_train();
     };
-    Track.prototype.update = function (scooter_pos, scooter_yaw, blinker_left_state) {
+    Track.prototype.update = function (scooter_pos, scooter_yaw, blinker_left_state, scooter_stoped) {
         this.scooter_obj_blinker_state = blinker_left_state;
         //can opti the code a lot here
         this.scooter_yaw = scooter_yaw;
@@ -278,15 +278,14 @@ var Track = /** @class */ (function () {
         this.part4_on = this.part4.is_in(scooter_pos);
         this.part5_on = this.part5.is_in(scooter_pos);
         if (!this.is_in_track(scooter_pos, this.arrayX, this.arrayY)) {
-            console.log("OFF TRACK");
             this.lost = true;
             this.line_failled = true;
             this.message = "You went of track !";
         }
-        if (this.part0_after.is_in(scooter_pos) && !this.part0_cango_after) {
+        if (this.part0_after.is_in(scooter_pos) && !this.part0_cango_after && !scooter_stoped) {
             this.lost = true;
             this.line_failled = true;
-            this.message = "You have to stay 7 sec on the line !";
+            this.message = "You have to stay 7 sec on the line (without stoping)!";
         }
         if (this.part1_after.is_in(scooter_pos) && !this.part1_cango_after) {
             this.part1_failled = true;
@@ -367,9 +366,12 @@ var Track = /** @class */ (function () {
                         _a.label = 2;
                     case 2:
                         if (!this.part1_on) return [3 /*break*/, 4];
-                        if (!this.part0_cango_after) {
-                            this.message = "Wait " + ((time_needed_ms / 1000) - var_counter) + " seconds";
+                        /*
+                        if(!this.part0_cango_after)
+                        {
+                            this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
                         }
+                        */
                         var_counter++;
                         return [4 /*yield*/, this.sleep(1000)];
                     case 3:
@@ -381,7 +383,7 @@ var Track = /** @class */ (function () {
                     case 4:
                         //if we break and th boolean is true, we can say it's good now 
                         if (this.part1_on) {
-                            this.message = "You can go";
+                            //this.message = "You can go";
                             if (function_) {
                                 function_(this);
                             }
@@ -415,9 +417,12 @@ var Track = /** @class */ (function () {
                         _a.label = 2;
                     case 2:
                         if (!this.part2_on) return [3 /*break*/, 4];
-                        if (!this.part2_cango_after) {
-                            this.message = "Wait " + ((time_needed_ms / 1000) - var_counter) + " seconds";
+                        /*
+                        if(!this.part2_cango_after)
+                        {
+                            this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
                         }
+                        */
                         var_counter++;
                         return [4 /*yield*/, this.sleep(1000)];
                     case 3:
@@ -429,7 +434,7 @@ var Track = /** @class */ (function () {
                     case 4:
                         //if we break and th boolean is true, we can say it's good now 
                         if (this.part2_on) {
-                            this.message = "You can go";
+                            //this.message = "You can go";
                             if (function_) {
                                 function_(this);
                             }
@@ -568,9 +573,12 @@ var Track = /** @class */ (function () {
                         _a.label = 2;
                     case 2:
                         if (!this.part5_on) return [3 /*break*/, 4];
-                        if (!this.part5_cango_after) {
-                            this.message = "Wait " + ((time_needed_ms / 1000) - var_counter) + " seconds";
+                        /*
+                        if(!this.part5_cango_after)
+                        {
+                            this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
                         }
+                        */
                         var_counter++;
                         return [4 /*yield*/, this.sleep(1000)];
                     case 3:
@@ -582,7 +590,7 @@ var Track = /** @class */ (function () {
                     case 4:
                         //if we break and th boolean is true, we can say it's good now 
                         if (this.part5_on) {
-                            this.message = "you can go now";
+                            //this.message = "you can go now";
                             if (function_) {
                                 function_(this);
                             }
