@@ -17,13 +17,27 @@ import {Track} from './track.js';
 import {Timer} from './timer.js';
 import {Robot} from './robot.js'
 import {ControlServer} from './server.js';
+<<<<<<< HEAD
 import {JBAnimation, TaiwanBear, TaiwanPolice} from './taiwan_bear.js';
 import { loadOptions } from '@babel/core';
+=======
+
+
+
+
+let test = 0.0;
+let g = 9.8;
+let phi_vel=0.001;
+let max_phi = 0.5
+let phi:number = 0.0;
+
+let prev_rx = 0;
+let prev_ry = 0;
+>>>>>>> master
 
 
 //server for the app comunication
 let controlServer:ControlServer;
-
 
 
 //Score variables
@@ -57,9 +71,6 @@ let w_up :boolean=true;
 let s_up :boolean=true;
 
 
-let user_imput_done = false;
-let nb_user_imput = 0;
-let log_flag = false
 let controls;
 
 
@@ -176,8 +187,6 @@ function init() {
     updateables = new Array<JBAnimation>();
     clock = new Clock();
 
-    console.log("FINISHED INIT")
-
 }
 
 function onResize() {
@@ -210,7 +219,7 @@ function render() {
 
     renderer.render(scene, camera);
 
-    
+
     if(controlServer.velocity != 0)
     {
         scooter_obj.velocity = controlServer.velocity;
@@ -228,23 +237,29 @@ function render() {
 
     if(test_track && scooter_obj)
     {
-        test_track.update(scooter_obj.get_wheel_position(),scooter_obj.scooter_yaw_rotation,scooter_obj.blinking_left);
+        console.log(scooter_obj.velocity == 0)
+        test_track.update(scooter_obj.get_wheel_position(),scooter_obj.scooter_yaw_rotation,scooter_obj.blinking_left,scooter_obj.velocity == 0);
         score_element.innerHTML = "SCORE : "+curent_score+"  |  BEST : "+best_score;
         comment_element.innerHTML = "COMMENTS : <br><br>"+test_track.getMessage();
     
 
         curent_score = test_track.getscore();
         
-
-        console.log(test_track.get_done())
-
-        if(test_track.get_done())
+        
+        if(test_track.get_done() || phi>=max_phi || phi<=-max_phi)
         {
             stopwatch.resetTimer();
             stopwatch.startTimer();
             test_track.init_track()
             scooter_obj.init_position();
+            phi =0.0;
+            phi_vel = 0.001;
+
+            prev_rx = 0;
+            prev_ry = 0;
+
         }
+        
         
     }
 
@@ -256,8 +271,14 @@ function render() {
         var cam_dist:number = 10;
         var camdist_x:number = cam_dist*Math.cos(-scooter_obj.scooter_yaw_rotation);
         var camdist_y:number = cam_dist*Math.sin(-scooter_obj.scooter_yaw_rotation);
+<<<<<<< HEAD
         // camera.position.set(scooter_obj.get_position().x-camdist_x, scooter_obj.get_position().y+5, scooter_obj.get_position().z-camdist_y);
         // camera.lookAt(scooter_obj.get_position().x, scooter_obj.get_position().y, scooter_obj.get_position().z);
+=======
+        camera.position.set(scooter_obj.get_position().x-camdist_x, scooter_obj.get_position().y+5, scooter_obj.get_position().z-camdist_y);
+        camera.lookAt(scooter_obj.get_position().x, scooter_obj.get_position().y, scooter_obj.get_position().z);
+    
+>>>>>>> master
     }
 
 
@@ -272,24 +293,102 @@ function render() {
 function physics() 
 {   
     //Velocity of the scooter on the X axis
+    if(scooter_obj.velocity !=0)
+    {
+        if(scooter_obj.steering_angle<0)
+        {   
+            var r :number  = Math.random()*-1; //random -1 to 1
+            scooter_obj.steering_angle = scooter_obj.steering_angle+r/100;
+        }
+        else
+        {
+            var r :number  = Math.random(); //random -1 to 1
+            scooter_obj.steering_angle = scooter_obj.steering_angle+r/100;
+        }
+    }
+
+
     var yaw_velocity:number = scooter_obj.velocity*scooter_obj.steering_angle/scooter_obj.b;
     scooter_obj.scooter_yaw_rotation+=yaw_velocity;
     var x_vel:number = scooter_obj.velocity*Math.cos(scooter_obj.scooter_yaw_rotation+Math.PI/2);
     var y_vel:number = scooter_obj.velocity*Math.sin(scooter_obj.scooter_yaw_rotation+Math.PI/2);
+    scooter_obj.scooter.setJointValue("steering_joint",scooter_obj.steering_angle);
     scooter_obj.scooter.position.x += y_vel;
     scooter_obj.scooter.position.z += x_vel;
-    scooter_obj.scooter.setJointValue("steering_joint",scooter_obj.steering_angle);
-    var phi:number = scooter_obj.transfer_function_steer_to_tilt(scooter_obj.steering_angle)-scooter_obj.transfer_function_steer_to_tilt(0);
-    phi = phi*100;
-    if(phi<-0.8)
+
+    phi = scooter_obj.transfer_function_steer_to_tilt(scooter_obj.steering_angle)-scooter_obj.transfer_function_steer_to_tilt(0);
+    phi = phi*1000*scooter_obj.velocity;
+
+
+
+    
+    if(scooter_obj.steering_angle>0 && phi_vel>0)
     {
-        phi = -0.8;
+        phi_vel *= 1 + scooter_obj.velocity ;
     }
-    else if(phi>0.8)
+    else if(scooter_obj.steering_angle>0 && phi_vel<0)
     {
-        phi=0.8;
+        phi_vel += 0.01;
     }
+    else if(scooter_obj.steering_angle<0 && phi_vel>0)
+    {
+        phi_vel -= 0.01;
+    }
+    else if(scooter_obj.steering_angle<0 && phi_vel<0)
+    {
+        phi_vel = -Math.abs(phi_vel)* (1+scooter_obj.velocity);//-Math.abs(phi_vel)*1.1;
+    }
+    
+
+    if(phi_vel>0.8)
+    {
+        phi_vel = 0.8;
+    }
+    if(phi_vel<-0.8)
+    {
+        phi_vel = -0.8;
+    }
+
+
+    phi += phi_vel;
+    
+    
+    if(phi<-max_phi)
+    {
+        phi = -max_phi;
+    }
+    else if(phi>max_phi)
+    {
+        phi=max_phi;
+    }
+
+    
+    if(test != phi)
+    {
+
+        var delta = test-phi
+        var a = Math.sin(phi)*(scooter_obj.h);
+        var [rx,ry] = rotate_around(0,0, 0, a, -(scooter_obj.scooter_yaw_rotation+(Math.PI/2)))
+
+        scooter_obj.scooter.position.x-=ry-prev_ry;
+        scooter_obj.scooter.position.z-=rx-prev_rx;
+
+        prev_rx = rx;
+        prev_ry = ry;
+
+
+    }
+    
+    test = phi;
+
+
+
+    
+
     applyRotation(scooter_three,[phi,scooter_obj.scooter_yaw_rotation,0]);
+
+    
+
 }
 
 function applyRotation(obj, rpy, additive = false) {
@@ -307,7 +406,13 @@ function applyRotation(obj, rpy, additive = false) {
 
 
 
-
+function rotate_around(cx, cy, x, y, radians) {
+    var cos = Math.cos(radians),
+        sin = Math.sin(radians),
+        nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+        ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+    return [nx, ny];
+}
 
 
 
@@ -316,11 +421,8 @@ function applyRotation(obj, rpy, additive = false) {
 function steer_keyboard()
 {
     
-    nb_user_imput = 0;
-    user_imput_done = true;
-
     const vel_update :number= 0.01;
-    const steer_update:number = 0.1;
+    const steer_update:number = 0.05;
 
     if(!w_up)
     {
@@ -346,17 +448,19 @@ function steer_keyboard()
         scooter_obj.steering_angle-=steer_update;
     }
 
-    if(a_up && d_up)
-    {
-        if(scooter_obj.steering_angle>=0.05)
-        {
-            scooter_obj.steering_angle-=0.05;
-        }
-        else if(scooter_obj.steering_angle<=-0.05)
-        {
-            scooter_obj.steering_angle+=0.05;
-        }
-    }
+    // if(a_up && d_up && scooter_obj.velocity != 0)
+    // {
+
+    //     var update :number = 0.05;
+    //     if(scooter_obj.steering_angle>=update)
+    //     {
+    //         scooter_obj.steering_angle-=update;
+    //     }
+    //     else if(scooter_obj.steering_angle<=-update)
+    //     {
+    //         scooter_obj.steering_angle+=update;
+    //     }
+    // }
     check_angles();
 }
 
@@ -434,6 +538,7 @@ function user_imput_down(event)
     if(event.key == "a")
     {
         a_up=false;
+
     }
     else if(event.key == "d")
     {

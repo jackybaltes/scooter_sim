@@ -14,6 +14,7 @@ export class Track {
     protected traffic_state:number;
     protected train_blink:boolean;
     protected scooter_yaw:number;
+    protected scooter_vel:number;
 
     protected sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
@@ -347,6 +348,16 @@ export class Track {
         this.part5_cango_after = false;
         this.part5_on = false;
         
+
+        this.part0_failled = false;
+        this.part1_failled = false;
+        this.part2_failled = false;
+        this.part3_failled = false;
+        this.part35_failled = false;
+        this.part4_failled = false;
+        this.part5_failled = false;
+        this.line_failled = false;
+
         //this.zebra_blink = false;
         //this.traffic_state = 0;
         //this.train_blink = false;
@@ -358,8 +369,10 @@ export class Track {
     }
 
 
-    update(scooter_pos,scooter_yaw,blinker_left_state)
+    update(scooter_pos,scooter_yaw,blinker_left_state,scooter_stoped)
     {
+
+        this.scooter_vel = scooter_stoped;
         this.scooter_obj_blinker_state = blinker_left_state
         //can opti the code a lot here
         this.scooter_yaw = scooter_yaw;
@@ -375,18 +388,16 @@ export class Track {
         
         if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY))
         {
-            console.log("OFF TRACK");
             this.lost = true;
             this.line_failled = true;
             this.message = "You went of track !"
         }
         
         
-        if(this.part0_after.is_in(scooter_pos) && !this.part0_cango_after)
+        if((this.part0_after.is_in(scooter_pos) && !this.part0_cango_after) || (this.part0_on && this.part0_failled) )
         {
             this.lost = true;
-            this.line_failled = true;
-            this.message = "You have to stay 7 sec on the line !"
+            this.message = "You have to stay 7 sec on the line (without stoping)!"
         }
 
         if(this.part1_after.is_in(scooter_pos) && !this.part1_cango_after)
@@ -513,15 +524,16 @@ export class Track {
             var var_counter = 0;
             while(this.part1_on)
             {
-
+                /*
                 if(!this.part0_cango_after)
                 {
                     this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
-                }    
+                }
+                */ 
 
                 var_counter++;
-                await this.sleep(1000);
-                if(var_counter*1000>=time_needed_ms)
+                await this.sleep(100);
+                if(var_counter*100>=time_needed_ms)
                 {
                     break;
                 }
@@ -529,7 +541,7 @@ export class Track {
             //if we break and th boolean is true, we can say it's good now 
             if(this.part1_on)
             {
-                this.message = "You can go";
+                //this.message = "You can go";
                 if(function_)
                 {
                     function_(this);
@@ -556,10 +568,12 @@ export class Track {
             var var_counter = 0;
             while(this.part2_on)
             {
+                /*
                 if(!this.part2_cango_after)
                 {
                     this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
                 }
+                */
 
                 var_counter++;
                 await this.sleep(1000);
@@ -571,7 +585,7 @@ export class Track {
             //if we break and th boolean is true, we can say it's good now 
             if(this.part2_on)
             {
-                this.message = "You can go";
+                //this.message = "You can go";
                 if(function_)
                 {
                     function_(this);
@@ -692,11 +706,12 @@ export class Track {
             var var_counter = 0;
             while(this.part5_on)
             {
-
+                /*
                 if(!this.part5_cango_after)
                 {
                     this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
                 }    
+                */
 
                 var_counter++;
                 await this.sleep(1000);
@@ -708,7 +723,7 @@ export class Track {
             //if we break and th boolean is true, we can say it's good now 
             if(this.part5_on)
             {
-                this.message = "you can go now";
+                //this.message = "you can go now";
 
                 if(function_)
                 {
@@ -734,12 +749,18 @@ export class Track {
             {
                 if(!this.part0_cango_after)
                 {
-                    this.message = var_counter+" seconds | (min 7 seconds)";
+                    this.message = (var_counter/10)+" seconds | (min 7 seconds)";
+                }
+
+                if(this.scooter_vel)
+                {
+                    this.part0_failled = true;
+                    break;
                 }
 
                 var_counter++;
-                await this.sleep(1000);
-                if(var_counter*1000>=time_needed_ms)
+                await this.sleep(100);
+                if(var_counter*100>=time_needed_ms)
                 {
                     this.part0_cango_after = true
                     this.message = "you lasted more than 7 sec !";

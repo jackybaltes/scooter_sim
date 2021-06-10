@@ -38945,6 +38945,14 @@
 	        this.part4_on = false;
 	        this.part5_cango_after = false;
 	        this.part5_on = false;
+	        this.part0_failled = false;
+	        this.part1_failled = false;
+	        this.part2_failled = false;
+	        this.part3_failled = false;
+	        this.part35_failled = false;
+	        this.part4_failled = false;
+	        this.part5_failled = false;
+	        this.line_failled = false;
 	        //this.zebra_blink = false;
 	        //this.traffic_state = 0;
 	        //this.train_blink = false;
@@ -38953,7 +38961,8 @@
 	        this.trun_traffic_red();
 	        this.blink_train();
 	    };
-	    Track.prototype.update = function (scooter_pos, scooter_yaw, blinker_left_state) {
+	    Track.prototype.update = function (scooter_pos, scooter_yaw, blinker_left_state, scooter_stoped) {
+	        this.scooter_vel = scooter_stoped;
 	        this.scooter_obj_blinker_state = blinker_left_state;
 	        //can opti the code a lot here
 	        this.scooter_yaw = scooter_yaw;
@@ -38965,15 +38974,13 @@
 	        this.part4_on = this.part4.is_in(scooter_pos);
 	        this.part5_on = this.part5.is_in(scooter_pos);
 	        if (!this.is_in_track(scooter_pos, this.arrayX, this.arrayY)) {
-	            console.log("OFF TRACK");
 	            this.lost = true;
 	            this.line_failled = true;
 	            this.message = "You went of track !";
 	        }
-	        if (this.part0_after.is_in(scooter_pos) && !this.part0_cango_after) {
+	        if ((this.part0_after.is_in(scooter_pos) && !this.part0_cango_after) || (this.part0_on && this.part0_failled)) {
 	            this.lost = true;
-	            this.line_failled = true;
-	            this.message = "You have to stay 7 sec on the line !";
+	            this.message = "You have to stay 7 sec on the line (without stoping)!";
 	        }
 	        if (this.part1_after.is_in(scooter_pos) && !this.part1_cango_after) {
 	            this.part1_failled = true;
@@ -39053,21 +39060,24 @@
 	                        _a.label = 2;
 	                    case 2:
 	                        if (!this.part1_on) return [3 /*break*/, 4];
-	                        if (!this.part0_cango_after) {
-	                            this.message = "Wait " + ((time_needed_ms / 1000) - var_counter) + " seconds";
+	                        /*
+	                        if(!this.part0_cango_after)
+	                        {
+	                            this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
 	                        }
+	                        */
 	                        var_counter++;
-	                        return [4 /*yield*/, this.sleep(1000)];
+	                        return [4 /*yield*/, this.sleep(100)];
 	                    case 3:
 	                        _a.sent();
-	                        if (var_counter * 1000 >= time_needed_ms) {
+	                        if (var_counter * 100 >= time_needed_ms) {
 	                            return [3 /*break*/, 4];
 	                        }
 	                        return [3 /*break*/, 2];
 	                    case 4:
 	                        //if we break and th boolean is true, we can say it's good now 
 	                        if (this.part1_on) {
-	                            this.message = "You can go";
+	                            //this.message = "You can go";
 	                            if (function_) {
 	                                function_(this);
 	                            }
@@ -39100,9 +39110,12 @@
 	                        _a.label = 2;
 	                    case 2:
 	                        if (!this.part2_on) return [3 /*break*/, 4];
-	                        if (!this.part2_cango_after) {
-	                            this.message = "Wait " + ((time_needed_ms / 1000) - var_counter) + " seconds";
+	                        /*
+	                        if(!this.part2_cango_after)
+	                        {
+	                            this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
 	                        }
+	                        */
 	                        var_counter++;
 	                        return [4 /*yield*/, this.sleep(1000)];
 	                    case 3:
@@ -39114,7 +39127,7 @@
 	                    case 4:
 	                        //if we break and th boolean is true, we can say it's good now 
 	                        if (this.part2_on) {
-	                            this.message = "You can go";
+	                            //this.message = "You can go";
 	                            if (function_) {
 	                                function_(this);
 	                            }
@@ -39250,9 +39263,12 @@
 	                        _a.label = 2;
 	                    case 2:
 	                        if (!this.part5_on) return [3 /*break*/, 4];
-	                        if (!this.part5_cango_after) {
-	                            this.message = "Wait " + ((time_needed_ms / 1000) - var_counter) + " seconds";
+	                        /*
+	                        if(!this.part5_cango_after)
+	                        {
+	                            this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
 	                        }
+	                        */
 	                        var_counter++;
 	                        return [4 /*yield*/, this.sleep(1000)];
 	                    case 3:
@@ -39264,7 +39280,7 @@
 	                    case 4:
 	                        //if we break and th boolean is true, we can say it's good now 
 	                        if (this.part5_on) {
-	                            this.message = "you can go now";
+	                            //this.message = "you can go now";
 	                            if (function_) {
 	                                function_(this);
 	                            }
@@ -39297,13 +39313,17 @@
 	                    case 2:
 	                        if (!this.part0_on) return [3 /*break*/, 4];
 	                        if (!this.part0_cango_after) {
-	                            this.message = var_counter + " seconds | (min 7 seconds)";
+	                            this.message = (var_counter / 10) + " seconds | (min 7 seconds)";
+	                        }
+	                        if (this.scooter_vel) {
+	                            this.part0_failled = true;
+	                            return [3 /*break*/, 4];
 	                        }
 	                        var_counter++;
-	                        return [4 /*yield*/, this.sleep(1000)];
+	                        return [4 /*yield*/, this.sleep(100)];
 	                    case 3:
 	                        _a.sent();
-	                        if (var_counter * 1000 >= time_needed_ms) {
+	                        if (var_counter * 100 >= time_needed_ms) {
 	                            this.part0_cango_after = true;
 	                            this.message = "you lasted more than 7 sec !";
 	                            return [3 /*break*/, 4];
@@ -39495,7 +39515,7 @@
 	        this.max_steering_angle = 0.6;
 	        this.min_steering_angle = -0.6;
 	        this.m = 125; //mass of scooter + robot in kg
-	        this.h = 0.98; // height of the center of mass
+	        this.h = 0.89; // height of the center of mass
 	        this.b = 1.184012; //inter wheel distance=
 	        this.a = this.b / 2;
 	        this.g = 9.806;
@@ -39521,7 +39541,9 @@
 	        this.scooter.position.z = this.spawn_z;
 	        this.scooter.rotation.y = -Math.PI / 2;
 	        this.scooter_yaw_rotation = -Math.PI / 2;
-	        this.steering_angle = 0.0;
+	        var r = (Math.random() - 0.5) * 2; //random -1 to 1
+	        this.steering_angle = r / 5;
+	        //this.steering_angle = 0.0;
 	        this.velocity = 0.0;
 	    };
 	    Robot.prototype.change_color = function (obj, color) {
@@ -39541,6 +39563,7 @@
 	    };
 	    Robot.prototype.transfer_function_steer_to_tilt = function (s) {
 	        return ((this.a * this.velocity) / (this.b * this.h)) * ((s + (this.velocity / this.a)) / ((Math.pow(s, 2) - (this.g / this.h))));
+	        //return ((this.a*this.velocity)/(this.b*this.h)) * ( (s+(this.velocity/this.a) )/( (Math.pow(s,2)-(this.g/this.h))  ));
 	    };
 	    Robot.prototype.stop_signal = function () {
 	        this.change_color(this.stop_light, this.red);
@@ -39684,6 +39707,12 @@
 	    return ControlServer;
 	}());
 
+	var test = 0.0;
+	var phi_vel = 0.001;
+	var max_phi = 0.5;
+	var phi = 0.0;
+	var prev_rx = 0;
+	var prev_ry = 0;
 	//server for the app comunication
 	var controlServer;
 	//Score variables
@@ -39784,7 +39813,6 @@
 	    window.addEventListener('resize', onResize);
 	    document.addEventListener("keydown", user_imput_down);
 	    document.addEventListener("keyup", user_imput_up);
-	    console.log("FINISHED INIT");
 	}
 	function onResize() {
 	    renderer.setSize(window.innerWidth, window.innerHeight);
@@ -39804,16 +39832,20 @@
 	    }
 	    timer_element.innerHTML = stopwatch.getShowTime();
 	    if (test_track && scooter_obj) {
-	        test_track.update(scooter_obj.get_wheel_position(), scooter_obj.scooter_yaw_rotation, scooter_obj.blinking_left);
+	        console.log(scooter_obj.velocity == 0);
+	        test_track.update(scooter_obj.get_wheel_position(), scooter_obj.scooter_yaw_rotation, scooter_obj.blinking_left, scooter_obj.velocity == 0);
 	        score_element.innerHTML = "SCORE : " + curent_score + "  |  BEST : " + best_score;
 	        comment_element.innerHTML = "COMMENTS : <br><br>" + test_track.getMessage();
 	        curent_score = test_track.getscore();
-	        console.log(test_track.get_done());
-	        if (test_track.get_done()) {
+	        if (test_track.get_done() || phi >= max_phi || phi <= -max_phi) {
 	            stopwatch.resetTimer();
 	            stopwatch.startTimer();
 	            test_track.init_track();
 	            scooter_obj.init_position();
+	            phi = 0.0;
+	            phi_vel = 0.001;
+	            prev_rx = 0;
+	            prev_ry = 0;
 	        }
 	    }
 	    if (scooter_obj) {
@@ -39828,21 +39860,59 @@
 	}
 	function physics() {
 	    //Velocity of the scooter on the X axis
+	    if (scooter_obj.velocity != 0) {
+	        if (scooter_obj.steering_angle < 0) {
+	            var r = Math.random() * -1; //random -1 to 1
+	            scooter_obj.steering_angle = scooter_obj.steering_angle + r / 100;
+	        }
+	        else {
+	            var r = Math.random(); //random -1 to 1
+	            scooter_obj.steering_angle = scooter_obj.steering_angle + r / 100;
+	        }
+	    }
 	    var yaw_velocity = scooter_obj.velocity * scooter_obj.steering_angle / scooter_obj.b;
 	    scooter_obj.scooter_yaw_rotation += yaw_velocity;
 	    var x_vel = scooter_obj.velocity * Math.cos(scooter_obj.scooter_yaw_rotation + Math.PI / 2);
 	    var y_vel = scooter_obj.velocity * Math.sin(scooter_obj.scooter_yaw_rotation + Math.PI / 2);
+	    scooter_obj.scooter.setJointValue("steering_joint", scooter_obj.steering_angle);
 	    scooter_obj.scooter.position.x += y_vel;
 	    scooter_obj.scooter.position.z += x_vel;
-	    scooter_obj.scooter.setJointValue("steering_joint", scooter_obj.steering_angle);
-	    var phi = scooter_obj.transfer_function_steer_to_tilt(scooter_obj.steering_angle) - scooter_obj.transfer_function_steer_to_tilt(0);
-	    phi = phi * 100;
-	    if (phi < -0.8) {
-	        phi = -0.8;
+	    phi = scooter_obj.transfer_function_steer_to_tilt(scooter_obj.steering_angle) - scooter_obj.transfer_function_steer_to_tilt(0);
+	    phi = phi * 1000 * scooter_obj.velocity;
+	    if (scooter_obj.steering_angle > 0 && phi_vel > 0) {
+	        phi_vel *= 1 + scooter_obj.velocity;
 	    }
-	    else if (phi > 0.8) {
-	        phi = 0.8;
+	    else if (scooter_obj.steering_angle > 0 && phi_vel < 0) {
+	        phi_vel += 0.01;
 	    }
+	    else if (scooter_obj.steering_angle < 0 && phi_vel > 0) {
+	        phi_vel -= 0.01;
+	    }
+	    else if (scooter_obj.steering_angle < 0 && phi_vel < 0) {
+	        phi_vel = -Math.abs(phi_vel) * (1 + scooter_obj.velocity); //-Math.abs(phi_vel)*1.1;
+	    }
+	    if (phi_vel > 0.8) {
+	        phi_vel = 0.8;
+	    }
+	    if (phi_vel < -0.8) {
+	        phi_vel = -0.8;
+	    }
+	    phi += phi_vel;
+	    if (phi < -max_phi) {
+	        phi = -max_phi;
+	    }
+	    else if (phi > max_phi) {
+	        phi = max_phi;
+	    }
+	    if (test != phi) {
+	        var a = Math.sin(phi) * (scooter_obj.h);
+	        var _a = rotate_around(0, 0, 0, a, -(scooter_obj.scooter_yaw_rotation + (Math.PI / 2))), rx = _a[0], ry = _a[1];
+	        scooter_obj.scooter.position.x -= ry - prev_ry;
+	        scooter_obj.scooter.position.z -= rx - prev_rx;
+	        prev_rx = rx;
+	        prev_ry = ry;
+	    }
+	    test = phi;
 	    applyRotation$1(scooter_three, [phi, scooter_obj.scooter_yaw_rotation, 0]);
 	}
 	function applyRotation$1(obj, rpy, additive) {
@@ -39858,9 +39928,13 @@
 	    tempQuaternion.multiply(obj.quaternion);
 	    obj.quaternion.copy(tempQuaternion);
 	}
+	function rotate_around(cx, cy, x, y, radians) {
+	    var cos = Math.cos(radians), sin = Math.sin(radians), nx = (cos * (x - cx)) + (sin * (y - cy)) + cx, ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+	    return [nx, ny];
+	}
 	function steer_keyboard() {
 	    var vel_update = 0.01;
-	    var steer_update = 0.1;
+	    var steer_update = 0.05;
 	    if (!w_up) {
 	        scooter_obj.velocity += vel_update;
 	        scooter_obj.go_signal();
@@ -39878,14 +39952,18 @@
 	    else if (!d_up) {
 	        scooter_obj.steering_angle -= steer_update;
 	    }
-	    if (a_up && d_up) {
-	        if (scooter_obj.steering_angle >= 0.05) {
-	            scooter_obj.steering_angle -= 0.05;
-	        }
-	        else if (scooter_obj.steering_angle <= -0.05) {
-	            scooter_obj.steering_angle += 0.05;
-	        }
-	    }
+	    // if(a_up && d_up && scooter_obj.velocity != 0)
+	    // {
+	    //     var update :number = 0.05;
+	    //     if(scooter_obj.steering_angle>=update)
+	    //     {
+	    //         scooter_obj.steering_angle-=update;
+	    //     }
+	    //     else if(scooter_obj.steering_angle<=-update)
+	    //     {
+	    //         scooter_obj.steering_angle+=update;
+	    //     }
+	    // }
 	    check_angles();
 	}
 	function user_imput_up(event) {
