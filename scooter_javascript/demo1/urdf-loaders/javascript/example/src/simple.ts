@@ -17,12 +17,8 @@ import {Track} from './track.js';
 import {Timer} from './timer.js';
 import {Robot} from './robot.js'
 import {ControlServer} from './server.js';
-<<<<<<< HEAD
 import {JBAnimation, TaiwanBear, TaiwanPolice} from './taiwan_bear.js';
 import { loadOptions } from '@babel/core';
-=======
-
-
 
 
 let test = 0.0;
@@ -33,7 +29,6 @@ let phi:number = 0.0;
 
 let prev_rx = 0;
 let prev_ry = 0;
->>>>>>> master
 
 
 //server for the app comunication
@@ -200,15 +195,15 @@ function onResize() {
 
 let updateables : Array<JBAnimation>; 
 let clock : Clock; 
+var dt: number;
 
 function tick() {
-    const delta = clock.getDelta();
-    console.log(`tick: updateables ${updateables} ${delta}`);
+    dt = clock.getDelta();
+    console.log(`tick: updateables ${updateables} ${dt}`);
 
     for (const object of updateables) {
-      object.tick( delta );
+      object.tick( dt );
     }
-
 }
 
 
@@ -271,14 +266,8 @@ function render() {
         var cam_dist:number = 10;
         var camdist_x:number = cam_dist*Math.cos(-scooter_obj.scooter_yaw_rotation);
         var camdist_y:number = cam_dist*Math.sin(-scooter_obj.scooter_yaw_rotation);
-<<<<<<< HEAD
-        // camera.position.set(scooter_obj.get_position().x-camdist_x, scooter_obj.get_position().y+5, scooter_obj.get_position().z-camdist_y);
-        // camera.lookAt(scooter_obj.get_position().x, scooter_obj.get_position().y, scooter_obj.get_position().z);
-=======
         camera.position.set(scooter_obj.get_position().x-camdist_x, scooter_obj.get_position().y+5, scooter_obj.get_position().z-camdist_y);
         camera.lookAt(scooter_obj.get_position().x, scooter_obj.get_position().y, scooter_obj.get_position().z);
-    
->>>>>>> master
     }
 
 
@@ -381,10 +370,6 @@ function physics()
     
     test = phi;
 
-
-
-    
-
     applyRotation(scooter_three,[phi,scooter_obj.scooter_yaw_rotation,0]);
 
     
@@ -421,17 +406,17 @@ function rotate_around(cx, cy, x, y, radians) {
 function steer_keyboard()
 {
     
-    const vel_update :number= 0.01;
-    const steer_update:number = 0.05;
+    const vel_update :number= 0.1;
+    const steer_update:number = 1.2;
 
     if(!w_up)
     {
-        scooter_obj.velocity += vel_update;
+        scooter_obj.velocity += vel_update * dt;
         scooter_obj.go_signal();
     }
     else if(!s_up)
     {
-        scooter_obj.velocity -= vel_update;
+        scooter_obj.velocity -= vel_update * dt;
         scooter_obj.stop_signal();
     }
     else
@@ -441,11 +426,11 @@ function steer_keyboard()
 
     if(!a_up)
     {
-        scooter_obj.steering_angle+=steer_update;
+        scooter_obj.steering_angle+=steer_update * dt;
     }
     else if(!d_up)
     {
-        scooter_obj.steering_angle-=steer_update;
+        scooter_obj.steering_angle-=steer_update * dt;
     }
 
     // if(a_up && d_up && scooter_obj.velocity != 0)
