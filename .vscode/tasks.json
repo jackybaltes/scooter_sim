@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "build",
+			"path": "scooter_javascript/demo1/urdf-loaders/javascript/",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build",
+			"label": "npm: build - scooter_javascript/demo1/urdf-loaders/javascript",
+			"detail": "npx rollup --config"
+		}
+	]
+}
