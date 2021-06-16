@@ -9,6 +9,7 @@ import {
     Quaternion,
     Object3D,
     Euler,
+    Clock,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import URDFLoader, { URDFRobot } from '../../src/URDFLoader.js';
@@ -16,8 +17,8 @@ import {Track} from './track.js';
 import {Timer} from './timer.js';
 import {Robot} from './robot.js'
 import {ControlServer} from './server.js';
-
-
+import {JBAnimation, TaiwanBear, TaiwanPolice} from './taiwan_bear.js';
+import { loadOptions } from '@babel/core';
 
 
 let test = 0.0;
@@ -77,7 +78,6 @@ function render_no_physics()
     requestAnimationFrame(render_no_physics);
     renderer.render(scene, camera);
 }
-
 
 
 //Scene initialisation
@@ -144,7 +144,25 @@ function init() {
         
     };
     
+    const bear = new TaiwanBear( "pooh" );
 
+    bear.init().then( () => {
+        console.log("loaded taiwan bear Pooh", bear.model );
+        const m = bear.home();
+        console.log("Pooh", m );
+        //scene.add( m );
+        //updateables.push( bear );
+    });
+
+    const pol1 = new TaiwanPolice( "marry" );
+
+    pol1.init().then( () => {
+        console.log("loaded taiwan police Marry", pol1.model );
+        const m = pol1.home();
+        console.log("Police 1", m );
+        scene.add( m );
+        updateables.push( pol1 );
+    });
 
     let count = 0;
     setInterval( function () {
@@ -161,6 +179,8 @@ function init() {
     document.addEventListener("keydown",user_imput_down);
     document.addEventListener("keyup",user_imput_up);
 
+    updateables = new Array<JBAnimation>();
+    clock = new Clock();
 
 }
 
@@ -173,9 +193,25 @@ function onResize() {
     camera.updateProjectionMatrix();
 }
 
+let updateables : Array<JBAnimation>; 
+let clock : Clock; 
+let dt: number;
+
+function tick() {
+    dt = clock.getDelta();
+    console.log(`tick: updateables ${updateables} ${dt}`);
+
+    for (const object of updateables) {
+      object.tick( dt );
+    }
+}
+
+
 function render() {
 
     requestAnimationFrame(render);
+    tick();
+
     renderer.render(scene, camera);
 
 
@@ -232,7 +268,6 @@ function render() {
         var camdist_y:number = cam_dist*Math.sin(-scooter_obj.scooter_yaw_rotation);
         camera.position.set(scooter_obj.get_position().x-camdist_x, scooter_obj.get_position().y+5, scooter_obj.get_position().z-camdist_y);
         camera.lookAt(scooter_obj.get_position().x, scooter_obj.get_position().y, scooter_obj.get_position().z);
-    
     }
 
 
@@ -335,10 +370,6 @@ function physics()
     
     test = phi;
 
-
-
-    
-
     applyRotation(scooter_three,[phi,scooter_obj.scooter_yaw_rotation,0]);
 
     
@@ -375,17 +406,17 @@ function rotate_around(cx, cy, x, y, radians) {
 function steer_keyboard()
 {
     
-    const vel_update :number= 0.01;
-    const steer_update:number = 0.05;
+    const vel_update :number= 0.12;
+    const steer_update:number = 1.5;
 
     if(!w_up)
     {
-        scooter_obj.velocity += vel_update;
+        scooter_obj.velocity += vel_update * dt;
         scooter_obj.go_signal();
     }
     else if(!s_up)
     {
-        scooter_obj.velocity -= vel_update;
+        scooter_obj.velocity -= vel_update * dt;
         scooter_obj.stop_signal();
     }
     else
@@ -395,11 +426,11 @@ function steer_keyboard()
 
     if(!a_up)
     {
-        scooter_obj.steering_angle+=steer_update;
+        scooter_obj.steering_angle+=steer_update * dt;
     }
     else if(!d_up)
     {
-        scooter_obj.steering_angle-=steer_update;
+        scooter_obj.steering_angle-=steer_update * dt;
     }
 
     // if(a_up && d_up && scooter_obj.velocity != 0)

@@ -390,7 +390,7 @@ export class Track {
         {
             this.lost = true;
             this.line_failled = true;
-            this.message = "You went of track !"
+            this.message = "You went off track !"
         }
         
         

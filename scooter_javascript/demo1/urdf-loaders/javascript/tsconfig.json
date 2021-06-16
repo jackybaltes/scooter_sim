@@ -13,6 +13,7 @@
         "example/src/simple.ts",
         "example/src/track.ts",
         "example/src/robot.ts",
-        "example/src/timer.ts"
+        "example/src/timer.ts",
+        "example/src/taiwan_bear.ts",
     ]
 }
