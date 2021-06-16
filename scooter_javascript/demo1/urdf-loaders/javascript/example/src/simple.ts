@@ -195,7 +195,7 @@ function onResize() {
 
 let updateables : Array<JBAnimation>; 
 let clock : Clock; 
-var dt: number;
+let dt: number;
 
 function tick() {
     dt = clock.getDelta();
@@ -406,8 +406,8 @@ function rotate_around(cx, cy, x, y, radians) {
 function steer_keyboard()
 {
     
-    const vel_update :number= 0.1;
-    const steer_update:number = 1.2;
+    const vel_update :number= 0.12;
+    const steer_update:number = 1.5;
 
     if(!w_up)
     {
