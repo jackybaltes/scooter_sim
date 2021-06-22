@@ -90,3 +90,22 @@ export class TaiwanPolice extends JBAnimation {
         return super.home();
     }
 }
+
+export class TaiwanCopMale extends JBAnimation {
+    constructor ( name : string ) {
+        super( name, "../../urdf/taiwan cops male 1.glb", JBObjectType.TaiwanBear );
+    }
+
+    home( ) {
+        this.translate( -7, 0.0, -12.0 );
+        this.rotate( 0.0, -70.0/360.0 * Math.PI, 0.0 );
+
+        const clip = this.data.animations[1];
+        const action = this.mixer.clipAction(clip);
+        action.play();
+        
+        //this.model.tick = (delta) => this.mixer.update(delta);
+        
+        return super.home();
+    }
+}
