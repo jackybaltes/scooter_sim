@@ -63,24 +63,4 @@ export default [
             sourcemap: true,
         },
     },
-    // {
-    //     input: './example/src/vr.js',
-    //     plugins: [resolve()],
-    //     output: {
-    //         file: './example/bundle/vr.js',
-    //         format: 'iife',
-    //         sourcemap: true,
-    //     },
-    // },
-    // {
-    //     input: './example/src/simple.js',
-    //     plugins: [  resolve(),
-    //                 typescript()
-    //             ],
-    //     output: {
-    //         file: './example/bundle/simple.js',
-    //         format: 'iife',
-    //         sourcemap: true,
-    //     },
-    // },
 ];
