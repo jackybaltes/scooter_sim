@@ -8,12 +8,11 @@
 
     
     "files": [
-        "src/URDFLoader.d.ts",
-        "example/src/server.ts",
-        "example/src/simple.ts",
-        "example/src/track.ts",
-        "example/src/robot.ts",
-        "example/src/timer.ts",
-        "example/src/taiwan_bear.ts",
+        "src/main.ts",
+        "src/server.ts",
+        "src/track.ts",
+        "src/robot.ts",
+        "src/timer.ts",
+        "src/taiwan_bear.ts",
     ]
 }

@@ -61,7 +61,7 @@ export class JBAnimation {
 // This will probably end up as a superclass
 export class TaiwanPolice extends JBAnimation {
     constructor ( name : string ) {
-        super( name, "../../urdf/taiwan police.glb", JBObjectType.TaiwanPolice );
+        super( name, "../assets/tlgf/taiwan police.glb", JBObjectType.TaiwanPolice );
     }
 
     home( ) {

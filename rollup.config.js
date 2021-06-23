@@ -3,9 +3,9 @@ import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 
 const files = {
-    URDFLoader: 'URDFLoader.js',
-    URDFViewer: 'urdf-viewer-element.js',
-    URDFManipulator: 'urdf-manipulator-element.js',
+    URDFLoader: '../urdf/src/URDFLoader.js',
+    URDFViewer: '../urdf/src/urdf-viewer-element.js',
+    URDFManipulator: '../urdf/src/urdf-manipulator-element.js',
 };
 
 const isExternal = p => {
@@ -19,7 +19,7 @@ export default [
     ...Object.entries(files).map(([name, file]) => {
 
         const inputPath = path.join(__dirname, `./src/${ file }`);
-        const outputPath = path.join(__dirname, `./umd/${ file }`);
+        const outputPath = path.join(__dirname, `../urdf/umd/${ file }`);
 
         return {
 
@@ -52,13 +52,13 @@ export default [
 
     // examples
     {
-        input: './example/src/index.js',
+        input: './src/main.js',
         plugins: [
             resolve(),
             typescript()
         ],
         output: {
-            file: './example/bundle/index.js',
+            file: './bundle/index.js',
             format: 'iife',
             sourcemap: true,
         },
@@ -72,15 +72,15 @@ export default [
     //         sourcemap: true,
     //     },
     // },
-    {
-        input: './example/src/simple.js',
-        plugins: [  resolve(),
-                    typescript()
-                ],
-        output: {
-            file: './example/bundle/simple.js',
-            format: 'iife',
-            sourcemap: true,
-        },
-    },
+    // {
+    //     input: './example/src/simple.js',
+    //     plugins: [  resolve(),
+    //                 typescript()
+    //             ],
+    //     output: {
+    //         file: './example/bundle/simple.js',
+    //         format: 'iife',
+    //         sourcemap: true,
+    //     },
+    // },
 ];

@@ -62,7 +62,7 @@ export class JBAnimation {
 
 export class TaiwanBear extends JBAnimation {
     constructor ( name : string ) {
-        super( name, "../../urdf/taiwan bear 3.glb", JBObjectType.TaiwanBear );
+        super( name, "../assets/tlgf/taiwan bear 3.glb", JBObjectType.TaiwanBear );
     }
 
     home( ) {
@@ -82,7 +82,7 @@ export class TaiwanBear extends JBAnimation {
 // This will probably end up as a superclass
 export class TaiwanPolice extends JBAnimation {
     constructor ( name : string ) {
-        super( name, "../../urdf/taiwan police.glb", JBObjectType.TaiwanPolice );
+        super( name, "../assets/tlgf/taiwan police.glb", JBObjectType.TaiwanPolice );
     }
 
     home( ) {
@@ -95,7 +95,7 @@ export class TaiwanPolice extends JBAnimation {
 
 export class TaiwanCopMale extends JBAnimation {
     constructor ( name : string ) {
-        super( name, "../../urdf/taiwan cops male 1.glb", JBObjectType.TaiwanBear );
+        super( name, "../assets/tlgf/taiwan cops male 1.glb", JBObjectType.TaiwanBear );
     }
 
     home( ) {

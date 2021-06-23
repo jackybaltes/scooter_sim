@@ -3,10 +3,5 @@
     "files.exclude": {
         "**/bundle": true,
         "**/*.js.map": true,
-        "scooter_javascript\\demo1\\urdf-loaders\\javascript\\example\\src\\robot.js": true,
-        "scooter_javascript\\demo1\\urdf-loaders\\javascript\\example\\src\\server.js": true,
-        "scooter_javascript\\demo1\\urdf-loaders\\javascript\\example\\src\\simple.js": true,
-        "scooter_javascript\\demo1\\urdf-loaders\\javascript\\example\\src\\timer.js": true,
-        "scooter_javascript\\demo1\\urdf-loaders\\javascript\\example\\src\\track.js": true
     }
 }

@@ -29,8 +29,8 @@ import {
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
-import URDFLoader from '../../src/URDFLoader.js';
-import { URDFDragControls } from '../../src/URDFDragControls.js';
+import URDFLoader from '../urdf/src/URDFLoader.js';
+import { URDFDragControls } from '../urdf/src/URDFDragControls.js';
 
 let scene, camera, renderer, robot, workspace;
 let controller, controllerGrip, ray, robotGroup;
@@ -150,7 +150,7 @@ function init() {
         }
 
     };
-    loader.load('../../urdf/thormang3/urdf/all.urdf', result => {
+    loader.load('../assets/urdf/thormang3/urdf/all.urdf', result => {
         robot = result;
     });
 
