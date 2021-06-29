@@ -248,10 +248,7 @@ function render() {
         test_track.update(scooter_obj.get_wheel_position(),scooter_obj.scooter_yaw_rotation,scooter_obj.blinking_left,scooter_obj.velocity == 0);
         score_element.innerHTML = "SCORE : "+curent_score+"  |  BEST : "+best_score;
         comment_element.innerHTML = "COMMENTS : <br><br>"+test_track.getMessage();
-    
-
         curent_score = test_track.getscore();
-        
         
         if(test_track.get_done() || phi>=max_phi || phi<=-max_phi)
         {
@@ -261,13 +258,10 @@ function render() {
             scooter_obj.init_position();
             phi =0.0;
             phi_vel = 0.001;
-
             prev_rx = 0;
             prev_ry = 0;
-
         }
-        
-        
+    
     }
 
 
@@ -307,7 +301,7 @@ function physics()
             scooter_obj.steering_angle = scooter_obj.steering_angle+r/100;
         }
     }
-    scooter_obj.move_arms();
+    
 
     var yaw_velocity:number = scooter_obj.velocity*scooter_obj.steering_angle/scooter_obj.b;
     scooter_obj.scooter_yaw_rotation+=yaw_velocity;
@@ -317,8 +311,7 @@ function physics()
     scooter_obj.scooter.position.x += y_vel;
     scooter_obj.scooter.position.z += x_vel;
 
-    phi = scooter_obj.transfer_function_steer_to_tilt(scooter_obj.steering_angle)-scooter_obj.transfer_function_steer_to_tilt(0);
-    phi = phi*1000*scooter_obj.velocity;
+    phi = scooter_obj.get_phi();
 
 
 
@@ -383,8 +376,8 @@ function physics()
     test = phi;
 
     applyRotation(scooter_three,[phi,scooter_obj.scooter_yaw_rotation,0]);
-
-    
+    scooter_obj.phi = phi;
+    scooter_obj.move_arms();
 
 }
 
