@@ -56,10 +56,11 @@
     "nyc": "^15.1.0",
     "rollup": "^2.29.0",
     "static-server": "^3.0.0",
-    "three": "0.128.0",
+    "three": "^0.128.0",
     "typescript": "^3.9.7"
   },
   "dependencies": {
+    "ml-matrix": "^6.8.0",
     "typewiz": "^1.2.4"
   }
 }

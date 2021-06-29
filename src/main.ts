@@ -307,7 +307,7 @@ function physics()
             scooter_obj.steering_angle = scooter_obj.steering_angle+r/100;
         }
     }
-
+    scooter_obj.move_arms();
 
     var yaw_velocity:number = scooter_obj.velocity*scooter_obj.steering_angle/scooter_obj.b;
     scooter_obj.scooter_yaw_rotation+=yaw_velocity;
