@@ -224,7 +224,6 @@ function render() {
     requestAnimationFrame(render);
     tick();
 
-
     if(controlServer.velocity != 0)
     {
         scooter_obj.velocity = controlServer.velocity;
@@ -279,7 +278,11 @@ function render() {
         camera.position.set(scooter_obj.get_position().x-camdist_x, scooter_obj.get_position().y+5, scooter_obj.get_position().z-camdist_y);
         camera.lookAt(scooter_obj.get_position().x, scooter_obj.get_position().y, scooter_obj.get_position().z);
     }
-    
+
+
+
+    //UI update
+
     renderer.render(scene, camera);
 }
 
@@ -301,7 +304,7 @@ function physics()
             scooter_obj.steering_angle = scooter_obj.steering_angle+r/100;
         }
     }
-    //scooter_obj.move_arms();
+
 
     var yaw_velocity:number = scooter_obj.velocity*scooter_obj.steering_angle/scooter_obj.b;
     scooter_obj.scooter_yaw_rotation+=yaw_velocity;

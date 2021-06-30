@@ -4,13 +4,13 @@
 		{
 			"type": "npm",
 			"script": "build",
-			"path": "scooter_javascript/demo1/urdf-loaders/javascript/",
+			"path": ".",
 			"problemMatcher": [
 				"$tsc"
 			],
 			"group": "build",
-			"label": "npm: build - scooter_javascript/demo1/urdf-loaders/javascript",
-			"detail": "npx rollup --config"
+			"label": "tsc and rollup",
+			"detail": "tsc && npx rollup --config"
 		}
 	]
 }
