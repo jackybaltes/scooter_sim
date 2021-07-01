@@ -291,7 +291,7 @@ class ScooterSimScene extends JBScene {
                 this.scooterObj.steering_angle = this.scooterObj.steering_angle + r/100;
             }
         }
-        //scooterObj.move_arms();
+        this.scooterObj.move_arms();
     
         let yaw_velocity:number = this.scooterObj.velocity * this.scooterObj.steering_angle / this.scooterObj.b;
         this.scooterObj.scooter_yaw_rotation += yaw_velocity;
