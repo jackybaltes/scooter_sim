@@ -11,6 +11,13 @@
 			"group": "build",
 			"label": "tsc and rollup",
 			"detail": "tsc && npx rollup --config"
+		},
+		{
+			"type": "npm",
+			"script": "start",
+			"problemMatcher": [],
+			"label": "npm: start",
+			"detail": "concurrently --kill-others \"rollup -c -w\" \"cd .. && static-server\""
 		}
 	]
 }
