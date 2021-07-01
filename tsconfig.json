@@ -13,6 +13,6 @@
         "src/track.ts",
         "src/robot.ts",
         "src/timer.ts",
-        "src/taiwan_bear.ts",
+        "src/taiwanbear.ts",
     ]
 }

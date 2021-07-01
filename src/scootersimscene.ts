@@ -13,12 +13,13 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import URDFLoader, { URDFRobot } from '../urdf/src/URDFLoader.js';
-import {Track} from './track.js';
-import {Timer} from './timer.js';
-import {Robot} from './robot.js'
-import {ControlServer} from './server.js';
-import {JBAnimation, TaiwanBear, TaiwanPolice, TaiwanCopMale } from './taiwan_bear.js';
-import { loadOptions } from '@babel/core';
+import {Track} from './track';
+import {Timer} from './timer';
+import {Robot} from './robot'
+import {ControlServer} from './server';
+import { JBAnimation } from './jbanimation';
+import { TaiwanBear } from './taiwanbear';
+import { TaiwanPolice, TaiwanCopMale } from './taiwancop';
 import { JBScene } from './jbscene';
 import { JBGame } from './jbgame';
 
