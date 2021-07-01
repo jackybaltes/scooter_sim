@@ -79,6 +79,7 @@ export class Robot{
     protected last_pose_R:Matrix;
     protected start_pose_R:Matrix;
 
+    public phi:number;
 
 
 
@@ -138,6 +139,7 @@ export class Robot{
         var r :number  = (Math.random()-0.5)*2; //random -1 to 1
         this.steering_angle = r/5;
         //this.steering_angle = 0.0;
+        this.phi=0;
         this.velocity =0.0;
     }
 
@@ -259,6 +261,13 @@ export class Robot{
         this.scooter.setJointValue("r_arm_wr_r",-q_list_R.get(0,6));
         this.scooter.setJointValue("r_arm_wr_y",q_list_R.get(0,7));
         this.scooter.setJointValue("r_arm_wr_p",-q_list_R.get(0,8));
+    }
+
+
+    get_phi()
+    {
+        var phi = this.transfer_function_steer_to_tilt(this.steering_angle)-this.transfer_function_steer_to_tilt(0);
+        return phi*1000*this.velocity;    
     }
 
 
@@ -449,10 +458,27 @@ export class Robot{
         object.updateWorldMatrix( true, true );
         var vector = new Vector3( 0, 0, 0 );
         var v = object.localToWorld(vector,object.worldMatrix);
-        var a =[v.x-this.scooter.position.x,
-                v.y-this.scooter.position.y,
-                v.z-this.scooter.position.z,
+
+        var x = v.x-this.scooter.position.x
+        var z = v.z-this.scooter.position.z
+        var s = Math.sin(this.scooter_yaw_rotation);
+        var c = Math.cos(this.scooter_yaw_rotation);
+
+        var a =[Math.abs(x*s+z*c),
+                v.y-this.scooter.position.y-(0.17*Math.sin(this.phi)),
+                Math.abs(x*c)+Math.abs(z*s),
                 1.57,0,0];
+        /*
+        console.log("Scooter=",this.scooter_yaw_rotation);
+        console.log("PHI=",this.phi);
+        console.log("YAW=",a[3]);
+        console.log("sin=",s);
+        console.log("cos=",c);
+        console.log("x=",a[0]);
+        console.log("y=",a[1]);
+        console.log("z=",a[2]);
+        console.log("======");
+        */
         var pos = new Matrix([a]);
         return pos;
     }
@@ -465,10 +491,21 @@ export class Robot{
         var euler = new Euler()
         euler.setFromQuaternion(object.getWorldQuaternion())
         var v = object.localToWorld(vector,object.worldMatrix);
-        var a =[v.x-this.scooter.position.x,
-                v.y-this.scooter.position.y,
-                v.z-this.scooter.position.z,
+
+        var x = v.x-this.scooter.position.x
+        var z = v.z-this.scooter.position.z
+        var s = Math.sin(this.scooter_yaw_rotation);
+        var c = Math.cos(this.scooter_yaw_rotation);
+
+
+
+        var a =[-Math.abs(x*s+z*c),
+                v.y-this.scooter.position.y+(0.17*Math.sin(this.phi)),
+                Math.abs(x*c)+Math.abs(z*s),
                 4.7,0,0];
+
+        
+
         var pos = new Matrix([a]);
         return pos;
     }
