@@ -1,9 +1,14 @@
 import { 
     Object3D,
     AnimationMixer,
+    AnimationClip,
  } from 'three';
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+
+interface ILoaderObject {
+    animations : Array<AnimationClip>;
+}
 
 enum JBObjectType {
     TaiwanBear = 1,
@@ -15,7 +20,7 @@ export class JBAnimation {
     cls: JBObjectType;
     model : Object3D; // Not sure if there are type annotations for gltfloader
     mixer : AnimationMixer;
-    data: Object;
+    data: ILoaderObject;
     path : string;
 
     constructor( name : string, path : string, cls : JBObjectType ) {
@@ -25,14 +30,15 @@ export class JBAnimation {
     }
 
     async init() {
-        await this.load();
+        await this.preload();
     }
 
-    async load() {
+    async preload() {
         const gltfLoader = new GLTFLoader();
         const data = await gltfLoader.loadAsync( this.path );
-        this.data = data;
-        console.log("Roar data!!!", data );
+        this.data = data as ILoaderObject;
+
+        console.log(`Roar data!!! ${typeof(data)}` );
         console.dir(data);
 
         this.model = data.scene.children[0];
@@ -71,9 +77,11 @@ export class TaiwanBear extends JBAnimation {
         console.log( `TaiwanBear home. data=${typeof(this.data)} animation=` );
         console.dir( this.data );
 
-        //const clip = this.data.animations[1];
-        //const action = this.mixer.clipAction(clip);
-        //action.play();
+        // let anims = this.data['animations'] as keyof Object;
+
+        // const clip : AnimationClip = anims[1];
+        // const action = this.mixer.clipAction(clip);
+        // action.play();
         
         //this.model.tick = (delta) => this.mixer.update(delta);
         
@@ -104,10 +112,10 @@ export class TaiwanCopMale extends JBAnimation {
         this.translate( -7, 0.0, -12.0 );
         this.rotate( 0.0, -70.0/360.0 * Math.PI, 0.0 );
 
-        //const clip = this.data.animations[1];
-        //const action = this.mixer.clipAction(clip);
-        //action.play();
+        const clip = this.data.animations[0];
+        const action = this.mixer.clipAction(clip);
         
+        action.play();
         //this.model.tick = (delta) => this.mixer.update(delta);
         
         return super.home();

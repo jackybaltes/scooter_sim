@@ -67,8 +67,8 @@ class JBGame {
     count = 0;
     _render_game( physics : boolean ) {
         if ( this.count >= 100 ) {
-            console.log("*** STOP ***");
-            return;            
+            //console.log("*** STOP ***");
+            //return;            
         }
         this.count = this.count + 1;
         console.log( `render_game physics ${physics}` );
@@ -77,7 +77,7 @@ class JBGame {
             console.log( `JBGame render currentScene ${this.currentSceneIndex}`);
             let ci = this.currentSceneIndex;
             if ( ci >= 0 ) {
-                this.scenes[ci].renderStep();
+                this.scenes[ci].tick();
             }
         } else {
             requestAnimationFrame( this.render_no_physics );

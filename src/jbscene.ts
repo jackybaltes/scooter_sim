@@ -29,7 +29,7 @@ class JBScene extends Scene {
     
     leave( next : JBScene ) {}
     
-    renderStep() {}
+    tick() {}
 }
 
 export { JBScene };

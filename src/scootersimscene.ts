@@ -75,7 +75,7 @@ class ScooterSimScene extends JBScene {
         console.log("ScooterSimScene create");
             
         this.preload().then( () => {
-            console.log("ScooterSimScene create");
+            console.log("ScooterSimScene create after preload");
             //setting the HTML elements
             this.score_element.innerHTML = "";
             //creating the stopwatch
@@ -110,65 +110,6 @@ class ScooterSimScene extends JBScene {
             this.controls.update();
             // Load robot
             
-            const manager :LoadingManager = new LoadingManager();
-            const loader :URDFLoader = new URDFLoader(manager);
-            loader.load('../assets/urdf/thormang3/urdf/all.urdf', result => {
-                this.scooter_three = result;
-            });
-
-            let ref = this;
-            manager.onLoad = () => {
-                ref.add( this.scooter_three );
-                ref.scooterObj = new Robot( this.scooter_three );
-                ref.scooterObj.init_position();
-            };
-            
-            const manager2 = new LoadingManager();
-            const loader2 = new URDFLoader(manager2);
-            loader2.load('../assets/urdf/track/urdf/model.urdf', result => {
-                this.track = result;
-            });
-            
-            manager2.onLoad = () => {
-                this.track.rotation.x = -Math.PI/2;
-                this.add( this.track );
-                this.test_track = new Track( this.track ); //, render_no_physics );
-                this.test_track.init_track()
-            };
-            
-            const bear = new TaiwanBear( "pooh" );
-
-            bear.init().then( () => {
-                console.log("loaded taiwan bear Pooh", bear.model );
-                const m = bear.home();
-                console.log("Pooh", m );
-                console.dir(m);
-                //scene.add( m );
-                //updateables.push( bear );
-            });
-
-            const pol1 = new TaiwanPolice( "marry" );
-            const pol2 = new TaiwanCopMale( "chi tai" );
-            
-            pol1.init().then( () => {
-                console.log("loaded taiwan police Marry", pol1.model );
-                const m = pol1.home();
-                console.log("Police 1", m );
-                console.dir(m);
-                this.add( m );
-                this.updateables.push( pol1 );
-            });
-
-            pol2.init().then( () => {
-                console.log("loaded taiwan police Chi Tai", pol2.model );
-                const m = pol2.home();
-                console.log("Police Chi tai" );
-                console.dir(m)
-
-                this.add( m );
-                this.updateables.push( pol2 );
-            });
-
             let count = 0;
             setInterval( function () {
                 let msg = `State message ${count}`;  
@@ -182,7 +123,6 @@ class ScooterSimScene extends JBScene {
             document.addEventListener("keydown", this.user_input_down);
             document.addEventListener("keyup", this.user_input_up);
 
-            this.updateables = new Array<JBAnimation>();
             this.clock = new Clock();
 
             
@@ -191,8 +131,69 @@ class ScooterSimScene extends JBScene {
         });
     }
 
-    async preLoad() {
-        console.log("JBGame preload");
+    async preload() {
+        super.preload();
+        console.log("ScooterSimScene preload");
+
+        const manager :LoadingManager = new LoadingManager();
+        const loader :URDFLoader = new URDFLoader(manager);
+        loader.load('../assets/urdf/thormang3/urdf/all.urdf', result => {
+            this.scooter_three = result;
+        });
+
+        let ref = this;
+        manager.onLoad = () => {
+            ref.add( this.scooter_three );
+            ref.scooterObj = new Robot( this.scooter_three );
+            ref.scooterObj.init_position();
+        };
+        
+        const manager2 = new LoadingManager();
+        const loader2 = new URDFLoader(manager2);
+        loader2.load('../assets/urdf/track/urdf/model.urdf', result => {
+            this.track = result;
+        });
+        
+        manager2.onLoad = () => {
+            this.track.rotation.x = -Math.PI/2;
+            this.add( this.track );
+            this.test_track = new Track( this.track ); //, render_no_physics );
+            this.test_track.init_track()
+        };
+        
+        const bear = new TaiwanBear( "pooh" );
+
+        await bear.init()
+        
+        console.log("loaded taiwan bear Pooh", bear.model );
+        let m;
+
+        m = bear.home();
+        console.log("Pooh", m );
+        console.dir(m);
+        //scene.add( m );
+        //updateables.push( bear );
+    
+        const pol1 = new TaiwanPolice( "marry" );
+        const pol2 = new TaiwanCopMale( "chi tai" );
+        
+        await pol1.init()
+        console.log("loaded taiwan police Marry", pol1.model );
+        m = pol1.home();
+        console.log("Police 1", m );
+        console.dir(m);
+        this.add( m );
+        this.updateables.push( pol1 );
+    
+        await pol2.init()
+        
+        console.log("loaded taiwan police Chi Tai", pol2.model );
+        m = pol2.home();
+        console.log("Police Chi tai" );
+        console.dir(m)
+
+        this.add( m );
+        this.updateables.push( pol2 );
     }
 
     enter( prev : JBScene ) {
@@ -217,20 +218,16 @@ class ScooterSimScene extends JBScene {
 
     tick() {
         this.dt = this.clock.getDelta();
-        console.log(`tick: updateables ${this.updateables} ${this.dt}`);
-
-        for (const object of this.updateables) {
-            object.tick( this.dt );
-        }
-    }
-
-    renderStep() {
-        console.log("ScooterSimScene renderStep");
-        console.log( `ScooterSimScene renderStep scooter ${this.scooterObj} controlServer ${this.controlServer}` );
+        console.log("ScooterSimScene tick");
+        console.log( `ScooterSimScene tick scooter ${this.scooterObj} controlServer ${this.controlServer}` );
     
 //        requestAnimationFrame( this.render );
-        this.tick();
-        
+        console.log(`tick: updateables ${this.updateables} ${this.dt}`);
+
+        if( this.scooterObj == null ) {
+            return;
+        }
+
         if( this.controlServer.velocity != 0) {
             this.scooterObj.velocity = this.controlServer.velocity;
             this.scooterObj.steering_angle = this.controlServer.steering_angle;    
@@ -274,7 +271,11 @@ class ScooterSimScene extends JBScene {
             this.camera.position.set( this.scooterObj.get_position().x - camdist_x, this.scooterObj.get_position().y+5, this.scooterObj.get_position().z-camdist_y);
             this.camera.lookAt( this.scooterObj.get_position().x, this.scooterObj.get_position().y, this.scooterObj.get_position().z );
         }
-    
+            
+        for (const object of this.updateables) {
+            object.tick( this.dt );
+        }
+
         this.renderer.render( this, this.camera );
     }
     
