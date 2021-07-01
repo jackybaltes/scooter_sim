@@ -183,11 +183,6 @@
     <mu2>0.2</mu2>
     <material>Gazebo/Grey</material>
   </gazebo>
-  <gazebo reference="l_arm_end_link">
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-    <material>Gazebo/Red</material>
-  </gazebo>
   <!-- Right Arm -->
   <gazebo reference="r_arm_sh_p1_link">
     <mu1>0.2</mu1>
@@ -233,11 +228,6 @@
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <material>Gazebo/Grey</material>
-  </gazebo>
-  <gazebo reference="r_arm_end_link">
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-    <material>Gazebo/Red</material>
   </gazebo>
   <!-- Left Leg -->
   <gazebo reference="l_leg_hip_y_link">
@@ -825,28 +815,7 @@
     </inertial>
   </link>
   <!-- left end effector FIXED -->
-  <joint name="l_arm_end" type="revolute">
-    <axis xyz="0 1 0"/>
-    <limit effort="1000000" lower="0" upper="0" velocity="6.5"/>
-    <origin rpy="0 0 0" xyz="0.145 0.045 0"/>
-    <parent link="l_arm_wr_p_link"/>
-    <child link="l_arm_end_link"/>
-  </joint>
   <!-- left end effector link -->
-  <link name="l_arm_end_link">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <box size="0.01 0.01 0.01"/>
-      </geometry>
-      <material name="red"/>
-    </visual>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <mass value="0.001"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-  </link>
   <!-- right shoulder pitch 1 joint -->
   <joint name="r_arm_sh_p1" type="revolute">
     <axis xyz="0 -1 0"/>
@@ -1219,26 +1188,7 @@
     </inertial>
   </link>
   <!-- right end effector -->
-  <joint name="r_arm_end" type="fixed">
-    <origin rpy="0 0 0" xyz="0.145 -0.045 0"/>
-    <parent link="r_arm_wr_p_link"/>
-    <child link="r_arm_end_link"/>
-  </joint>
   <!-- right end effector link -->
-  <link name="r_arm_end_link">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <box size="0.01 0.01 0.01"/>
-      </geometry>
-      <material name="red"/>
-    </visual>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <mass value="0.001"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-  </link>
   <!-- left hip yaw joint -->
   <joint name="l_leg_hip_y" type="revolute">
     <axis xyz="0 0 -1"/>
@@ -2008,12 +1958,6 @@
     <parent link="body"/>
     <child link="blinker_right"/>
   </joint>
-  <joint name="rigid4" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0 -0.2 0.0"/>
-    <parent link="body"/>
-    <child link="feet_visual"/>
-    <limit effort="1000" lower="0" upper="0" velocity="6.5"/>
-  </joint>
   <!-- Transmissions-->
   <transmission name="tran1">
     <type>transmission_interface/SimpleTransmission</type>
@@ -2189,25 +2133,6 @@
       </geometry>
     </visual>
   </link>
-  <link name="feet_visual">
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <mass value="0.01"/>
-      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
-    </inertial>
-    <!--collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-				<box size="0.05 0.09 0.085"/>
-            </geometry>
-        </collision-->
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <box size="0.15 0.1 0.1"/>
-      </geometry>
-    </visual>
-  </link>
   <link name="scooter_grip_L">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -2246,60 +2171,11 @@
     <parent link="head"/>
     <child link="scooter_grip_R"/>
   </joint>
-  <!--
-    <gazebo reference="blinker_left">
-        <visual>
-            <plugin name="gazebo_ros_blinker_light_control" filename="libgazebo_ros_blinker_light_control.so">
-                <topicName>/scooter/blinker_left</topicName>
-            </plugin>
-        </visual>
-    </gazebo>
-
-    <gazebo reference="blinker_right">
-        <visual>
-            <plugin name="gazebo_ros_blinker_light_control" filename="libgazebo_ros_blinker_light_control.so">
-                <topicName>/scooter/blinker_right</topicName>
-            </plugin>
-        </visual>
-    </gazebo>
-
-    <gazebo reference="stop_light">
-        <visual>
-            <plugin name="gazebo_ros_scooter_stop_light_control" filename="libgazebo_ros_scooter_stop_light_control.so">
-                <topic>/scooter/stop_light</topic>
-            </plugin>
-        </visual>
-    </gazebo>
-
-    <gazebo reference="feet_visual">
-        <plugin name="gazebo_ros_feet_stop_control" filename="libgazebo_ros_feet_stop_control.so">			
-                <nameChild>feet_visual</nameChild>
-                <visualTopic>/scooter/feet_visual</visualTopic>
-
-        </plugin>
-        <visual>
-            <plugin name="gazebo_ros_feet_stop_visual_control" filename="libgazebo_ros_feet_stop_visual_control.so">
-                <TopicName>/scooter/feet_visual</TopicName>
-            </plugin>
-        </visual>
-    </gazebo>
-
-    <gazebo>
-        <plugin name="gazebo_ros_feet_stop_control" filename="libgazebo_ros_feet_stop_control.so">			
-                <nameChild>feet_visual</nameChild>
-                <visualTopic>/scooter/feet_visual</visualTopic>
-
-        </plugin>
-    </gazebo>
--->
   <gazebo reference="front">
     <material>Gazebo/Grey</material>
   </gazebo>
   <gazebo reference="back">
     <material>Gazebo/Black</material>
-  </gazebo>
-  <gazebo reference="feet_visual">
-    <material>Gazebo/Red</material>
   </gazebo>
   <gazebo reference="scooter_grip_L">
     <material>Gazebo/Blue</material>
