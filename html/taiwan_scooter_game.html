@@ -19,10 +19,16 @@
         </style-->
     </head>
 
-
     <body>
 
         <div id="menu">
+            <div style="color: rgb(0, 0, 0);">
+                <select id="cb_camera_view" class="combobox" type=text list=value>
+                    <option value="cb_follow">Follow Camera</option>
+                    <option value="cb_orbit">Orbit View</option>
+                    <option value="cb_free">Free Camera</option>
+                </select>
+            </div>
             <div>
                 <div style="color: rgb(0, 0, 0); position: relative; width: 90vw;">
                     <span id ="score" style="color: rgb(0, 0, 0);"> SCORE : 1000  |  BEST : 99999 </span>
@@ -32,6 +38,6 @@
             </div>
         </div>
 
-        <script type="module" src="../bundle/index.js"></script>
+        <script type="module" src="../index.js"></script>
     </body>
 </html>

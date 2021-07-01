@@ -5,35 +5,33 @@
   "main": "src/URDFLoader.js",
   "type": "module",
   "scripts": {
-    "start": "concurrently --kill-others \"rollup -c -w\" \"cd .. && static-server\"",
+    "start": "concurrently --kill-others \"rollup -c -w\" \"( cd bundle; static-server)\" ",
     "build": "tsc && npx rollup -c",
+    "dist": "rm -r ./dist/* && cp -aR ./assets ./dist && cp -aR ./html/* ./dist/ && cp ./bundle/bundle.* ./dist",
     "test": "jest",
-    "lint": "eslint \"./src/*.js\" \"./test/*.js\" && tsc -p tsconfig.json --noEmit"
+    "lint": "eslint \"./src/*.js\" \"./test/*.js\" && tsc -p tsconfig.json --noEmit",
+    "deploy" : "gh-pages -d bundle"
   },
   "files": [
-    "src/*",
-    "umd/*",
-    "example/index.js",
-    "example/dragAndDrop.js",
-    "example/styles.css"
+    "src/*.ts",
+    "html/*",
+    "assets/*"
   ],
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gkjohnson/urdf-loaders.git"
+    "url": "git+https://github.com/jackybaltes/scooter_sim.git"
   },
   "bugs": {
-    "url": "https://github.com/gkjohnson/urdf-loaders/issues"
+    "url": "https://github.com/jackybaltes/scooter_sim.git/issues"
   },
-  "homepage": "https://github.com/gkjohnson/urdf-loaders#readme",
+  "homepage": "https://github.com/jackybaltes/scooter_sim.git/#readme",
   "keywords": [
     "javascript",
     "threejs",
     "graphics",
-    "ros",
+    "fira",
     "robotics",
-    "urdf",
-    "urdf-models",
     "webcomponents"
   ],
   "peerDependencies": {
