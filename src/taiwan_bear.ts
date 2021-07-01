@@ -1,5 +1,4 @@
 import { 
-    Object,
     Object3D,
     AnimationMixer,
  } from 'three';
@@ -41,15 +40,15 @@ export class JBAnimation {
         this.mixer = new AnimationMixer( this.model );
     } 
 
-    tick( delta : Number ) {
+    tick( delta : number ) {
         return this.mixer.update( delta );
     }
 
-    translate( tx : Number, ty : Number, tz : Number ) {
+    translate( tx : number, ty : number, tz : number ) {
         this.model.position.set( tx, ty, tz );
     }
 
-    rotate( a : Number, b : Number, c : Number ) {
+    rotate( a : number, b : number, c : number ) {
         this.model.rotation.set( a, b, c );
     }
 
@@ -69,9 +68,12 @@ export class TaiwanBear extends JBAnimation {
         this.translate( -7, 0.0, -12.0 );
         this.rotate( 0.0, -70.0/360.0 * Math.PI, 0.0 );
 
-        const clip = this.data.animations[1];
-        const action = this.mixer.clipAction(clip);
-        action.play();
+        console.log( `TaiwanBear home. data=${typeof(this.data)} animation=` );
+        console.dir( this.data );
+
+        //const clip = this.data.animations[1];
+        //const action = this.mixer.clipAction(clip);
+        //action.play();
         
         //this.model.tick = (delta) => this.mixer.update(delta);
         
@@ -102,9 +104,9 @@ export class TaiwanCopMale extends JBAnimation {
         this.translate( -7, 0.0, -12.0 );
         this.rotate( 0.0, -70.0/360.0 * Math.PI, 0.0 );
 
-        const clip = this.data.animations[1];
-        const action = this.mixer.clipAction(clip);
-        action.play();
+        //const clip = this.data.animations[1];
+        //const action = this.mixer.clipAction(clip);
+        //action.play();
         
         //this.model.tick = (delta) => this.mixer.update(delta);
         

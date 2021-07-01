@@ -309,7 +309,7 @@ export class Robot{
                 );
             var m4 = new Matrix4();
             m4.setFromMatrix3(m3);
-            var euler = new Euler('XYZ');
+            var euler = new Euler( 0, 0, 0, 'XYZ' ); 
             euler.setFromRotationMatrix(m4,'XYZ');
 
             return new Matrix([[pos_end_eff_y,pos_end_eff_z,pos_end_eff_x,euler.x+Math.PI/2,euler.y,euler.z]])
@@ -359,13 +359,11 @@ export class Robot{
                 );
             var m4 = new Matrix4();
             m4.setFromMatrix3(m3);
-            var euler = new Euler('XYZ');
+            var euler = new Euler(0, 0, 0, 'XYZ');
             euler.setFromRotationMatrix(m4,'XYZ');
             return new Matrix([[pos_end_eff_y,pos_end_eff_z,pos_end_eff_x,euler.x+Math.PI/2,euler.y,euler.z]])
         }
     }
-
-
 
     calc_jacob_newton(state,is_left_arm =true)
     {

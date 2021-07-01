@@ -4,8 +4,6 @@ import {
 } from 'three';
 
 export class Track {
-
-
     protected scooter_obj_blinker_state:boolean;
     protected start_score:number;
     protected lost:boolean;
@@ -18,7 +16,7 @@ export class Track {
 
     protected sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
-    protected render;
+    // protected render;
     protected track_; // the track described as a threeJS object
 
 
@@ -87,21 +85,10 @@ export class Track {
     protected arrayX:Array<number>;
     protected arrayY:Array<number>;
 
-
-
-
-
-
-
-
-
-
-    constructor(track_threejs,render)
+    
+    constructor(track_threejs ) // ,render)
     {
-
-
-
-        this.render =render
+//        this.render = render
         this.track_ = track_threejs; // the track described as a threeJS object
     
         this.scooter_obj_blinker_state = false;

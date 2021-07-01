@@ -22,7 +22,6 @@ export default [
         const outputPath = path.join(__dirname, `../urdf/umd/${ file }`);
 
         return {
-
             input: inputPath,
             treeshake: false,
             external: p => isExternal(p),
