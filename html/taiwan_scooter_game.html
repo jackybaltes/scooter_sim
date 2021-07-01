@@ -22,13 +22,12 @@
     <body>
 
         <div id="menu">
-            <div>
-                <input id="camera_view" type=text list=value>
-                    <datalist>
-                    <option>Orbit View</option>
-                    <option>Follow Scooter</option>
-                    <option>Free Camera</option>
-                    </datalist>
+            <div style="color: rgb(0, 0, 0);">
+                <select id="cb_camera_view" class="combobox" type=text list=value>
+                    <option value="cb_follow">Follow Camera</option>
+                    <option value="cb_orbit">Orbit View</option>
+                    <option value="cb_free">Free Camera</option>
+                </select>
             </div>
             <div>
                 <div style="color: rgb(0, 0, 0); position: relative; width: 90vw;">
