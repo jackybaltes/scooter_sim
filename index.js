@@ -48296,7 +48296,7 @@
 
 	}
 
-	var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$5 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -48389,14 +48389,14 @@
 	        return this.lost;
 	    }
 	    stop_blink_zebra() {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            this.zebra_blink = false;
 	            this.change_color(this.zebra_l, this.black);
 	            this.change_color(this.zebra_r, this.black);
 	        });
 	    }
 	    blink_zebra() {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            if (!this.zebra_blink) {
 	                this.zebra_blink = true;
 	                while (this.zebra_blink) {
@@ -48411,14 +48411,14 @@
 	        });
 	    }
 	    stop_blink_train() {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            this.train_blink = false;
 	            this.change_color(this.train_l, this.black);
 	            this.change_color(this.train_r, this.black);
 	        });
 	    }
 	    blink_train() {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            if (!this.train_blink) {
 	                this.train_blink = true;
 	                while (this.train_blink) {
@@ -48434,7 +48434,7 @@
 	        });
 	    }
 	    trun_traffic_red() {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            //is green
 	            if (this.traffic_state == 2) {
 	                this.change_color(this.traffic_r, this.black);
@@ -48448,7 +48448,7 @@
 	        });
 	    }
 	    trun_traffic_green() {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            //is red
 	            if (this.traffic_state == 0) {
 	                this.change_color(this.traffic_r, this.black);
@@ -48589,7 +48589,7 @@
 	        return odd;
 	    }
 	    part_1_colision_callback(time_needed_ms, function_ = null) {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            this.part1_cango_after = false;
 	            while (true) {
 	                var var_counter = 0;
@@ -48621,7 +48621,7 @@
 	        });
 	    }
 	    part_2_colision_callback(time_needed_ms, function_ = null) {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            this.part2_cango_after = false;
 	            while (true) {
 	                var var_counter = 0;
@@ -48653,7 +48653,7 @@
 	        });
 	    }
 	    part_3_colision_callback(time_needed_ms, function_ = null) {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            this.part3_cango_after = false;
 	            while (true) {
 	                var ori_Ok = this.scooter_yaw < 1.8 && this.scooter_yaw > 1.4;
@@ -48691,7 +48691,7 @@
 	        });
 	    }
 	    part_4_colision_callback(time_needed_ms, function_ = null) {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            this.part4_cango_after = false;
 	            while (true) {
 	                var var_counter = 0;
@@ -48720,7 +48720,7 @@
 	        });
 	    }
 	    part_5_colision_callback(time_needed_ms, function_ = null) {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            this.part4_cango_after = false;
 	            while (true) {
 	                var var_counter = 0;
@@ -48752,7 +48752,7 @@
 	        });
 	    }
 	    part_0_colision_callback(time_needed_ms, function_ = null) {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            this.part0_cango_after = false;
 	            while (true) {
 	                var var_counter = 0;
@@ -48778,7 +48778,7 @@
 	        });
 	    }
 	    part_35_colision_callback() {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            while (true) {
 	                if (this.part35_on && !this.scooter_obj_blinker_state) {
 	                    this.part35_failled = true;
@@ -52377,7 +52377,7 @@ ${indent}columns: ${matrix.columns}
 	  return V.mmul(Matrix.diag(s).mmul(U.transpose()));
 	}
 
-	var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -52460,7 +52460,7 @@ ${indent}columns: ${matrix.columns}
 	        this.change_color(this.stop_light, this.black);
 	    }
 	    stop_blink() {
-	        return __awaiter$3(this, void 0, void 0, function* () {
+	        return __awaiter$4(this, void 0, void 0, function* () {
 	            this.blinking_left = false;
 	            this.blinking_right = false;
 	            this.change_color(this.blinker_l, this.black);
@@ -52468,7 +52468,7 @@ ${indent}columns: ${matrix.columns}
 	        });
 	    }
 	    blink_right() {
-	        return __awaiter$3(this, void 0, void 0, function* () {
+	        return __awaiter$4(this, void 0, void 0, function* () {
 	            if (!this.blinking_right) {
 	                this.blinking_right = true;
 	                while (this.blinking_right) {
@@ -52483,7 +52483,7 @@ ${indent}columns: ${matrix.columns}
 	        });
 	    }
 	    blink_left() {
-	        return __awaiter$3(this, void 0, void 0, function* () {
+	        return __awaiter$4(this, void 0, void 0, function* () {
 	            if (!this.blinking_left) {
 	                this.blinking_left = true;
 	                while (this.blinking_left) {
@@ -56708,7 +56708,7 @@ ${indent}columns: ${matrix.columns}
 
 	}
 
-	var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -56729,12 +56729,12 @@ ${indent}columns: ${matrix.columns}
 	        this.cls = cls;
 	    }
 	    init() {
-	        return __awaiter$2(this, void 0, void 0, function* () {
+	        return __awaiter$3(this, void 0, void 0, function* () {
 	            yield this.preload();
 	        });
 	    }
 	    preload() {
-	        return __awaiter$2(this, void 0, void 0, function* () {
+	        return __awaiter$3(this, void 0, void 0, function* () {
 	            const gltfLoader = new GLTFLoader();
 	            const data = yield gltfLoader.loadAsync(this.path);
 	            this.data = data;
@@ -56803,7 +56803,7 @@ ${indent}columns: ${matrix.columns}
 	    }
 	}
 
-	var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -56815,6 +56815,7 @@ ${indent}columns: ${matrix.columns}
 	class JBScene extends Scene {
 	    constructor(name, game) {
 	        super();
+	        this.onResize = this._onResize.bind(this);
 	        this.name = name;
 	        this.game = game;
 	        console.log("JBScene constructor");
@@ -56824,16 +56825,24 @@ ${indent}columns: ${matrix.columns}
 	        this.renderer = renderer;
 	    }
 	    preload() {
-	        return __awaiter$1(this, void 0, void 0, function* () {
+	        return __awaiter$2(this, void 0, void 0, function* () {
 	            console.log("JBScene preload");
 	        });
 	    }
+	    start() { this.enter(null); }
+	    pause() { }
 	    enter(prev) { }
 	    leave(next) { }
 	    tick() { }
+	    _onResize() {
+	        if (this.renderer !== null) {
+	            this.renderer.setSize(window.innerWidth, window.innerHeight);
+	            this.renderer.setPixelRatio(window.devicePixelRatio);
+	        }
+	    }
 	}
 
-	var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -56866,9 +56875,9 @@ ${indent}columns: ${matrix.columns}
 	        this.w_up = true;
 	        this.s_up = true;
 	        this.clock = new Clock();
-	        this.onResize = this._onResize.bind(this);
 	        this.user_input_up = this._user_input_up.bind(this);
 	        this.user_input_down = this._user_input_down.bind(this);
+	        this.onResize = this._onResize.bind(this);
 	    }
 	    //Scene initialisation
 	    create(renderer) {
@@ -56923,7 +56932,7 @@ ${indent}columns: ${matrix.columns}
 	        const _super = Object.create(null, {
 	            preload: { get: () => super.preload }
 	        });
-	        return __awaiter(this, void 0, void 0, function* () {
+	        return __awaiter$1(this, void 0, void 0, function* () {
 	            _super.preload.call(this);
 	            console.log("ScooterSimScene preload");
 	            const manager = new LoadingManager();
@@ -56977,15 +56986,6 @@ ${indent}columns: ${matrix.columns}
 	    }
 	    enter(prev) {
 	        console.log(`ScooterSimScene enter ${prev}`);
-	        if (prev != null) {
-	            prev.leave(this);
-	        }
-	    }
-	    _onResize() {
-	        this.renderer.setSize(window.innerWidth, window.innerHeight);
-	        this.renderer.setPixelRatio(window.devicePixelRatio);
-	        this.camera.aspect = window.innerWidth / window.innerHeight;
-	        this.camera.updateProjectionMatrix();
 	    }
 	    tick() {
 	        this.dt = this.clock.getDelta();
@@ -57214,12 +57214,69 @@ ${indent}columns: ${matrix.columns}
 	            this.scooterObj.steering_angle = this.scooterObj.max_steering_angle;
 	        }
 	    }
+	    _onResize() {
+	        super._onResize();
+	        if (this.camera !== null) {
+	            let cam = this.camera;
+	            cam.aspect = window.innerWidth / window.innerHeight;
+	            cam.updateProjectionMatrix();
+	        }
+	    }
+	}
+
+	var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	class StartScene extends JBScene {
+	    constructor() {
+	        super(...arguments);
+	        this.loader = null;
+	    }
+	    preload() {
+	        return __awaiter(this, void 0, void 0, function* () {
+	            if (this.loader === null) {
+	                this.loader = new TextureLoader();
+	            }
+	            this.texture = this.loader.load("../assets/images/taiwan_drivers_licence_intro.png");
+	        });
+	    }
+	    create(renderer) {
+	        super.create(renderer);
+	        console.log("Start scene create");
+	        this.preload().then(() => {
+	            // camera
+	            let vWidth = 300;
+	            let vHeight = 300;
+	            this.camera = new OrthographicCamera(vWidth / -2, vWidth / 2, vHeight / -2, vHeight / 2, 1, 1000);
+	            this.camera.position.x = 0;
+	            this.camera.position.y = 0;
+	            this.camera.position.z = 100;
+	            this.camera.rotation.x = 0.0 * (Math.PI / 180);
+	            this.add(this.camera);
+	            this.material = new MeshBasicMaterial({ map: this.texture, side: DoubleSide, });
+	            this.plane = new Mesh(new PlaneGeometry(vWidth, vHeight), this.material);
+	            this.add(this.plane);
+	            this._onResize();
+	            window.addEventListener('resize', this.onResize);
+	        });
+	    }
+	    tick() {
+	        if ((this.camera !== null) && (this.camera !== undefined)) {
+	            console.log(`startScene tick ${this.camera}`);
+	            this.renderer.render(this, this.camera);
+	        }
+	    }
 	}
 
 	class JBGame {
 	    constructor(name) {
 	        this.scenes = new Array();
-	        this.currentSceneIndex = -1;
 	        this.render = this._render.bind(this);
 	        this.render_no_physics = this._render_no_physics.bind(this);
 	        this.render_game = this._render_game.bind(this);
@@ -57231,16 +57288,24 @@ ${indent}columns: ${matrix.columns}
 	        //renderer.shadowMap.enabled = true;
 	        //renderer.shadowMap.type = PCFSoftShadowMap;
 	        document.body.appendChild(this.renderer.domElement);
-	        let s1 = new ScooterSimScene("Scooter Simulation Scene", this);
+	        let s1 = new StartScene("start", this);
 	        this.addScene(s1);
-	        this.currentSceneIndex = 0;
+	        s1.background = new Color("#ffff00");
+	        let s2 = new ScooterSimScene("sim", this);
+	        this.addScene(s2);
+	        s2.background = new Color("#ff00ff");
+	    }
+	    sceneByName(name) {
+	        return this.scenes.find(scene => scene.name === name);
 	    }
 	    start() {
-	        let ci = this.currentSceneIndex;
-	        console.log(`JBGame start ci ${ci}`);
-	        if (ci >= 0) {
-	            this.scenes[ci].enter(null);
-	            this.scenes[ci].create(this.renderer);
+	        this.currentSceneName = "start";
+	        this.currentScene = this.sceneByName(this.currentSceneName);
+	        console.log(`JBGame start ci ${this.currentScene}`);
+	        if (this.currentScene !== null) {
+	            this.currentScene.create(this.renderer);
+	            this.currentScene.start();
+	            this.currentScene.enter(null);
 	            this.render();
 	        }
 	    }
@@ -57262,15 +57327,25 @@ ${indent}columns: ${matrix.columns}
 	        console.log(`render_game physics ${physics}`);
 	        if (physics) {
 	            requestAnimationFrame(this.render);
-	            console.log(`JBGame render currentScene ${this.currentSceneIndex}`);
-	            let ci = this.currentSceneIndex;
-	            if (ci >= 0) {
-	                this.scenes[ci].tick();
+	            console.log(`JBGame render currentScene ${this.currentSceneName}`);
+	            let ci = this.currentScene;
+	            if (ci !== null) {
+	                ci.tick();
 	            }
 	        }
 	        else {
 	            requestAnimationFrame(this.render_no_physics);
 	        }
+	    }
+	    switch(nextSceneName) {
+	        let ns = this.sceneByName(nextSceneName);
+	        if (this.currentScene !== null) {
+	            this.currentScene.leave(this.currentScene);
+	            this.currentScene = null;
+	            this.currentSceneName = "UNKNOWN";
+	        }
+	        this.currentScene = ns;
+	        ns.enter(ns);
 	    }
 	}
 
