@@ -9,7 +9,7 @@ html, body, urdf-viewer {
 body {
     font-family: "Roboto", helvetica, arial, sans-serif;
     animation: fade 3s ease;
-    color: white;
+    color: black;
     user-select: none;
 }
 

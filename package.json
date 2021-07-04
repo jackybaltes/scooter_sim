@@ -10,7 +10,7 @@
     "dist": "rm -r ./dist/* && cp -aR ./assets ./dist && cp -aR ./html/* ./dist/ && cp ./bundle/bundle.* ./dist",
     "test": "jest",
     "lint": "eslint \"./src/*.js\" \"./test/*.js\" && tsc -p tsconfig.json --noEmit",
-    "deploy" : "gh-pages -d bundle"
+    "deploy": "gh-pages -d dist"
   },
   "files": [
     "src/*.ts",
@@ -55,6 +55,7 @@
     "node-fetch": "^2.6.1",
     "nyc": "^15.1.0",
     "rollup": "^2.29.0",
+    "rollup-plugin-copy": "^3.4.0",
     "static-server": "^3.0.0",
     "three": "^0.128.0",
     "typescript": "^3.9.10"

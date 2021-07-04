@@ -47,7 +47,7 @@ class ScooterSimScene extends JBScene {
 
     controlServer : ControlServer;
     background : Color;
-    camera : PerspectiveCamera;
+    //camera : PerspectiveCamera;
     controls : OrbitControls;
 
     updateables = new Array<JBAnimation>(); 
@@ -199,23 +199,10 @@ class ScooterSimScene extends JBScene {
 
     enter( prev : JBScene ) {
         console.log( `ScooterSimScene enter ${prev}`);
-        if ( prev != null ) {
-            prev.leave( this );
-        }
     }
 
     clock : Clock = new Clock(); 
     dt: number;
-
-    _onResize() {
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(window.devicePixelRatio);
-
-        this.camera.aspect = window.innerWidth / window.innerHeight;
-        this.camera.updateProjectionMatrix();
-    }
-
-    onResize = this._onResize.bind( this );
 
     tick() {
         this.dt = this.clock.getDelta();
@@ -481,6 +468,19 @@ class ScooterSimScene extends JBScene {
             this.scooterObj.steering_angle = this.scooterObj.max_steering_angle;
         }
     }
+
+    _onResize() {
+        super._onResize();
+
+        if ( this.camera !== null ) {
+            let cam = this.camera as PerspectiveCamera;
+            cam.aspect = window.innerWidth / window.innerHeight;
+            cam.updateProjectionMatrix();
+        }
+    }
+
+    onResize = this._onResize.bind( this );
+
 }
 
 export { ScooterSimScene } ;

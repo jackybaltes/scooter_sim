@@ -4,13 +4,15 @@ import {
 
 import { JBScene } from './jbscene';
 import { ScooterSimScene } from './scootersimscene';
+import { StartScene } from './startscene';
 
 class JBGame {
     name : string;
     scenes = new Array<JBScene>();
     renderer : WebGLRenderer;
 
-    currentSceneIndex : number = -1;
+    currentSceneName: string;
+    currentScene : JBScene;
 
     constructor( name : string ) {
         console.log( `JBGame constructor ${name}` );
@@ -22,20 +24,28 @@ class JBGame {
         //renderer.shadowMap.type = PCFSoftShadowMap;
         document.body.appendChild(this.renderer.domElement);
 
-        let s1 =  new ScooterSimScene( "Scooter Simulation Scene", this );
+        let s1 =  new StartScene( "start", this );
         this.addScene( s1 );
-        this.currentSceneIndex = 0;
+
+        let s2 =  new ScooterSimScene( "sim", this );
+        this.addScene( s2 );
+    }
+
+    sceneByName( name : string ) {
+        return this.scenes.find( scene => scene.name === name );
     }
 
     start() {
-        let ci = this.currentSceneIndex;
+        this.currentSceneName = "start";
+        
+        this.currentScene = this.sceneByName( this.currentSceneName );
 
-        console.log( `JBGame start ci ${ci}` );
+        console.log( `JBGame start ci ${ this.currentScene }` );
 
-        if ( ci >= 0 ) {
-            this.scenes[ci].enter(null);
-            this.scenes[ci].create( this.renderer );
-            
+        if ( this.currentScene !== null ) {
+            this.currentScene.create( this.renderer );
+            this.currentScene.start();
+            this.currentScene.enter( null )
             this.render();
         }
     }
@@ -74,14 +84,25 @@ class JBGame {
         console.log( `render_game physics ${physics}` );
         if ( physics ) {
             requestAnimationFrame( this.render );
-            console.log( `JBGame render currentScene ${this.currentSceneIndex}`);
-            let ci = this.currentSceneIndex;
-            if ( ci >= 0 ) {
-                this.scenes[ci].tick();
+            console.log( `JBGame render currentScene ${this.currentSceneName}`);
+            let ci = this.currentScene;
+            if ( ci !== null ) {
+                ci.tick();
             }
         } else {
             requestAnimationFrame( this.render_no_physics );
         }
+    }
+
+    switch( nextSceneName : string ) {
+        let ns = this.sceneByName( nextSceneName );
+        if ( this.currentScene !== null ) {
+            this.currentScene.leave( this.currentScene );
+            this.currentScene = null;
+            this.currentSceneName = "UNKNOWN";
+        }
+        this.currentScene = ns;
+        ns.enter( ns );
     }
 }
 

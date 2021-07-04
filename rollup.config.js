@@ -1,4 +1,5 @@
 import path from 'path';
+import copy from 'rollup-plugin-copy';
 import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 
@@ -49,15 +50,22 @@ export default [
         };
     }),
 
-    // examples
     {
         input: './src/main.js',
         plugins: [
             resolve(),
-            typescript()
+            typescript(),
+            copy( {
+                targets: [
+                    { src: "assets", dest: "dist/" },
+                    { src: "html", dest: "dist/" },
+                    { src: "index.html", dest: "dist/" }
+                ]
+            })
+
         ],
         output: {
-            file: './bundle/index.js',
+            file: './dist/index.js',
             format: 'iife',
             sourcemap: true,
         },
