@@ -1,4 +1,5 @@
 import {
+    Color,
     WebGLRenderer,
 } from 'three';
 
@@ -26,9 +27,11 @@ class JBGame {
 
         let s1 =  new StartScene( "start", this );
         this.addScene( s1 );
+        s1.background = new Color( "#ffff00" );
 
         let s2 =  new ScooterSimScene( "sim", this );
         this.addScene( s2 );
+        s2.background = new Color( "#ff00ff" );
     }
 
     sceneByName( name : string ) {
