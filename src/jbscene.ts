@@ -17,10 +17,7 @@ class JBScene extends Scene {
 
     renderer : WebGLRenderer;
     
-    create( renderer : WebGLRenderer ) { 
-        console.log( `JBScene create renderer ${renderer}` );
-        this.renderer = renderer;
-    }
+    create( ) { }
 
     async preload() {
         console.log( "JBScene preload" );
@@ -30,9 +27,23 @@ class JBScene extends Scene {
 
     pause( ) { }
 
-    enter( prev : JBScene ) { }
+    enter( prev : JBScene ) { 
+        this.renderer = new WebGLRenderer({ antialias: false });
+        //renderer.outputEncoding = sRGBEncoding;
+        //renderer.shadowMap.enabled = true;
+        //renderer.shadowMap.type = PCFSoftShadowMap;
+        this.renderer.domElement.id = "id_" + this.name;
+        let parent = document.getElementById( "game" );
+        parent.appendChild( this.renderer.domElement );
+    }
     
-    leave( next : JBScene ) {}
+    leave( next : JBScene ) {
+        let el = document.getElementById( "id_" + this.name );
+        if ( el !== null ) {
+            let parent = document.getElementById( "game" );
+            parent.removeChild( el );
+        }
+    }
     
     tick() {}
 

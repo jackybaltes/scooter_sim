@@ -19,12 +19,6 @@ class JBGame {
         console.log( `JBGame constructor ${name}` );
         
         this.name = name;
-        this.renderer = new WebGLRenderer({ antialias: false });
-        //renderer.outputEncoding = sRGBEncoding;
-        //renderer.shadowMap.enabled = true;
-        //renderer.shadowMap.type = PCFSoftShadowMap;
-        document.body.appendChild(this.renderer.domElement);
-
         let s1 =  new StartScene( "start", this );
         this.addScene( s1 );
         s1.background = new Color( "#ffff00" );
@@ -46,7 +40,7 @@ class JBGame {
         console.log( `JBGame start ci ${ this.currentScene }` );
 
         if ( this.currentScene !== null ) {
-            this.currentScene.create( this.renderer );
+            this.currentScene.create( );
             this.currentScene.start();
             this.currentScene.enter( null )
             this.render();

@@ -71,8 +71,14 @@ class ScooterSimScene extends JBScene {
     }
 
     //Scene initialisation
-    create( renderer : WebGLRenderer ) {
-        super.create( renderer );
+    create( ) {
+        super.create( );
+        this.renderer = new WebGLRenderer({ antialias: false });
+        //renderer.outputEncoding = sRGBEncoding;
+        //renderer.shadowMap.enabled = true;
+        //renderer.shadowMap.type = PCFSoftShadowMap;
+        document.body.appendChild( this.renderer.domElement );
+
         console.log("ScooterSimScene create");
             
         this.preload().then( () => {
