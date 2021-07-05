@@ -275,9 +275,10 @@ div#game {
     height: 100%;
     position: relative;
     overflow: hidden;
+    font-size: 24px;
 }
 
-div#id_start_labels {
+div.intro_scene {
     position: absolute;
     top: 50px;
     left: 150px;
@@ -288,7 +289,7 @@ div#id_start_labels {
     font-size: 28px;
 }
 
-button.game_button_next {
+button.game_button_prev {
     background: rgba(200,100,100);
     color: rgb(243, 243, 60);
     font-size: inherit;
@@ -300,6 +301,11 @@ button.game_button_next {
     color: rgb(243, 243, 60);
     font-size: inherit;
     float: right;
+}
+
+div#sim {
+    font-size: 28px;
+    background:rgb(243, 243, 60);
 }
 
 @keyframes fade {

@@ -16,8 +16,6 @@ class JBScene extends Scene {
     }
 
     renderer : WebGLRenderer;
-    
-    create( ) { }
 
     async preload() {
         console.log( "JBScene preload" );
@@ -38,12 +36,9 @@ class JBScene extends Scene {
     }
     
     leave( next : JBScene ) {
-        console.log( `leaving scene ${this.name}, next ${next.name}`);
-        
-        let el = document.getElementById( "id_" + this.name );
-        if ( el !== null ) {
-            let parent = document.getElementById( "game" );
-            parent.removeChild( el );
+        let parent = document.getElementById( "game" );
+        while ( parent.lastChild ) {
+            parent.removeChild( parent.lastChild );
         }
     }
     

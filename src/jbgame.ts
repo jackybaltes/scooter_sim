@@ -5,7 +5,8 @@ import {
 
 import { JBScene } from './jbscene';
 import { ScooterSimScene } from './scootersimscene';
-import { StartScene } from './startscene';
+import { StartIntroScene } from './startintroscene';
+import { ControlIntroScene } from './controlintroscene';
 
 class JBGame {
     name : string;
@@ -19,13 +20,14 @@ class JBGame {
         console.log( `JBGame constructor ${name}` );
         
         this.name = name;
-        let s1 =  new StartScene( "start", this );
+        let s1 =  new StartIntroScene( this );
         this.addScene( s1 );
-        s1.background = new Color( "#ffff00" );
-
-        let s2 =  new ScooterSimScene( "sim", this );
-        this.addScene( s2 );
-        s2.background = new Color( "#ff00ff" );
+        
+        let sIntro =  new ControlIntroScene( this );
+        this.addScene( sIntro );
+        
+        let sSim =  new ScooterSimScene( "sim", this );
+        this.addScene( sSim );
     }
 
     sceneByName( name : string ) {
@@ -33,16 +35,14 @@ class JBGame {
     }
 
     start() {
-        this.currentSceneName = "start";
+        this.currentSceneName = "start_intro";
         
         this.currentScene = this.sceneByName( this.currentSceneName );
 
         console.log( `JBGame start ci ${ this.currentScene }` );
 
         if ( this.currentScene !== null ) {
-            this.currentScene.create( );
-            this.currentScene.start();
-            this.currentScene.enter( null )
+            this.currentScene.enter( null );
             this.render();
         }
     }
@@ -92,14 +92,18 @@ class JBGame {
     }
 
     switch( nextSceneName : string ) {
+        console.log( `game switching to ${nextSceneName}`);
+
         let ns = this.sceneByName( nextSceneName );
         if ( this.currentScene !== null ) {
             this.currentScene.leave( this.currentScene );
             this.currentScene = null;
             this.currentSceneName = "UNKNOWN";
         }
-        this.currentScene = ns;
-        ns.enter( ns );
+        if ( ns !== null ) {
+            this.currentScene = ns;
+            ns.enter( ns );
+        }
     }
 }
 
