@@ -38,6 +38,8 @@ class JBScene extends Scene {
     }
     
     leave( next : JBScene ) {
+        console.log( `leaving scene ${this.name}, next ${next.name}`);
+        
         let el = document.getElementById( "id_" + this.name );
         if ( el !== null ) {
             let parent = document.getElementById( "game" );

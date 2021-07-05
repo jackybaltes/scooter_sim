@@ -278,13 +278,28 @@ div#game {
 }
 
 div#id_start_labels {
-    top: 70px;
-    left: 70px;
-    width: 90%;
-    height: 90%;
+    position: absolute;
+    top: 50px;
+    left: 150px;
+    width: 50%;
+    height: 75%;
     color: black;
     background-color: transparent;
-    font-size: large;
+    font-size: 28px;
+}
+
+button.game_button_next {
+    background: rgba(200,100,100);
+    color: rgb(243, 243, 60);
+    font-size: inherit;
+    float: left;
+}
+
+button.game_button_next {
+    background: rgba(200,100,100);
+    color: rgb(243, 243, 60);
+    font-size: inherit;
+    float: right;
 }
 
 @keyframes fade {

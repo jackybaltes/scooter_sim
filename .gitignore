@@ -39,4 +39,4 @@ jspm_packages
 
 tools/venv/
 src/*.js
-bundle/
+dist/
