@@ -308,6 +308,10 @@ div#sim {
     background:rgb(243, 243, 60);
 }
 
+div.intro_scene table {
+    padding: 10px;
+}
+
 @keyframes fade {
     from { opacity: 0; }
     to { opacity: 1; }

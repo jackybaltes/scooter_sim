@@ -101,6 +101,7 @@ class JBGame {
             this.currentSceneName = "UNKNOWN";
         }
         if ( ns !== null ) {
+            this.currentSceneName = nextSceneName;
             this.currentScene = ns;
             ns.enter( ns );
         }

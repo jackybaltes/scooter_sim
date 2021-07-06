@@ -38,9 +38,9 @@ class ScooterSimScene extends JBScene {
     best_score :number= 999
         
     //elements to modify the html page
-    score_element : HTMLElement = document.getElementById("score");
-    comment_element : HTMLElement = document.getElementById("comment");
-    timer_element : HTMLElement = document.getElementById("timer");
+    score_element : HTMLElement;
+    comment_element : HTMLElement;
+    timer_element : HTMLElement;
 
     //Stopwatch used to show the time and TODO: add some score
     stopwatch :Timer;
@@ -135,19 +135,55 @@ class ScooterSimScene extends JBScene {
         this.updateables.push( pol2 );
     }
 
-    enter( prev : JBScene ) {
-        console.log( `ScooterSimScene enter ${prev}`);
+    html = `
+    <div id="menu">
+            <div style="color: rgb(0, 0, 0);">
+                <select id="cb_camera_view" class="combobox" type=text list=value>
+                    <option value="cb_follow">Follow Camera</option>
+                    <option value="cb_orbit">Orbit View</option>
+                    <!-- <option value="cb_free">Free Camera</option> -->
+                </select>
+            </div>
+            <div>
+                <div style="color: rgb(0, 0, 0); position: relative; width: 90vw;">
+                    <span id ="score" style="color: rgb(0, 0, 0);"> SCORE : 1000  |  BEST : 99999 </span>
+                    <span id ="comment" style="color: rgb(0, 0, 0); position: absolute; top: 0; right: 0; width: 200px; word-wrap: break-word;"> COMMENT  tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt</span>
+                </div>
+                <div id ="timer" style="color: rgb(0, 0, 0);">TIMER = 00:00:00</div>
+            </div>
+        </div>
+    </div>
+    `;
+
+    createDOM( ) {
+        let gel = document.getElementById("game");
+
+        let h = document.createElement('div');
+        
+        h.innerHTML = this.html;
+
+        gel.appendChild( h );
+
         this.renderer = new WebGLRenderer({ antialias: false });
         //renderer.outputEncoding = sRGBEncoding;
         //renderer.shadowMap.enabled = true;
         //renderer.shadowMap.type = PCFSoftShadowMap;
-        let gel = document.getElementById("game");
-
         gel.appendChild( this.renderer.domElement );
 
+        this.score_element = document.getElementById("score");
+        this.comment_element = document.getElementById("comment");
+        this.timer_element = document.getElementById("timer");
+    
         console.log("ScooterSimScene create");
-            
+    }
+
+    enter( prev : JBScene ) {
+
         this.preload().then( () => {
+            console.log( `ScooterSimScene enter ${prev}`);
+            
+            this.createDOM();
+    
             console.log("ScooterSimScene create after preload");
             //setting the HTML elements
             this.score_element.innerHTML = "";
@@ -198,7 +234,6 @@ class ScooterSimScene extends JBScene {
 
             this.clock = new Clock();
 
-            
             //setting the server to port 8878
             this.controlServer = new ControlServer(8878);
         });
@@ -213,8 +248,7 @@ class ScooterSimScene extends JBScene {
         console.log("ScooterSimScene tick");
         console.log( `ScooterSimScene tick scooter ${this.scooterObj} controlServer ${this.controlServer}` );
     
-//        requestAnimationFrame( this.render );
-        console.log(`tick: updateables ${this.updateables} ${this.dt}`);
+        console.log(`tick: updateables ${this.updateables} dt ${this.dt}`);
 
         if( this.scooterObj == null ) {
             return;
