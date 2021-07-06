@@ -56820,10 +56820,6 @@ ${indent}columns: ${matrix.columns}
 	        this.game = game;
 	        console.log("JBScene constructor");
 	    }
-	    create(renderer) {
-	        console.log(`JBScene create renderer ${renderer}`);
-	        this.renderer = renderer;
-	    }
 	    preload() {
 	        return __awaiter$2(this, void 0, void 0, function* () {
 	            console.log("JBScene preload");
@@ -56831,8 +56827,21 @@ ${indent}columns: ${matrix.columns}
 	    }
 	    start() { this.enter(null); }
 	    pause() { }
-	    enter(prev) { }
-	    leave(next) { }
+	    enter(prev) {
+	        this.renderer = new WebGLRenderer({ antialias: false });
+	        //renderer.outputEncoding = sRGBEncoding;
+	        //renderer.shadowMap.enabled = true;
+	        //renderer.shadowMap.type = PCFSoftShadowMap;
+	        this.renderer.domElement.id = "id_" + this.name;
+	        let parent = document.getElementById("game");
+	        parent.appendChild(this.renderer.domElement);
+	    }
+	    leave(next) {
+	        let parent = document.getElementById("game");
+	        while (parent.lastChild) {
+	            parent.removeChild(parent.lastChild);
+	        }
+	    }
 	    tick() { }
 	    _onResize() {
 	        if (this.renderer !== null) {
@@ -56864,69 +56873,35 @@ ${indent}columns: ${matrix.columns}
 	        //Score variables
 	        this.curent_score = 100;
 	        this.best_score = 999;
-	        //elements to modify the html page
-	        this.score_element = document.getElementById("score");
-	        this.comment_element = document.getElementById("comment");
-	        this.timer_element = document.getElementById("timer");
 	        this.updateables = new Array();
 	        //Booleans to check user inputs
 	        this.a_up = true;
 	        this.d_up = true;
 	        this.w_up = true;
 	        this.s_up = true;
+	        this.html = `
+    <div id="menu">
+            <div style="color: rgb(0, 0, 0);">
+                <select id="cb_camera_view" class="combobox" type=text list=value>
+                    <option value="cb_follow">Follow Camera</option>
+                    <option value="cb_orbit">Orbit View</option>
+                    <!-- <option value="cb_free">Free Camera</option> -->
+                </select>
+            </div>
+            <div>
+                <div style="color: rgb(0, 0, 0); position: relative; width: 90vw;">
+                    <span id ="score" style="color: rgb(0, 0, 0);"> SCORE : 1000  |  BEST : 99999 </span>
+                    <span id ="comment" style="color: rgb(0, 0, 0); position: absolute; top: 0; right: 0; width: 200px; word-wrap: break-word;"> COMMENT  tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt</span>
+                </div>
+                <div id ="timer" style="color: rgb(0, 0, 0);">TIMER = 00:00:00</div>
+            </div>
+        </div>
+    </div>
+    `;
 	        this.clock = new Clock();
 	        this.user_input_up = this._user_input_up.bind(this);
 	        this.user_input_down = this._user_input_down.bind(this);
 	        this.onResize = this._onResize.bind(this);
-	    }
-	    //Scene initialisation
-	    create(renderer) {
-	        super.create(renderer);
-	        console.log("ScooterSimScene create");
-	        this.preload().then(() => {
-	            console.log("ScooterSimScene create after preload");
-	            //setting the HTML elements
-	            this.score_element.innerHTML = "";
-	            //creating the stopwatch
-	            this.stopwatch = new Timer();
-	            this.background = new Color(0x92fffb);
-	            this.camera = new PerspectiveCamera();
-	            this.camera.position.set(-11, 10, 17);
-	            this.camera.lookAt(-11, 0, 17);
-	            // this.renderer = new WebGLRenderer({ antialias: false });
-	            // //renderer.outputEncoding = sRGBEncoding;
-	            // //renderer.shadowMap.enabled = true;
-	            // //renderer.shadowMap.type = PCFSoftShadowMap;
-	            // document.body.appendChild( this.renderer.domElement );
-	            const directionalLight = new DirectionalLight(0xffffff, 1.0);
-	            directionalLight.castShadow = true;
-	            directionalLight.shadow.mapSize.setScalar(1024);
-	            directionalLight.position.set(30, 100, 5);
-	            directionalLight.target.position.set(0, 0, 0);
-	            const ambientLight = new AmbientLight(0xffffff, 0.01);
-	            //ading the stuff to the scene
-	            this.add(directionalLight);
-	            this.add(ambientLight);
-	            this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-	            this.controls.minDistance = 4;
-	            this.controls.target.y = 1;
-	            this.controls.update();
-	            // Load robot
-	            let count = 0;
-	            setInterval(function () {
-	                let msg = `State message ${count}`;
-	                console.log(`Trying to send message ${msg}`);
-	                this.controlServer.send(msg);
-	                count++;
-	            }, 5000);
-	            this._onResize();
-	            window.addEventListener('resize', this.onResize);
-	            document.addEventListener("keydown", this.user_input_down);
-	            document.addEventListener("keyup", this.user_input_up);
-	            this.clock = new Clock();
-	            //setting the server to port 8878
-	            this.controlServer = new ControlServer(8878);
-	        });
 	    }
 	    preload() {
 	        const _super = Object.create(null, {
@@ -56984,15 +56959,74 @@ ${indent}columns: ${matrix.columns}
 	            this.updateables.push(pol2);
 	        });
 	    }
+	    createDOM() {
+	        let gel = document.getElementById("game");
+	        let h = document.createElement('div');
+	        h.innerHTML = this.html;
+	        gel.appendChild(h);
+	        this.renderer = new WebGLRenderer({ antialias: false });
+	        //renderer.outputEncoding = sRGBEncoding;
+	        //renderer.shadowMap.enabled = true;
+	        //renderer.shadowMap.type = PCFSoftShadowMap;
+	        gel.appendChild(this.renderer.domElement);
+	        this.score_element = document.getElementById("score");
+	        this.comment_element = document.getElementById("comment");
+	        this.timer_element = document.getElementById("timer");
+	        console.log("ScooterSimScene create");
+	    }
 	    enter(prev) {
-	        console.log(`ScooterSimScene enter ${prev}`);
+	        this.preload().then(() => {
+	            console.log(`ScooterSimScene enter ${prev}`);
+	            this.createDOM();
+	            console.log("ScooterSimScene create after preload");
+	            //setting the HTML elements
+	            this.score_element.innerHTML = "";
+	            //creating the stopwatch
+	            this.stopwatch = new Timer();
+	            this.background = new Color(0x92fffb);
+	            this.camera = new PerspectiveCamera();
+	            this.camera.position.set(-11, 10, 17);
+	            this.camera.lookAt(-11, 0, 17);
+	            // this.renderer = new WebGLRenderer({ antialias: false });
+	            // //renderer.outputEncoding = sRGBEncoding;
+	            // //renderer.shadowMap.enabled = true;
+	            // //renderer.shadowMap.type = PCFSoftShadowMap;
+	            // document.body.appendChild( this.renderer.domElement );
+	            const directionalLight = new DirectionalLight(0xffffff, 1.0);
+	            directionalLight.castShadow = true;
+	            directionalLight.shadow.mapSize.setScalar(1024);
+	            directionalLight.position.set(30, 100, 5);
+	            directionalLight.target.position.set(0, 0, 0);
+	            const ambientLight = new AmbientLight(0xffffff, 0.01);
+	            //ading the stuff to the scene
+	            this.add(directionalLight);
+	            this.add(ambientLight);
+	            this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+	            this.controls.minDistance = 4;
+	            this.controls.target.y = 1;
+	            this.controls.update();
+	            // Load robot
+	            let count = 0;
+	            setInterval(function () {
+	                let msg = `State message ${count}`;
+	                console.log(`Trying to send message ${msg}`);
+	                this.controlServer.send(msg);
+	                count++;
+	            }, 5000);
+	            this._onResize();
+	            window.addEventListener('resize', this.onResize);
+	            document.addEventListener("keydown", this.user_input_down);
+	            document.addEventListener("keyup", this.user_input_up);
+	            this.clock = new Clock();
+	            //setting the server to port 8878
+	            this.controlServer = new ControlServer(8878);
+	        });
 	    }
 	    tick() {
 	        this.dt = this.clock.getDelta();
 	        console.log("ScooterSimScene tick");
 	        console.log(`ScooterSimScene tick scooter ${this.scooterObj} controlServer ${this.controlServer}`);
-	        //        requestAnimationFrame( this.render );
-	        console.log(`tick: updateables ${this.updateables} ${this.dt}`);
+	        console.log(`tick: updateables ${this.updateables} dt ${this.dt}`);
 	        if (this.scooterObj == null) {
 	            return;
 	        }
@@ -57233,10 +57267,13 @@ ${indent}columns: ${matrix.columns}
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	class StartScene extends JBScene {
-	    constructor() {
-	        super(...arguments);
+	class IntroScene extends JBScene {
+	    constructor(name, game, content, prev, next) {
+	        super(name, game);
 	        this.loader = null;
+	        this.content = content;
+	        this.prev = prev;
+	        this.next = next;
 	    }
 	    preload() {
 	        return __awaiter(this, void 0, void 0, function* () {
@@ -57246,17 +57283,47 @@ ${indent}columns: ${matrix.columns}
 	            this.texture = this.loader.load("../assets/images/taiwan_drivers_licence_intro.png");
 	        });
 	    }
-	    create(renderer) {
-	        super.create(renderer);
-	        console.log("Start scene create");
+	    createDOM() {
+	        let parent = document.getElementById("game");
+	        this.renderer = new WebGLRenderer({ antialias: false });
+	        //renderer.outputEncoding = sRGBEncoding;
+	        //renderer.shadowMap.enabled = true;
+	        //renderer.shadowMap.type = PCFSoftShadowMap;
+	        this.renderer.domElement.id = "id_" + this.name;
+	        parent.appendChild(this.renderer.domElement);
+	        let l = document.createElement("div");
+	        l.className = "intro_scene";
+	        l.id = "id_" + this.name + "_labels";
+	        l.style.position = "absolute";
+	        l.innerHTML = this.content;
+	        parent.appendChild(l);
+	        console.log(`inner ${l.innerHTML}`);
+	        this.labels = l;
+	        if (this.next !== "") {
+	            let nb = document.getElementById(this.name + "_btn_next");
+	            nb.onclick = () => {
+	                console.log("intro scene next button pressed");
+	                this.game.switch(this.next);
+	            };
+	        }
+	        if (this.prev !== "") {
+	            let pb = document.getElementById(this.name + "_btn_prev");
+	            pb.onclick = () => {
+	                console.log("intro scene prev button pressed");
+	                this.game.switch(this.prev);
+	            };
+	        }
+	    }
+	    enter(prev) {
 	        this.preload().then(() => {
+	            this.createDOM();
 	            // camera
 	            let vWidth = 300;
 	            let vHeight = 300;
-	            this.camera = new OrthographicCamera(vWidth / -2, vWidth / 2, vHeight / -2, vHeight / 2, 1, 1000);
+	            this.camera = new OrthographicCamera(vWidth / -2, vWidth / 2, vHeight / -2, vHeight / 2, 1, 2);
 	            this.camera.position.x = 0;
 	            this.camera.position.y = 0;
-	            this.camera.position.z = 100;
+	            this.camera.position.z = 1;
 	            this.camera.rotation.x = 0.0 * (Math.PI / 180);
 	            this.add(this.camera);
 	            this.material = new MeshBasicMaterial({ map: this.texture, side: DoubleSide, });
@@ -57268,9 +57335,77 @@ ${indent}columns: ${matrix.columns}
 	    }
 	    tick() {
 	        if ((this.camera !== null) && (this.camera !== undefined)) {
-	            console.log(`startScene tick ${this.camera}`);
+	            console.log(`intro scene tick ${this.camera}`);
 	            this.renderer.render(this, this.camera);
 	        }
+	    }
+	}
+
+	const content$1 = `<h1>Taiwan Scooter Licence Test</h1> 
+        
+<h2>National Taiwan Normal University, Taipei, Taiwan</h2>
+
+<p>This game is an off-shoot of our research into developing a humanoid robot
+that is able to pass the Taiwan scooter licence test.</p>
+
+<table>
+<tr>
+<td>
+<img height="300px" src="../assets/images/thormang2.png"></img>
+</td>
+<td>
+<img height="300px" src="../assets/images/thormang1.png"></img>
+</td>
+</tr>
+<tr>
+<td>Thormang 3 and Gogoro Scooter</td>
+<td>Thormang 3 First Driving Tests </td>
+</tr>
+</table>
+
+<!-- <button id="start_intro_btn_prev" class="game_button_prev">>Previous</button> -->
+<button id="start_intro_btn_next" class="game_button_next">Next</button>
+`;
+	class StartIntroScene extends IntroScene {
+	    constructor(game) {
+	        super("start_intro", game, content$1, "", "control_intro");
+	    }
+	}
+
+	const content = `<h1>Taiwan Scooter Licence Test</h1> 
+        
+    <h2>Control</h2>
+
+    <p>Use the following controls:</p>
+    
+    <table>
+    <tr>
+    <td>'w'</td><td>Increase throttle</td>
+    </tr>
+    <tr>
+    <td>'s'</td><td>Decrease throttle</td>
+    </tr>
+    <tr>
+    <td>'a'</td><td>Steer left</td>
+    </tr>
+    <tr>
+    <td>'d'</td><td>Steer right</td>
+    </tr>
+    <tr>
+    <td>'q'</td><td>Turn signal left</td>
+    </tr>
+    <tr>
+    <td>'d'</td><td>Turn signal right</td>
+    </tr>
+    </table>
+
+    <button id="control_intro_btn_prev" class="game_button_prev">Previous</button>
+
+    <button id="control_intro_btn_next" class="game_button_next">Next</button>
+    `;
+	class ControlIntroScene extends IntroScene {
+	    constructor(game) {
+	        super("control_intro", game, content, "start_intro", "sim");
 	    }
 	}
 
@@ -57283,28 +57418,21 @@ ${indent}columns: ${matrix.columns}
 	        this.count = 0;
 	        console.log(`JBGame constructor ${name}`);
 	        this.name = name;
-	        this.renderer = new WebGLRenderer({ antialias: false });
-	        //renderer.outputEncoding = sRGBEncoding;
-	        //renderer.shadowMap.enabled = true;
-	        //renderer.shadowMap.type = PCFSoftShadowMap;
-	        document.body.appendChild(this.renderer.domElement);
-	        let s1 = new StartScene("start", this);
+	        let s1 = new StartIntroScene(this);
 	        this.addScene(s1);
-	        s1.background = new Color("#ffff00");
-	        let s2 = new ScooterSimScene("sim", this);
-	        this.addScene(s2);
-	        s2.background = new Color("#ff00ff");
+	        let sIntro = new ControlIntroScene(this);
+	        this.addScene(sIntro);
+	        let sSim = new ScooterSimScene("sim", this);
+	        this.addScene(sSim);
 	    }
 	    sceneByName(name) {
 	        return this.scenes.find(scene => scene.name === name);
 	    }
 	    start() {
-	        this.currentSceneName = "start";
+	        this.currentSceneName = "start_intro";
 	        this.currentScene = this.sceneByName(this.currentSceneName);
 	        console.log(`JBGame start ci ${this.currentScene}`);
 	        if (this.currentScene !== null) {
-	            this.currentScene.create(this.renderer);
-	            this.currentScene.start();
 	            this.currentScene.enter(null);
 	            this.render();
 	        }
@@ -57338,14 +57466,18 @@ ${indent}columns: ${matrix.columns}
 	        }
 	    }
 	    switch(nextSceneName) {
+	        console.log(`game switching to ${nextSceneName}`);
 	        let ns = this.sceneByName(nextSceneName);
 	        if (this.currentScene !== null) {
 	            this.currentScene.leave(this.currentScene);
 	            this.currentScene = null;
 	            this.currentSceneName = "UNKNOWN";
 	        }
-	        this.currentScene = ns;
-	        ns.enter(ns);
+	        if (ns !== null) {
+	            this.currentSceneName = nextSceneName;
+	            this.currentScene = ns;
+	            ns.enter(ns);
+	        }
 	    }
 	}
 
