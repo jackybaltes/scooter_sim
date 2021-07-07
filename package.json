@@ -5,7 +5,7 @@
   "main": "src/URDFLoader.js",
   "type": "module",
   "scripts": {
-    "start": "concurrently --kill-others \"rollup -c -w\" \"( cd bundle; static-server)\" ",
+    "start": "concurrently --kill-others \"rollup -c -w\" \"( cd dist; static-server)\" ",
     "build": "npx tsc && npx rollup -c rollup.config.js",
     "test": "jest",
     "lint": "eslint \"./src/*.js\" \"./test/*.js\" && tsc -p tsconfig.json --noEmit",
