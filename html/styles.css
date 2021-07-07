@@ -308,8 +308,12 @@ div#sim {
     background:rgb(243, 243, 60);
 }
 
-div.intro_scene table {
+div.intro_scene table td {
     padding: 10px;
+}
+
+div#menu {
+    background:rgb(243, 243, 60);
 }
 
 @keyframes fade {

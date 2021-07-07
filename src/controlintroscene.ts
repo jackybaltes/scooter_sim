@@ -24,22 +24,22 @@ const content = `<h1>Taiwan Scooter Licence Test</h1>
     
     <table>
     <tr>
-    <td>w</td><td>Increase throttle</td>
+    <td>'w'</td><td>Increase throttle</td>
     </tr>
     <tr>
-    <td>s</td><td>Decrease throttle</td>
+    <td>'s'</td><td>Decrease throttle</td>
     </tr>
     <tr>
-    <td>a</td><td>Steer left</td>
+    <td>'a'</td><td>Steer left</td>
     </tr>
     <tr>
-    <td>d</td><td>Steer right</td>
+    <td>'d'</td><td>Steer right</td>
     </tr>
     <tr>
-    <td>q</td><td>Turn signal left</td>
+    <td>'q'</td><td>Turn signal left</td>
     </tr>
     <tr>
-    <td>d</td><td>Turn signal right</td>
+    <td>'d'</td><td>Turn signal right</td>
     </tr>
     </table>
 
