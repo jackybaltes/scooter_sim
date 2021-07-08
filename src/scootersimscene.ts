@@ -16,12 +16,19 @@ import URDFLoader, { URDFRobot } from '../urdf/src/URDFLoader.js';
 import {Track} from './track';
 import {Timer} from './timer';
 import {Robot} from './robot'
-import {ControlServer} from './server';
+import {ControlServer} from './controlserver';
 import { JBAnimation } from './jbanimation';
 import { TaiwanBear } from './taiwanbear';
 import { TaiwanPolice, TaiwanCopMale } from './taiwancop';
 import { JBScene } from './jbscene';
 import { JBGame } from './jbgame';
+
+enum SimChapter {
+    FreeDriving = "Free Driving",
+    SlowDriving = "Slow Driving",
+    HookTurn = "Hook Turn",
+    DrivingTest = "Driving Test",
+}
 
 class ScooterSimScene extends JBScene {
     g = 9.81;
@@ -177,66 +184,65 @@ class ScooterSimScene extends JBScene {
         console.log("ScooterSimScene create");
     }
 
-    enter( prev : JBScene ) {
+    async enter( prev : JBScene ) {
 
-        this.preload().then( () => {
-            console.log( `ScooterSimScene enter ${prev}`);
-            
-            this.createDOM();
-    
-            console.log("ScooterSimScene create after preload");
-            //setting the HTML elements
-            this.score_element.innerHTML = "";
-            //creating the stopwatch
-            this.stopwatch = new Timer();
-
-            this.background = new Color(0x92fffb);
-            
-            this.camera = new PerspectiveCamera();
-            this.camera.position.set( -11, 10, 17 );
-            this.camera.lookAt( -11, 0, 17 );
-            
-            // this.renderer = new WebGLRenderer({ antialias: false });
-            // //renderer.outputEncoding = sRGBEncoding;
-            // //renderer.shadowMap.enabled = true;
-            // //renderer.shadowMap.type = PCFSoftShadowMap;
-            // document.body.appendChild( this.renderer.domElement );
+        await this.preload(); 
+        console.log( `ScooterSimScene enter ${prev}`);
         
-            const directionalLight : DirectionalLight = new DirectionalLight(0xffffff, 1.0);
-            directionalLight.castShadow = true;
-            directionalLight.shadow.mapSize.setScalar(1024);
-            directionalLight.position.set(30, 100, 5);
-            directionalLight.target.position.set( 0, 0, 0 );
+        this.createDOM();
+
+        console.log("ScooterSimScene create after preload");
+        //setting the HTML elements
+        this.score_element.innerHTML = "";
+        //creating the stopwatch
+        this.stopwatch = new Timer();
+
+        this.background = new Color(0x92fffb);
         
-            const ambientLight : AmbientLight = new AmbientLight(0xffffff, 0.01);
-            //ading the stuff to the scene
-            this.add( directionalLight );
-            this.add(ambientLight);
-
-            this.controls = new OrbitControls( this.camera, this.renderer.domElement);
-            this.controls.minDistance = 4;
-            this.controls.target.y = 1;
-            this.controls.update();
-            // Load robot
-            
-            let count = 0;
-            setInterval( function () {
-                let msg = `State message ${count}`;  
-                console.log( `Trying to send message ${msg}`);
-                this.controlServer.send( msg ); 
-                count++; }
-            , 5000 );
+        this.camera = new PerspectiveCamera();
+        this.camera.position.set( -11, 10, 17 );
+        this.camera.lookAt( -11, 0, 17 );
+        
+        // this.renderer = new WebGLRenderer({ antialias: false });
+        // //renderer.outputEncoding = sRGBEncoding;
+        // //renderer.shadowMap.enabled = true;
+        // //renderer.shadowMap.type = PCFSoftShadowMap;
+        // document.body.appendChild( this.renderer.domElement );
     
-            this._onResize();
-            window.addEventListener('resize', this.onResize );
-            document.addEventListener("keydown", this.user_input_down);
-            document.addEventListener("keyup", this.user_input_up);
+        const directionalLight : DirectionalLight = new DirectionalLight(0xffffff, 1.0);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.setScalar(1024);
+        directionalLight.position.set(30, 100, 5);
+        directionalLight.target.position.set( 0, 0, 0 );
+    
+        const ambientLight : AmbientLight = new AmbientLight(0xffffff, 0.01);
+        //ading the stuff to the scene
+        this.add( directionalLight );
+        this.add(ambientLight);
 
-            this.clock = new Clock();
+        this.controls = new OrbitControls( this.camera, this.renderer.domElement);
+        this.controls.minDistance = 4;
+        this.controls.target.y = 1;
+        this.controls.update();
+        // Load robot
+        
+        let count = 0;
+        setInterval( function () {
+            let msg = `State message ${count}`;  
+            console.log( `Trying to send message ${msg}`);
+            this.controlServer.send( msg ); 
+            count++; }
+        , 5000 );
 
-            //setting the server to port 8878
-            this.controlServer = new ControlServer(8878);
-        });
+        this._onResize();
+        window.addEventListener('resize', this.onResize );
+        document.addEventListener("keydown", this.user_input_down);
+        document.addEventListener("keyup", this.user_input_up);
+
+        this.clock = new Clock();
+
+        //setting the server to port 8878
+        this.controlServer = new ControlServer(8878);
     }
 
     clock : Clock = new Clock(); 
@@ -275,16 +281,18 @@ class ScooterSimScene extends JBScene {
         
             this.curent_score = this.test_track.getscore();
             
-            if( this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= - this.max_phi ) {
-                this.stopwatch.resetTimer();
-                this.stopwatch.startTimer();
-                this.test_track.init_track()
-                this.scooterObj.init_position();
-                this.phi =0.0;
-                this.phi_vel = 0.001;
-    
-                this.prev_rx = 0;
-                this.prev_ry = 0;
+            if (true) { // (this.phase !== SimChapter.FreeDriving ) {
+                if( this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= - this.max_phi ) {
+                    this.stopwatch.resetTimer();
+                    this.stopwatch.startTimer();
+                    this.test_track.init_track()
+                    this.scooterObj.init_position();
+                    this.phi =0.0;
+                    this.phi_vel = 0.001;
+        
+                    this.prev_rx = 0;
+                    this.prev_ry = 0;
+                }
             }
         }
     
@@ -521,4 +529,4 @@ class ScooterSimScene extends JBScene {
 
 }
 
-export { ScooterSimScene } ;
+export { ScooterSimScene, SimChapter } ;

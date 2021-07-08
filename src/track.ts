@@ -3,7 +3,7 @@ import {
     Color,
 } from 'three';
 
-export class Track {
+class Track {
     protected scooter_obj_blinker_state:boolean;
     protected start_score:number;
     protected lost:boolean;
@@ -20,7 +20,7 @@ export class Track {
     protected track_; // the track described as a threeJS object
 
 
-    //Parsin the track to find visuals
+    //Parsing the track to find visuals
     protected zebra_l;
     protected zebra_r;
     protected traffic_r;
@@ -175,13 +175,13 @@ export class Track {
     
 
 
-        this.part_1_colision_callback(3000,this.stop_blink_zebra);
-        this.part_2_colision_callback(3000,this.trun_traffic_green);
-        this.part_3_colision_callback(3000);
-        this.part_4_colision_callback(3000);
-        this.part_5_colision_callback(3000,this.stop_blink_train);
-        this.part_0_colision_callback(7000);
-        this.part_35_colision_callback();
+        this.part_1_collision_callback(3000,this.stop_blink_zebra);
+        this.part_2_collision_callback(3000,this.trun_traffic_green);
+        this.part_3_collision_callback(3000);
+        this.part_4_collision_callback(3000);
+        this.part_5_collision_callback(3000,this.stop_blink_train);
+        this.part_0_collision_callback(7000);
+        this.part_35_collision_callback();
 
 
         this.coord = [[-11.57,15.86],[-11.57,14.00],[-11.92,12.80],[-11.92,-2.35],[-11.35,-8.90],[-11.3,-14.07],[-9.94,-15.59],[-8.64,-16.11],[-7.16,-16.18],[1.57,-16.24],[2.51,-15.88],[2.97,-14.85],[4.17,-13.96],[2.78,-12.92],[2.78,-4.19],[2.31,-3.30],[1.22,-3.03],[-8.54,-3.03],[-8.58,2.311],[0.77,2.37],[1.80,2.42],[2.63,2.98],[2.89,3.96],[2.88,15.16],[5.90,15.16],[5.87,0.49],[-4.61,0.49],[-4.61,-1.22],[2.75,-1.18],[4.25,-1.18],[4.25,-4.84],[4.81,-5.73],[5.80,-6.20],[5.69,-20.58],[-4.5,-20.58],[-4.5,-17.51],[-8.68,-17.46],[-9.98,-17.13],[-11.22,-16.45],[-12.23,-15.43],[-13.05,-14.09],[-13.01,-8.94],[-12.40,-2.31],[-12.40,12.80],[-12.69,14.00],[-12.74,15.85]];
@@ -503,7 +503,7 @@ export class Track {
 
 
 
-    async part_1_colision_callback(time_needed_ms,function_ = null)
+    async part_1_collision_callback(time_needed_ms,function_ = null)
     {
         this.part1_cango_after = false; 
         while(true)
@@ -547,7 +547,7 @@ export class Track {
 
 
 
-    async part_2_colision_callback(time_needed_ms,function_ = null)
+    async part_2_collision_callback(time_needed_ms,function_ = null)
     {
         this.part2_cango_after = false; 
         while(true)
@@ -590,7 +590,7 @@ export class Track {
 
 
 
-    async part_3_colision_callback(time_needed_ms,function_ = null)
+    async part_3_collision_callback(time_needed_ms,function_ = null)
     {
         this.part3_cango_after = false; 
         while(true)
@@ -643,7 +643,7 @@ export class Track {
     }
 
 
-    async part_4_colision_callback(time_needed_ms,function_ = null)
+    async part_4_collision_callback(time_needed_ms,function_ = null)
     {
         this.part4_cango_after = false; 
         while(true)
@@ -685,7 +685,7 @@ export class Track {
 
 
 
-    async part_5_colision_callback(time_needed_ms,function_ = null)
+    async part_5_collision_callback(time_needed_ms,function_ = null)
     {
         this.part4_cango_after = false; 
         while(true)
@@ -726,7 +726,7 @@ export class Track {
 
 
 
-    async part_0_colision_callback(time_needed_ms,function_ = null)
+    async part_0_collision_callback(time_needed_ms,function_ = null)
     {
         this.part0_cango_after = false; 
         while(true)
@@ -763,7 +763,7 @@ export class Track {
 
 
 
-    async part_35_colision_callback()
+    async part_35_collision_callback()
     {
         while(true)
         {   
@@ -777,10 +777,9 @@ export class Track {
             await this.sleep(100);
         }        
     }
-
-
-
 }
+
+export {  Track }; 
 
 
 

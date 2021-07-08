@@ -9,7 +9,7 @@
     
     "files": [
         "src/main.ts",
-        "src/server.ts",
+        "src/controlserver.ts",
         "src/track.ts",
         "src/robot.ts",
         "src/timer.ts",

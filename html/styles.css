@@ -303,6 +303,19 @@ button.game_button_next {
     float: right;
 }
 
+button.chapter_select {
+    background: rgb(173, 185, 209);
+    color: black;
+    font-size: inherit;
+}
+
+button#chapter_driving_test.chapter_select {
+    background: rgb(3, 138, 26);
+    color: white;
+    font-size: inherit;
+}
+
+
 div#sim {
     font-size: 28px;
     background:rgb(243, 243, 60);

@@ -26,6 +26,8 @@ class IntroScene extends JBScene {
     prev : string;
     next : string;
 
+    loaded : boolean = false;
+
     constructor( name : string, game : JBGame, content: string, prev: string, next : string ) {
         super(name, game );
         this.content = content;
@@ -80,31 +82,33 @@ class IntroScene extends JBScene {
         }
     }
 
-    enter( prev : JBScene ) {
-        this.preload().then( () => {
+    async enter( prev : JBScene ) {
+        this.loaded = false;
+        await this.preload();
+        
+        this.createDOM();
 
-            this.createDOM();
+        // camera
+        let vWidth = 300;
+        let vHeight = 300;
 
-            // camera
-            let vWidth = 300;
-            let vHeight = 300;
+        this.camera = new OrthographicCamera( vWidth / -2, vWidth / 2 , vHeight / -2, vHeight / 2, 1, 2);
+        this.camera.position.x = 0;
+        this.camera.position.y = 0;
+        this.camera.position.z = 1;
+        this.camera.rotation.x = 0.0 * (Math.PI / 180);
 
-            this.camera = new OrthographicCamera( vWidth / -2, vWidth / 2 , vHeight / -2, vHeight / 2, 1, 2);
-            this.camera.position.x = 0;
-            this.camera.position.y = 0;
-            this.camera.position.z = 1;
-            this.camera.rotation.x = 0.0 * (Math.PI / 180);
+        this.add( this.camera );
 
-            this.add( this.camera );
+        this.material = new MeshBasicMaterial( { map: this.texture,  side: DoubleSide, } );
 
-            this.material = new MeshBasicMaterial( { map: this.texture,  side: DoubleSide, } );
+        this.plane = new Mesh(new PlaneGeometry( vWidth, vHeight), this.material );
+        this.add( this.plane );
 
-            this.plane = new Mesh(new PlaneGeometry( vWidth, vHeight), this.material );
-            this.add( this.plane );
-
-            this._onResize();
-            window.addEventListener('resize', this.onResize );        
-        });    
+        this._onResize();
+        window.addEventListener('resize', this.onResize );  
+        
+        this.loaded = true;    
     }
 
     tick( ) {

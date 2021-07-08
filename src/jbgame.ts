@@ -7,6 +7,7 @@ import { JBScene } from './jbscene';
 import { ScooterSimScene } from './scootersimscene';
 import { StartIntroScene } from './startintroscene';
 import { ControlIntroScene } from './controlintroscene';
+import { ChapterSelectScene } from './chapterselectscene';
 
 class JBGame {
     name : string;
@@ -26,6 +27,9 @@ class JBGame {
         let sIntro =  new ControlIntroScene( this );
         this.addScene( sIntro );
         
+        let sCSel = new ChapterSelectScene( this );
+        this.addScene( sCSel );
+
         let sSim =  new ScooterSimScene( "sim", this );
         this.addScene( sSim );
     }
@@ -94,16 +98,18 @@ class JBGame {
     switch( nextSceneName : string ) {
         console.log( `game switching to ${nextSceneName}`);
 
-        let ns = this.sceneByName( nextSceneName );
         if ( this.currentScene !== null ) {
-            this.currentScene.leave( this.currentScene );
-            this.currentScene = null;
-            this.currentSceneName = "UNKNOWN";
-        }
-        if ( ns !== null ) {
-            this.currentSceneName = nextSceneName;
-            this.currentScene = ns;
-            ns.enter( ns );
+            this.currentScene.leave( this.currentScene ).then( () => {
+                this.currentSceneName = "UNKNOWN";    
+            }).then( () => {
+                let ns = this.sceneByName( nextSceneName );
+                if ( ns !== null ) {
+                    ns.enter( ns ).then( () => { 
+                        this.currentSceneName = nextSceneName;
+                        this.currentScene = ns;
+                    });        
+                }
+            });
         }
     }
 }

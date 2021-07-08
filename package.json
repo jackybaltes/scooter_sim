@@ -5,11 +5,11 @@
   "main": "src/URDFLoader.js",
   "type": "module",
   "scripts": {
-    "start": "concurrently --kill-others \"rollup -c -w\" \"( cd dist; static-server)\" ",
+    "start": "concurrently --kill-others \"rollup -c -w\" \"( cd dist; npx static-server)\" ",
     "build": "npx tsc && npx rollup -c rollup.config.js",
     "test": "jest",
     "lint": "eslint \"./src/*.js\" \"./test/*.js\" && tsc -p tsconfig.json --noEmit",
-    "deploy": "gh-pages -d dist"
+    "deploy": "npx gh-pages -d dist"
   },
   "files": [
     "src/*.ts",

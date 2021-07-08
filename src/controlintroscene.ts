@@ -51,7 +51,7 @@ const content = `<h1>Taiwan Scooter Licence Test</h1>
 class ControlIntroScene extends IntroScene {
     
     constructor( game : JBGame ) {
-        super( "control_intro", game, content, "start_intro", "sim" );
+        super( "control_intro", game, content, "start_intro", "chapter_select" );
     }
 }
 

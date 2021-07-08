@@ -25,7 +25,7 @@ class JBScene extends Scene {
 
     pause( ) { }
 
-    enter( prev : JBScene ) { 
+    async enter( prev : JBScene ) { 
         this.renderer = new WebGLRenderer({ antialias: false });
         //renderer.outputEncoding = sRGBEncoding;
         //renderer.shadowMap.enabled = true;
@@ -35,7 +35,7 @@ class JBScene extends Scene {
         parent.appendChild( this.renderer.domElement );
     }
     
-    leave( next : JBScene ) {
+    async leave( next : JBScene ) {
         let parent = document.getElementById( "game" );
         while ( parent.lastChild ) {
             parent.removeChild( parent.lastChild );
