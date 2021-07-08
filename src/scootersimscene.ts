@@ -23,7 +23,7 @@ import { TaiwanPolice, TaiwanCopMale } from './taiwancop';
 import { JBScene } from './jbscene';
 import { JBGame } from './jbgame';
 
-enum SimChapter {
+enum SimPhase {
     FreeDriving = "Free Driving",
     SlowDriving = "Slow Driving",
     HookTurn = "Hook Turn",
@@ -529,4 +529,4 @@ class ScooterSimScene extends JBScene {
 
 }
 
-export { ScooterSimScene, SimChapter } ;
+export { ScooterSimScene, SimPhase } ;

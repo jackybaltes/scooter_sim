@@ -16,7 +16,7 @@ import {
 import { IntroScene } from './introscene';
 import { JBScene } from './jbscene';
 import { JBGame } from './jbgame';
-
+import { SimPhase } from './scootersimscene';
 
 class ChapterSelectScene extends IntroScene {
     
@@ -63,19 +63,19 @@ class ChapterSelectScene extends IntroScene {
         nb =  document.getElementById( "chapter_free_driving");
         nb.onclick = () => {
             console.log("chapter free driving");
-            alert("free driving");
+            this.game.switch( "sim", SimPhase.FreeDriving );
         };
 
         nb =  document.getElementById( "chapter_slow_driving");
         nb.onclick = () => {
             console.log("chapter slow driving");
-            alert("slow driving");
+            this.game.switch( "sim", SimPhase.SlowDriving );
         };
 
         nb =  document.getElementById( "chapter_driving_test");
         nb.onclick = () => {
             console.log("chapter driving test");
-            alert("driving test");
+            this.game.switch( "sim", SimPhase.DrivingTest );
         };
         
 

@@ -142,7 +142,6 @@ class URDFLoader {
     }
 
     parse(content) {
-
         const packages = this.packages;
         const loadMeshCb = this.loadMeshCb;
         const parseVisual = this.parseVisual;

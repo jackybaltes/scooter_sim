@@ -5,6 +5,7 @@ import { JBGame } from './jbgame';
 
 class JBScene extends Scene {
     name : string;
+    phase : string;
     game : JBGame;
     camera : PerspectiveCamera | OrthographicCamera;
 
@@ -25,14 +26,17 @@ class JBScene extends Scene {
 
     pause( ) { }
 
-    async enter( prev : JBScene ) { 
+    async enter( prev : JBScene, phase? : string ) { 
         this.renderer = new WebGLRenderer({ antialias: false });
         //renderer.outputEncoding = sRGBEncoding;
         //renderer.shadowMap.enabled = true;
         //renderer.shadowMap.type = PCFSoftShadowMap;
         this.renderer.domElement.id = "id_" + this.name;
+
         let parent = document.getElementById( "game" );
         parent.appendChild( this.renderer.domElement );
+
+        this.phase = phase;
     }
     
     async leave( next : JBScene ) {
