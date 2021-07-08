@@ -47776,7 +47776,6 @@
 	    }
 
 	    parse(content) {
-
 	        const packages = this.packages;
 	        const loadMeshCb = this.loadMeshCb;
 	        const parseVisual = this.parseVisual;
@@ -48296,7 +48295,7 @@
 
 	}
 
-	var __awaiter$5 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$6 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -48370,13 +48369,13 @@
 	        this.part4_failled = false;
 	        this.part5_failled = false;
 	        this.line_failled = false;
-	        this.part_1_colision_callback(3000, this.stop_blink_zebra);
-	        this.part_2_colision_callback(3000, this.trun_traffic_green);
-	        this.part_3_colision_callback(3000);
-	        this.part_4_colision_callback(3000);
-	        this.part_5_colision_callback(3000, this.stop_blink_train);
-	        this.part_0_colision_callback(7000);
-	        this.part_35_colision_callback();
+	        this.part_1_collision_callback(3000, this.stop_blink_zebra);
+	        this.part_2_collision_callback(3000, this.trun_traffic_green);
+	        this.part_3_collision_callback(3000);
+	        this.part_4_collision_callback(3000);
+	        this.part_5_collision_callback(3000, this.stop_blink_train);
+	        this.part_0_collision_callback(7000);
+	        this.part_35_collision_callback();
 	        this.coord = [[-11.57, 15.86], [-11.57, 14.00], [-11.92, 12.80], [-11.92, -2.35], [-11.35, -8.90], [-11.3, -14.07], [-9.94, -15.59], [-8.64, -16.11], [-7.16, -16.18], [1.57, -16.24], [2.51, -15.88], [2.97, -14.85], [4.17, -13.96], [2.78, -12.92], [2.78, -4.19], [2.31, -3.30], [1.22, -3.03], [-8.54, -3.03], [-8.58, 2.311], [0.77, 2.37], [1.80, 2.42], [2.63, 2.98], [2.89, 3.96], [2.88, 15.16], [5.90, 15.16], [5.87, 0.49], [-4.61, 0.49], [-4.61, -1.22], [2.75, -1.18], [4.25, -1.18], [4.25, -4.84], [4.81, -5.73], [5.80, -6.20], [5.69, -20.58], [-4.5, -20.58], [-4.5, -17.51], [-8.68, -17.46], [-9.98, -17.13], [-11.22, -16.45], [-12.23, -15.43], [-13.05, -14.09], [-13.01, -8.94], [-12.40, -2.31], [-12.40, 12.80], [-12.69, 14.00], [-12.74, 15.85]];
 	        this.arrayX = [];
 	        this.arrayY = [];
@@ -48389,14 +48388,14 @@
 	        return this.lost;
 	    }
 	    stop_blink_zebra() {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            this.zebra_blink = false;
 	            this.change_color(this.zebra_l, this.black);
 	            this.change_color(this.zebra_r, this.black);
 	        });
 	    }
 	    blink_zebra() {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            if (!this.zebra_blink) {
 	                this.zebra_blink = true;
 	                while (this.zebra_blink) {
@@ -48411,14 +48410,14 @@
 	        });
 	    }
 	    stop_blink_train() {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            this.train_blink = false;
 	            this.change_color(this.train_l, this.black);
 	            this.change_color(this.train_r, this.black);
 	        });
 	    }
 	    blink_train() {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            if (!this.train_blink) {
 	                this.train_blink = true;
 	                while (this.train_blink) {
@@ -48434,7 +48433,7 @@
 	        });
 	    }
 	    trun_traffic_red() {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            //is green
 	            if (this.traffic_state == 2) {
 	                this.change_color(this.traffic_r, this.black);
@@ -48448,7 +48447,7 @@
 	        });
 	    }
 	    trun_traffic_green() {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            //is red
 	            if (this.traffic_state == 0) {
 	                this.change_color(this.traffic_r, this.black);
@@ -48588,8 +48587,8 @@
 	        }
 	        return odd;
 	    }
-	    part_1_colision_callback(time_needed_ms, function_ = null) {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	    part_1_collision_callback(time_needed_ms, function_ = null) {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            this.part1_cango_after = false;
 	            while (true) {
 	                var var_counter = 0;
@@ -48620,8 +48619,8 @@
 	            }
 	        });
 	    }
-	    part_2_colision_callback(time_needed_ms, function_ = null) {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	    part_2_collision_callback(time_needed_ms, function_ = null) {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            this.part2_cango_after = false;
 	            while (true) {
 	                var var_counter = 0;
@@ -48652,8 +48651,8 @@
 	            }
 	        });
 	    }
-	    part_3_colision_callback(time_needed_ms, function_ = null) {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	    part_3_collision_callback(time_needed_ms, function_ = null) {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            this.part3_cango_after = false;
 	            while (true) {
 	                var ori_Ok = this.scooter_yaw < 1.8 && this.scooter_yaw > 1.4;
@@ -48690,8 +48689,8 @@
 	            }
 	        });
 	    }
-	    part_4_colision_callback(time_needed_ms, function_ = null) {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	    part_4_collision_callback(time_needed_ms, function_ = null) {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            this.part4_cango_after = false;
 	            while (true) {
 	                var var_counter = 0;
@@ -48719,8 +48718,8 @@
 	            }
 	        });
 	    }
-	    part_5_colision_callback(time_needed_ms, function_ = null) {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	    part_5_collision_callback(time_needed_ms, function_ = null) {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            this.part4_cango_after = false;
 	            while (true) {
 	                var var_counter = 0;
@@ -48751,8 +48750,8 @@
 	            }
 	        });
 	    }
-	    part_0_colision_callback(time_needed_ms, function_ = null) {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	    part_0_collision_callback(time_needed_ms, function_ = null) {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            this.part0_cango_after = false;
 	            while (true) {
 	                var var_counter = 0;
@@ -48777,8 +48776,8 @@
 	            }
 	        });
 	    }
-	    part_35_colision_callback() {
-	        return __awaiter$5(this, void 0, void 0, function* () {
+	    part_35_collision_callback() {
+	        return __awaiter$6(this, void 0, void 0, function* () {
 	            while (true) {
 	                if (this.part35_on && !this.scooter_obj_blinker_state) {
 	                    this.part35_failled = true;
@@ -52377,7 +52376,7 @@ ${indent}columns: ${matrix.columns}
 	  return V.mmul(Matrix.diag(s).mmul(U.transpose()));
 	}
 
-	var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$5 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -52460,7 +52459,7 @@ ${indent}columns: ${matrix.columns}
 	        this.change_color(this.stop_light, this.black);
 	    }
 	    stop_blink() {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            this.blinking_left = false;
 	            this.blinking_right = false;
 	            this.change_color(this.blinker_l, this.black);
@@ -52468,7 +52467,7 @@ ${indent}columns: ${matrix.columns}
 	        });
 	    }
 	    blink_right() {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            if (!this.blinking_right) {
 	                this.blinking_right = true;
 	                while (this.blinking_right) {
@@ -52483,7 +52482,7 @@ ${indent}columns: ${matrix.columns}
 	        });
 	    }
 	    blink_left() {
-	        return __awaiter$4(this, void 0, void 0, function* () {
+	        return __awaiter$5(this, void 0, void 0, function* () {
 	            if (!this.blinking_left) {
 	                this.blinking_left = true;
 	                while (this.blinking_left) {
@@ -56708,7 +56707,7 @@ ${indent}columns: ${matrix.columns}
 
 	}
 
-	var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -56729,12 +56728,12 @@ ${indent}columns: ${matrix.columns}
 	        this.cls = cls;
 	    }
 	    init() {
-	        return __awaiter$3(this, void 0, void 0, function* () {
+	        return __awaiter$4(this, void 0, void 0, function* () {
 	            yield this.preload();
 	        });
 	    }
 	    preload() {
-	        return __awaiter$3(this, void 0, void 0, function* () {
+	        return __awaiter$4(this, void 0, void 0, function* () {
 	            const gltfLoader = new GLTFLoader();
 	            const data = yield gltfLoader.loadAsync(this.path);
 	            this.data = data;
@@ -56803,7 +56802,7 @@ ${indent}columns: ${matrix.columns}
 	    }
 	}
 
-	var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -56821,26 +56820,31 @@ ${indent}columns: ${matrix.columns}
 	        console.log("JBScene constructor");
 	    }
 	    preload() {
-	        return __awaiter$2(this, void 0, void 0, function* () {
+	        return __awaiter$3(this, void 0, void 0, function* () {
 	            console.log("JBScene preload");
 	        });
 	    }
 	    start() { this.enter(null); }
 	    pause() { }
-	    enter(prev) {
-	        this.renderer = new WebGLRenderer({ antialias: false });
-	        //renderer.outputEncoding = sRGBEncoding;
-	        //renderer.shadowMap.enabled = true;
-	        //renderer.shadowMap.type = PCFSoftShadowMap;
-	        this.renderer.domElement.id = "id_" + this.name;
-	        let parent = document.getElementById("game");
-	        parent.appendChild(this.renderer.domElement);
+	    enter(prev, phase) {
+	        return __awaiter$3(this, void 0, void 0, function* () {
+	            this.renderer = new WebGLRenderer({ antialias: false });
+	            //renderer.outputEncoding = sRGBEncoding;
+	            //renderer.shadowMap.enabled = true;
+	            //renderer.shadowMap.type = PCFSoftShadowMap;
+	            this.renderer.domElement.id = "id_" + this.name;
+	            let parent = document.getElementById("game");
+	            parent.appendChild(this.renderer.domElement);
+	            this.phase = phase;
+	        });
 	    }
 	    leave(next) {
-	        let parent = document.getElementById("game");
-	        while (parent.lastChild) {
-	            parent.removeChild(parent.lastChild);
-	        }
+	        return __awaiter$3(this, void 0, void 0, function* () {
+	            let parent = document.getElementById("game");
+	            while (parent.lastChild) {
+	                parent.removeChild(parent.lastChild);
+	            }
+	        });
 	    }
 	    tick() { }
 	    _onResize() {
@@ -56851,7 +56855,7 @@ ${indent}columns: ${matrix.columns}
 	    }
 	}
 
-	var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -56860,6 +56864,13 @@ ${indent}columns: ${matrix.columns}
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
+	var SimPhase;
+	(function (SimPhase) {
+	    SimPhase["FreeDriving"] = "Free Driving";
+	    SimPhase["SlowDriving"] = "Slow Driving";
+	    SimPhase["HookTurn"] = "Hook Turn";
+	    SimPhase["DrivingTest"] = "Driving Test";
+	})(SimPhase || (SimPhase = {}));
 	class ScooterSimScene extends JBScene {
 	    constructor(name, game) {
 	        super(name, game);
@@ -56907,7 +56918,7 @@ ${indent}columns: ${matrix.columns}
 	        const _super = Object.create(null, {
 	            preload: { get: () => super.preload }
 	        });
-	        return __awaiter$1(this, void 0, void 0, function* () {
+	        return __awaiter$2(this, void 0, void 0, function* () {
 	            _super.preload.call(this);
 	            console.log("ScooterSimScene preload");
 	            const manager = new LoadingManager();
@@ -56974,8 +56985,13 @@ ${indent}columns: ${matrix.columns}
 	        this.timer_element = document.getElementById("timer");
 	        console.log("ScooterSimScene create");
 	    }
-	    enter(prev) {
-	        this.preload().then(() => {
+	    enter(prev, phase) {
+	        const _super = Object.create(null, {
+	            enter: { get: () => super.enter }
+	        });
+	        return __awaiter$2(this, void 0, void 0, function* () {
+	            _super.enter.call(this, prev, phase);
+	            yield this.preload();
 	            console.log(`ScooterSimScene enter ${prev}`);
 	            this.createDOM();
 	            console.log("ScooterSimScene create after preload");
@@ -57038,20 +57054,25 @@ ${indent}columns: ${matrix.columns}
 	            this.steer_keyboard();
 	        }
 	        this.timer_element.innerHTML = this.stopwatch.getShowTime();
-	        if (this.test_track && this.scooterObj) {
-	            this.test_track.update(this.scooterObj.get_wheel_position(), this.scooterObj.scooter_yaw_rotation, this.scooterObj.blinking_left, this.scooterObj.velocity == 0);
-	            this.score_element.innerHTML = "SCORE : " + this.curent_score + "  |  BEST : " + this.best_score;
-	            this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
-	            this.curent_score = this.test_track.getscore();
-	            if (this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= -this.max_phi) {
-	                this.stopwatch.resetTimer();
-	                this.stopwatch.startTimer();
-	                this.test_track.init_track();
-	                this.scooterObj.init_position();
-	                this.phi = 0.0;
-	                this.phi_vel = 0.001;
-	                this.prev_rx = 0;
-	                this.prev_ry = 0;
+	        if (this.phase !== SimPhase.FreeDriving) {
+	            alert("check track");
+	            if (this.test_track && this.scooterObj) {
+	                this.test_track.update(this.scooterObj.get_wheel_position(), this.scooterObj.scooter_yaw_rotation, this.scooterObj.blinking_left, this.scooterObj.velocity == 0);
+	                this.score_element.innerHTML = "SCORE : " + this.curent_score + "  |  BEST : " + this.best_score;
+	                this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
+	                this.curent_score = this.test_track.getscore();
+	                { // (this.phase !== SimChapter.FreeDriving ) {
+	                    if (this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= -this.max_phi) {
+	                        this.stopwatch.resetTimer();
+	                        this.stopwatch.startTimer();
+	                        this.test_track.init_track();
+	                        this.scooterObj.init_position();
+	                        this.phi = 0.0;
+	                        this.phi_vel = 0.001;
+	                        this.prev_rx = 0;
+	                        this.prev_ry = 0;
+	                    }
+	                }
 	            }
 	        }
 	        if (this.scooterObj) {
@@ -57258,7 +57279,7 @@ ${indent}columns: ${matrix.columns}
 	    }
 	}
 
-	var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -57271,12 +57292,13 @@ ${indent}columns: ${matrix.columns}
 	    constructor(name, game, content, prev, next) {
 	        super(name, game);
 	        this.loader = null;
+	        this.loaded = false;
 	        this.content = content;
 	        this.prev = prev;
 	        this.next = next;
 	    }
 	    preload() {
-	        return __awaiter(this, void 0, void 0, function* () {
+	        return __awaiter$1(this, void 0, void 0, function* () {
 	            if (this.loader === null) {
 	                this.loader = new TextureLoader();
 	            }
@@ -57315,7 +57337,9 @@ ${indent}columns: ${matrix.columns}
 	        }
 	    }
 	    enter(prev) {
-	        this.preload().then(() => {
+	        return __awaiter$1(this, void 0, void 0, function* () {
+	            this.loaded = false;
+	            yield this.preload();
 	            this.createDOM();
 	            // camera
 	            let vWidth = 300;
@@ -57331,6 +57355,7 @@ ${indent}columns: ${matrix.columns}
 	            this.add(this.plane);
 	            this._onResize();
 	            window.addEventListener('resize', this.onResize);
+	            this.loaded = true;
 	        });
 	    }
 	    tick() {
@@ -57405,7 +57430,74 @@ that is able to pass the Taiwan scooter licence test.</p>
     `;
 	class ControlIntroScene extends IntroScene {
 	    constructor(game) {
-	        super("control_intro", game, content, "start_intro", "sim");
+	        super("control_intro", game, content, "start_intro", "chapter_select");
+	    }
+	}
+
+	var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	class ChapterSelectScene extends IntroScene {
+	    constructor(game) {
+	        let name = "chapter_select";
+	        let content = `<h1>Taiwan Scooter Licence Test</h1> 
+        
+        <h2>Select Chapter</h2>
+    
+        <table>
+        <tr>
+        <td><button id="chapter_free_driving" class="chapter_select">Practice: Free Driving</button></td>
+        </tr>
+        <tr>
+        <td><button id="chapter_slow_driving" class="chapter_select">Practice: Slow Driving</button></td>
+        </tr>
+        <tr>
+        <td><button id="chapter_railway_crossing" class="chapter_select">Practice: Railway Crossing</button></td>
+        </tr>
+        <tr>
+        <td><button id="chapter_hook_turn" class="chapter_select">Practice: Hook Turn</button></td>
+        </tr>
+        <tr>
+        <td><button id="chapter_driving_test" class="chapter_select">Take the Driving Test</button></td>
+        </tr>
+        </table>
+    
+        <button id="${name}_btn_prev" class="game_button_prev">Previous</button>
+        `;
+	        super(name, game, content, "control_intro", "");
+	    }
+	    delay(ms) {
+	        return new Promise(resolve => setTimeout(resolve, ms));
+	    }
+	    enter(prev) {
+	        const _super = Object.create(null, {
+	            enter: { get: () => super.enter }
+	        });
+	        return __awaiter(this, void 0, void 0, function* () {
+	            yield _super.enter.call(this, prev);
+	            let nb;
+	            nb = document.getElementById("chapter_free_driving");
+	            nb.onclick = () => {
+	                console.log("chapter free driving");
+	                this.game.switch("sim", SimPhase.FreeDriving);
+	            };
+	            nb = document.getElementById("chapter_slow_driving");
+	            nb.onclick = () => {
+	                console.log("chapter slow driving");
+	                this.game.switch("sim", SimPhase.SlowDriving);
+	            };
+	            nb = document.getElementById("chapter_driving_test");
+	            nb.onclick = () => {
+	                console.log("chapter driving test");
+	                this.game.switch("sim", SimPhase.DrivingTest);
+	            };
+	        });
 	    }
 	}
 
@@ -57422,6 +57514,8 @@ that is able to pass the Taiwan scooter licence test.</p>
 	        this.addScene(s1);
 	        let sIntro = new ControlIntroScene(this);
 	        this.addScene(sIntro);
+	        let sCSel = new ChapterSelectScene(this);
+	        this.addScene(sCSel);
 	        let sSim = new ScooterSimScene("sim", this);
 	        this.addScene(sSim);
 	    }
@@ -57465,18 +57559,20 @@ that is able to pass the Taiwan scooter licence test.</p>
 	            requestAnimationFrame(this.render_no_physics);
 	        }
 	    }
-	    switch(nextSceneName) {
+	    switch(nextSceneName, phase) {
 	        console.log(`game switching to ${nextSceneName}`);
-	        let ns = this.sceneByName(nextSceneName);
 	        if (this.currentScene !== null) {
-	            this.currentScene.leave(this.currentScene);
-	            this.currentScene = null;
-	            this.currentSceneName = "UNKNOWN";
-	        }
-	        if (ns !== null) {
-	            this.currentSceneName = nextSceneName;
-	            this.currentScene = ns;
-	            ns.enter(ns);
+	            this.currentScene.leave(this.currentScene).then(() => {
+	                this.currentSceneName = "UNKNOWN";
+	            }).then(() => {
+	                let ns = this.sceneByName(nextSceneName);
+	                if (ns !== null) {
+	                    ns.enter(ns, phase).then(() => {
+	                        this.currentSceneName = nextSceneName;
+	                        this.currentScene = ns;
+	                    });
+	                }
+	            });
 	        }
 	    }
 	}
