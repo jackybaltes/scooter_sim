@@ -184,7 +184,8 @@ class ScooterSimScene extends JBScene {
         console.log("ScooterSimScene create");
     }
 
-    async enter( prev : JBScene ) {
+    async enter( prev : JBScene, phase : string ) {
+        super.enter( prev, phase );
 
         await this.preload(); 
         console.log( `ScooterSimScene enter ${prev}`);
@@ -281,12 +282,13 @@ class ScooterSimScene extends JBScene {
         
             this.curent_score = this.test_track.getscore();
             
-            if (true) { // (this.phase !== SimChapter.FreeDriving ) {
+            if (this.phase !== SimPhase.FreeDriving ) {
                 if( this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= - this.max_phi ) {
                     this.stopwatch.resetTimer();
                     this.stopwatch.startTimer();
                     this.test_track.init_track()
                     this.scooterObj.init_position();
+                    
                     this.phi =0.0;
                     this.phi_vel = 0.001;
         
@@ -295,7 +297,7 @@ class ScooterSimScene extends JBScene {
                 }
             }
         }
-    
+        
         if( this.scooterObj ) {
             this.physics();
             let cam_dist : number = 10;
@@ -529,4 +531,4 @@ class ScooterSimScene extends JBScene {
 
 }
 
-export { ScooterSimScene, SimPhase } ;
+export { ScooterSimScene, SimPhase } 

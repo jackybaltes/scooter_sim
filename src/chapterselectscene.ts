@@ -77,8 +77,6 @@ class ChapterSelectScene extends IntroScene {
             console.log("chapter driving test");
             this.game.switch( "sim", SimPhase.DrivingTest );
         };
-        
-
     }
 }
 

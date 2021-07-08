@@ -356,7 +356,7 @@ class Track {
     }
 
 
-    update(scooter_pos,scooter_yaw,blinker_left_state,scooter_stoped)
+    update( scooter_pos,scooter_yaw, blinker_left_state, scooter_stoped)
     {
 
         this.scooter_vel = scooter_stoped;
