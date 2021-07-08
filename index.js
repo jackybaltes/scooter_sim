@@ -56812,11 +56812,12 @@ ${indent}columns: ${matrix.columns}
 	    });
 	};
 	class JBScene extends Scene {
-	    constructor(name, game) {
+	    constructor(name, game, root) {
 	        super();
 	        this.onResize = this._onResize.bind(this);
 	        this.name = name;
 	        this.game = game;
+	        this.root = root;
 	        console.log("JBScene constructor");
 	    }
 	    preload() {
@@ -56833,7 +56834,7 @@ ${indent}columns: ${matrix.columns}
 	            //renderer.shadowMap.enabled = true;
 	            //renderer.shadowMap.type = PCFSoftShadowMap;
 	            this.renderer.domElement.id = "id_" + this.name;
-	            let parent = document.getElementById("game");
+	            let parent = document.getElementById(this.root);
 	            parent.appendChild(this.renderer.domElement);
 	            this.phase = phase;
 	        });
@@ -56866,14 +56867,22 @@ ${indent}columns: ${matrix.columns}
 	};
 	var SimPhase;
 	(function (SimPhase) {
+	    SimPhase["FreeDrivingIntro"] = "Free Driving Intro";
 	    SimPhase["FreeDriving"] = "Free Driving";
+	    SimPhase["FreeDrivingDone"] = "Free Driving Done";
+	    SimPhase["SlowDrivingIntro"] = "Slow Driving Intro";
 	    SimPhase["SlowDriving"] = "Slow Driving";
+	    SimPhase["SlowDrivingDone"] = "Slow Driving Done";
+	    SimPhase["HookTurnIntro"] = "Hook Turn Intro";
 	    SimPhase["HookTurn"] = "Hook Turn";
+	    SimPhase["HookTurnDone"] = "Hook Turn Done";
+	    SimPhase["DrivingTestIntro"] = "Driving Test Intro";
 	    SimPhase["DrivingTest"] = "Driving Test";
+	    SimPhase["DrivingTestDone"] = "Driving Test Done";
 	})(SimPhase || (SimPhase = {}));
 	class ScooterSimScene extends JBScene {
-	    constructor(name, game) {
-	        super(name, game);
+	    constructor(name, game, root, overlay) {
+	        super(name, game, root);
 	        this.g = 9.81;
 	        this.test = 0.0;
 	        this.phi_vel = 0.001;
@@ -56891,28 +56900,32 @@ ${indent}columns: ${matrix.columns}
 	        this.w_up = true;
 	        this.s_up = true;
 	        this.html = `
-    <div id="menu">
-            <div style="color: rgb(0, 0, 0);">
-                <select id="cb_camera_view" class="combobox" type=text list=value>
-                    <option value="cb_follow">Follow Camera</option>
-                    <option value="cb_orbit">Orbit View</option>
-                    <!-- <option value="cb_free">Free Camera</option> -->
-                </select>
-            </div>
-            <div>
-                <div style="color: rgb(0, 0, 0); position: relative; width: 90vw;">
-                    <span id ="score" style="color: rgb(0, 0, 0);"> SCORE : 1000  |  BEST : 99999 </span>
-                    <span id ="comment" style="color: rgb(0, 0, 0); position: absolute; top: 0; right: 0; width: 200px; word-wrap: break-word;"> COMMENT  tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt</span>
-                </div>
-                <div id ="timer" style="color: rgb(0, 0, 0);">TIMER = 00:00:00</div>
-            </div>
+    <div class="sim_menu">
+        <div style="color: rgb(0, 0, 0);">
+            <select id="cb_camera_view" class="combobox" type=text list=value>
+                <option value="cb_follow">Follow Camera</option>
+                <option value="cb_orbit">Orbit View</option>
+                <!-- <option value="cb_free">Free Camera</option> -->
+            </select>
         </div>
+        <div>
+            <div style="color: rgb(0, 0, 0); position: relative; width: 90vw;">
+                <span id ="score" style="color: rgb(0, 0, 0);"> SCORE : 1000  |  BEST : 99999 </span>
+                <span id ="comment" style="color: rgb(0, 0, 0); position: absolute; top: 0; right: 0; width: 200px; word-wrap: break-word;"> COMMENT  tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt</span>
+            </div>
+            <div id ="timer" style="color: rgb(0, 0, 0);">TIMER = 00:00:00</div>
+        </div>
+    </div>
+    <div id="id_sim_render" class="sim_render">
+    </div>
+    <div id="id_sim_overlay" class="sim_overlay">
     </div>
     `;
 	        this.clock = new Clock();
 	        this.user_input_up = this._user_input_up.bind(this);
 	        this.user_input_down = this._user_input_down.bind(this);
 	        this.onResize = this._onResize.bind(this);
+	        this.overlay = overlay;
 	    }
 	    preload() {
 	        const _super = Object.create(null, {
@@ -56979,6 +56992,7 @@ ${indent}columns: ${matrix.columns}
 	        //renderer.outputEncoding = sRGBEncoding;
 	        //renderer.shadowMap.enabled = true;
 	        //renderer.shadowMap.type = PCFSoftShadowMap;
+	        document.getElementById(this.root);
 	        gel.appendChild(this.renderer.domElement);
 	        this.score_element = document.getElementById("score");
 	        this.comment_element = document.getElementById("comment");
@@ -56990,10 +57004,10 @@ ${indent}columns: ${matrix.columns}
 	            enter: { get: () => super.enter }
 	        });
 	        return __awaiter$2(this, void 0, void 0, function* () {
-	            _super.enter.call(this, prev, phase);
 	            yield this.preload();
 	            console.log(`ScooterSimScene enter ${prev}`);
 	            this.createDOM();
+	            _super.enter.call(this, prev, phase);
 	            console.log("ScooterSimScene create after preload");
 	            //setting the HTML elements
 	            this.score_element.innerHTML = "";
@@ -57013,7 +57027,7 @@ ${indent}columns: ${matrix.columns}
 	            directionalLight.shadow.mapSize.setScalar(1024);
 	            directionalLight.position.set(30, 100, 5);
 	            directionalLight.target.position.set(0, 0, 0);
-	            const ambientLight = new AmbientLight(0xffffff, 0.01);
+	            const ambientLight = new AmbientLight(0xffffff, 0.25);
 	            //ading the stuff to the scene
 	            this.add(directionalLight);
 	            this.add(ambientLight);
@@ -57054,24 +57068,21 @@ ${indent}columns: ${matrix.columns}
 	            this.steer_keyboard();
 	        }
 	        this.timer_element.innerHTML = this.stopwatch.getShowTime();
-	        if (this.phase !== SimPhase.FreeDriving) {
-	            alert("check track");
-	            if (this.test_track && this.scooterObj) {
-	                this.test_track.update(this.scooterObj.get_wheel_position(), this.scooterObj.scooter_yaw_rotation, this.scooterObj.blinking_left, this.scooterObj.velocity == 0);
-	                this.score_element.innerHTML = "SCORE : " + this.curent_score + "  |  BEST : " + this.best_score;
-	                this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
-	                this.curent_score = this.test_track.getscore();
-	                { // (this.phase !== SimChapter.FreeDriving ) {
-	                    if (this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= -this.max_phi) {
-	                        this.stopwatch.resetTimer();
-	                        this.stopwatch.startTimer();
-	                        this.test_track.init_track();
-	                        this.scooterObj.init_position();
-	                        this.phi = 0.0;
-	                        this.phi_vel = 0.001;
-	                        this.prev_rx = 0;
-	                        this.prev_ry = 0;
-	                    }
+	        if (this.test_track && this.scooterObj) {
+	            this.test_track.update(this.scooterObj.get_wheel_position(), this.scooterObj.scooter_yaw_rotation, this.scooterObj.blinking_left, this.scooterObj.velocity == 0);
+	            this.score_element.innerHTML = "SCORE : " + this.curent_score + "  |  BEST : " + this.best_score;
+	            this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
+	            this.curent_score = this.test_track.getscore();
+	            if (this.phase !== SimPhase.FreeDriving) {
+	                if (this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= -this.max_phi) {
+	                    this.stopwatch.resetTimer();
+	                    this.stopwatch.startTimer();
+	                    this.test_track.init_track();
+	                    this.scooterObj.init_position();
+	                    this.phi = 0.0;
+	                    this.phi_vel = 0.001;
+	                    this.prev_rx = 0;
+	                    this.prev_ry = 0;
 	                }
 	            }
 	        }
@@ -57289,24 +57300,26 @@ ${indent}columns: ${matrix.columns}
 	    });
 	};
 	class IntroScene extends JBScene {
-	    constructor(name, game, content, prev, next) {
-	        super(name, game);
+	    // "../assets/images/taiwan_drivers_licence_intro.png"
+	    constructor(name, game, content, prev, next, bg, root) {
+	        super(name, game, root);
 	        this.loader = null;
 	        this.loaded = false;
 	        this.content = content;
 	        this.prev = prev;
 	        this.next = next;
+	        this.textureName = bg;
 	    }
 	    preload() {
 	        return __awaiter$1(this, void 0, void 0, function* () {
 	            if (this.loader === null) {
 	                this.loader = new TextureLoader();
 	            }
-	            this.texture = this.loader.load("../assets/images/taiwan_drivers_licence_intro.png");
+	            this.texture = this.loader.load(this.textureName);
 	        });
 	    }
 	    createDOM() {
-	        let parent = document.getElementById("game");
+	        let parent = document.getElementById(this.root);
 	        this.renderer = new WebGLRenderer({ antialias: false });
 	        //renderer.outputEncoding = sRGBEncoding;
 	        //renderer.shadowMap.enabled = true;
@@ -57393,7 +57406,7 @@ that is able to pass the Taiwan scooter licence test.</p>
 `;
 	class StartIntroScene extends IntroScene {
 	    constructor(game) {
-	        super("start_intro", game, content$1, "", "control_intro");
+	        super("start_intro", game, content$1, "", "control_intro", "../assets/images/taiwan_drivers_licence_intro.png", "game");
 	    }
 	}
 
@@ -57420,7 +57433,7 @@ that is able to pass the Taiwan scooter licence test.</p>
     <td>'q'</td><td>Turn signal left</td>
     </tr>
     <tr>
-    <td>'d'</td><td>Turn signal right</td>
+    <td>'e'</td><td>Turn signal right</td>
     </tr>
     </table>
 
@@ -57430,7 +57443,7 @@ that is able to pass the Taiwan scooter licence test.</p>
     `;
 	class ControlIntroScene extends IntroScene {
 	    constructor(game) {
-	        super("control_intro", game, content, "start_intro", "chapter_select");
+	        super("control_intro", game, content, "start_intro", "chapter_select", "../assets/images/taiwan_drivers_licence_intro.png", "game");
 	    }
 	}
 
@@ -57470,7 +57483,7 @@ that is able to pass the Taiwan scooter licence test.</p>
     
         <button id="${name}_btn_prev" class="game_button_prev">Previous</button>
         `;
-	        super(name, game, content, "control_intro", "");
+	        super(name, game, content, "control_intro", "", "../assets/images/taiwan_drivers_licence_intro.png", "game");
 	    }
 	    delay(ms) {
 	        return new Promise(resolve => setTimeout(resolve, ms));
@@ -57516,7 +57529,7 @@ that is able to pass the Taiwan scooter licence test.</p>
 	        this.addScene(sIntro);
 	        let sCSel = new ChapterSelectScene(this);
 	        this.addScene(sCSel);
-	        let sSim = new ScooterSimScene("sim", this);
+	        let sSim = new ScooterSimScene("sim", this, "id_sim_render", "sim_overlay");
 	        this.addScene(sSim);
 	    }
 	    sceneByName(name) {
