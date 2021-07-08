@@ -47,7 +47,7 @@ class ChapterSelectScene extends IntroScene {
         <button id="${name}_btn_prev" class="game_button_prev">Previous</button>
         `;
     
-        super( name, game, content, "control_intro", "" );        
+        super( name, game, content, "control_intro", "", "../assets/images/taiwan_drivers_licence_intro.png", "game" );        
     }
 
     private delay(ms: number)

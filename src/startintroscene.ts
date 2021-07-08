@@ -46,7 +46,7 @@ that is able to pass the Taiwan scooter licence test.</p>
 class StartIntroScene extends IntroScene {
     
     constructor( game : JBGame ) {
-        super( "start_intro", game, content, "", "control_intro" );
+        super( "start_intro", game, content, "", "control_intro", "../assets/images/taiwan_drivers_licence_intro.png", "game" );
     }
 }
 

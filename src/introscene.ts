@@ -28,24 +28,29 @@ class IntroScene extends JBScene {
 
     loaded : boolean = false;
 
-    constructor( name : string, game : JBGame, content: string, prev: string, next : string ) {
-        super(name, game );
+    textureName : string;
+    
+// "../assets/images/taiwan_drivers_licence_intro.png"
+
+    constructor( name : string, game : JBGame, content: string, prev: string, next : string, bg: string, root : string ) {
+        super(name, game, root );
         this.content = content;
         this.prev = prev;
         this.next = next;
+        this.textureName = bg;
     }
 
     async preload( ) {
         if ( this.loader === null ) {
             this.loader = new TextureLoader( );
         }
-        this.texture = this.loader.load( "../assets/images/taiwan_drivers_licence_intro.png");
+        this.texture = this.loader.load( this.textureName );
     }
 
     labels : HTMLDivElement;
 
     createDOM( ) {
-        let parent = document.getElementById( "game" );
+        let parent = document.getElementById( this.root );
 
         this.renderer = new WebGLRenderer({ antialias: false });
         //renderer.outputEncoding = sRGBEncoding;

@@ -10,6 +10,7 @@ import {
     Object3D,
     Euler,
     Clock,
+    Texture,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import URDFLoader, { URDFRobot } from '../urdf/src/URDFLoader.js';
@@ -24,10 +25,21 @@ import { JBScene } from './jbscene';
 import { JBGame } from './jbgame';
 
 enum SimPhase {
+    FreeDrivingIntro = "Free Driving Intro",
     FreeDriving = "Free Driving",
+    FreeDrivingDone = "Free Driving Done",
+
+    SlowDrivingIntro = "Slow Driving Intro",
     SlowDriving = "Slow Driving",
+    SlowDrivingDone = "Slow Driving Done",
+
+    HookTurnIntro = "Hook Turn Intro",
     HookTurn = "Hook Turn",
+    HookTurnDone = "Hook Turn Done",
+
+    DrivingTestIntro = "Driving Test Intro",
     DrivingTest = "Driving Test",
+    DrivingTestDone = "Driving Test Done",
 }
 
 class ScooterSimScene extends JBScene {
@@ -73,8 +85,11 @@ class ScooterSimScene extends JBScene {
     w_up :boolean=true;
     s_up :boolean=true;
 
-    constructor( name : string, game : JBGame ) {
-        super( name, game );
+    overlay : string;
+
+    constructor( name : string, game : JBGame, root: string, overlay : string ) {
+        super( name, game, root );
+        this.overlay = overlay;
     }
 
     async preload() {
@@ -140,25 +155,29 @@ class ScooterSimScene extends JBScene {
 
         this.add( m );
         this.updateables.push( pol2 );
+
     }
 
     html = `
-    <div id="menu">
-            <div style="color: rgb(0, 0, 0);">
-                <select id="cb_camera_view" class="combobox" type=text list=value>
-                    <option value="cb_follow">Follow Camera</option>
-                    <option value="cb_orbit">Orbit View</option>
-                    <!-- <option value="cb_free">Free Camera</option> -->
-                </select>
-            </div>
-            <div>
-                <div style="color: rgb(0, 0, 0); position: relative; width: 90vw;">
-                    <span id ="score" style="color: rgb(0, 0, 0);"> SCORE : 1000  |  BEST : 99999 </span>
-                    <span id ="comment" style="color: rgb(0, 0, 0); position: absolute; top: 0; right: 0; width: 200px; word-wrap: break-word;"> COMMENT  tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt</span>
-                </div>
-                <div id ="timer" style="color: rgb(0, 0, 0);">TIMER = 00:00:00</div>
-            </div>
+    <div class="sim_menu">
+        <div style="color: rgb(0, 0, 0);">
+            <select id="cb_camera_view" class="combobox" type=text list=value>
+                <option value="cb_follow">Follow Camera</option>
+                <option value="cb_orbit">Orbit View</option>
+                <!-- <option value="cb_free">Free Camera</option> -->
+            </select>
         </div>
+        <div>
+            <div style="color: rgb(0, 0, 0); position: relative; width: 90vw;">
+                <span id ="score" style="color: rgb(0, 0, 0);"> SCORE : 1000  |  BEST : 99999 </span>
+                <span id ="comment" style="color: rgb(0, 0, 0); position: absolute; top: 0; right: 0; width: 200px; word-wrap: break-word;"> COMMENT  tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt</span>
+            </div>
+            <div id ="timer" style="color: rgb(0, 0, 0);">TIMER = 00:00:00</div>
+        </div>
+    </div>
+    <div id="id_sim_render" class="sim_render">
+    </div>
+    <div id="id_sim_overlay" class="sim_overlay">
     </div>
     `;
 
@@ -175,6 +194,7 @@ class ScooterSimScene extends JBScene {
         //renderer.outputEncoding = sRGBEncoding;
         //renderer.shadowMap.enabled = true;
         //renderer.shadowMap.type = PCFSoftShadowMap;
+        let sr = document.getElementById( this.root );
         gel.appendChild( this.renderer.domElement );
 
         this.score_element = document.getElementById("score");
@@ -185,12 +205,12 @@ class ScooterSimScene extends JBScene {
     }
 
     async enter( prev : JBScene, phase : string ) {
-        super.enter( prev, phase );
-
         await this.preload(); 
         console.log( `ScooterSimScene enter ${prev}`);
         
         this.createDOM();
+
+        super.enter( prev, phase );
 
         console.log("ScooterSimScene create after preload");
         //setting the HTML elements
@@ -216,7 +236,7 @@ class ScooterSimScene extends JBScene {
         directionalLight.position.set(30, 100, 5);
         directionalLight.target.position.set( 0, 0, 0 );
     
-        const ambientLight : AmbientLight = new AmbientLight(0xffffff, 0.01);
+        const ambientLight : AmbientLight = new AmbientLight( 0xffffff, 0.25 );
         //ading the stuff to the scene
         this.add( directionalLight );
         this.add(ambientLight);

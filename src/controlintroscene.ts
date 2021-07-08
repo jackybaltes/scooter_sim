@@ -39,7 +39,7 @@ const content = `<h1>Taiwan Scooter Licence Test</h1>
     <td>'q'</td><td>Turn signal left</td>
     </tr>
     <tr>
-    <td>'d'</td><td>Turn signal right</td>
+    <td>'e'</td><td>Turn signal right</td>
     </tr>
     </table>
 
@@ -51,7 +51,7 @@ const content = `<h1>Taiwan Scooter Licence Test</h1>
 class ControlIntroScene extends IntroScene {
     
     constructor( game : JBGame ) {
-        super( "control_intro", game, content, "start_intro", "chapter_select" );
+        super( "control_intro", game, content, "start_intro", "chapter_select", "../assets/images/taiwan_drivers_licence_intro.png", "game" );
     }
 }
 

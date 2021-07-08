@@ -30,7 +30,7 @@ class JBGame {
         let sCSel = new ChapterSelectScene( this );
         this.addScene( sCSel );
 
-        let sSim =  new ScooterSimScene( "sim", this );
+        let sSim =  new ScooterSimScene( "sim", this, "id_sim_render", "sim_overlay" );
         this.addScene( sSim );
     }
 

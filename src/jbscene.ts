@@ -8,11 +8,14 @@ class JBScene extends Scene {
     phase : string;
     game : JBGame;
     camera : PerspectiveCamera | OrthographicCamera;
+    root : string;
 
-    constructor( name : string, game : JBGame ) {
+    constructor( name : string, game : JBGame, root : string ) {
         super();
         this.name = name;
         this.game = game;
+        this.root = root;
+
         console.log( "JBScene constructor" );
     }
 
@@ -27,13 +30,13 @@ class JBScene extends Scene {
     pause( ) { }
 
     async enter( prev : JBScene, phase? : string ) { 
-        this.renderer = new WebGLRenderer({ antialias: false });
+        this.renderer = new WebGLRenderer( { antialias: false } );
         //renderer.outputEncoding = sRGBEncoding;
         //renderer.shadowMap.enabled = true;
         //renderer.shadowMap.type = PCFSoftShadowMap;
         this.renderer.domElement.id = "id_" + this.name;
 
-        let parent = document.getElementById( "game" );
+        let parent = document.getElementById( this.root );
         parent.appendChild( this.renderer.domElement );
 
         this.phase = phase;
