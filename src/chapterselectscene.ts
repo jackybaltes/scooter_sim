@@ -69,7 +69,7 @@ class ChapterSelectScene extends IntroScene {
         nb =  document.getElementById( "chapter_slow_driving");
         nb.onclick = () => {
             console.log("chapter slow driving");
-            this.game.switch( "sim", SimPhase.SlowDriving );
+            this.game.switch( "sim", SimPhase.SlowDrivingIntro );
         };
 
         nb =  document.getElementById( "chapter_driving_test");

@@ -23,6 +23,8 @@ import { TaiwanBear } from './taiwanbear';
 import { TaiwanPolice, TaiwanCopMale } from './taiwancop';
 import { JBScene } from './jbscene';
 import { JBGame } from './jbgame';
+import { SlowDrivingPhaseIntro } from './slowdrivingphaseintro';
+import { IntroScene } from './introscene.js';
 
 enum SimPhase {
     FreeDrivingIntro = "Free Driving Intro",
@@ -31,7 +33,10 @@ enum SimPhase {
 
     SlowDrivingIntro = "Slow Driving Intro",
     SlowDriving = "Slow Driving",
+    SlowDrivingSuccess = "Slow Driving Success",
+    SlowDrivingFailure = "Slow Driving Failure",
     SlowDrivingDone = "Slow Driving Done",
+
 
     HookTurnIntro = "Hook Turn Intro",
     HookTurn = "Hook Turn",
@@ -86,6 +91,7 @@ class ScooterSimScene extends JBScene {
     s_up :boolean=true;
 
     overlay : string;
+    overlayPhase : IntroScene = null;
 
     constructor( name : string, game : JBGame, root: string, overlay : string ) {
         super( name, game, root );
@@ -159,7 +165,7 @@ class ScooterSimScene extends JBScene {
     }
 
     html = `
-    <div class="sim_menu">
+    <div id="id_sim_menu" class="sim_menu">
         <div style="color: rgb(0, 0, 0);">
             <select id="cb_camera_view" class="combobox" type=text list=value>
                 <option value="cb_follow">Follow Camera</option>
@@ -201,10 +207,18 @@ class ScooterSimScene extends JBScene {
         this.comment_element = document.getElementById("comment");
         this.timer_element = document.getElementById("timer");
     
+        console.log(`createDom: phase ${this.phase}`);
+        if ( this.phase === SimPhase.SlowDrivingIntro ) {
+            this.overlayPhase = new SlowDrivingPhaseIntro( this.game );
+            let r = document.getElementById( this.overlayPhase.root );
+            r.hidden = false;
+        }
         console.log("ScooterSimScene create");
     }
 
     async enter( prev : JBScene, phase : string ) {
+        this.phase = phase;
+
         await this.preload(); 
         console.log( `ScooterSimScene enter ${prev}`);
         
@@ -264,6 +278,10 @@ class ScooterSimScene extends JBScene {
 
         //setting the server to port 8878
         this.controlServer = new ControlServer(8878);
+
+        if ( this.overlayPhase !== null ) {
+            await this.overlayPhase.enter( prev );
+        }
     }
 
     clock : Clock = new Clock(); 
@@ -341,6 +359,9 @@ class ScooterSimScene extends JBScene {
             object.tick( this.dt );
         }
 
+        if ( this.overlayPhase !== null ) {
+            this.overlayPhase.tick();
+        }
         this.renderer.render( this, this.camera );
     }
     
@@ -548,7 +569,6 @@ class ScooterSimScene extends JBScene {
     }
 
     onResize = this._onResize.bind( this );
-
 }
 
 export { ScooterSimScene, SimPhase } 

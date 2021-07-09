@@ -53,7 +53,9 @@ class JBScene extends Scene {
 
     _onResize() {
         if (this.renderer !== null ) {
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            let parent = document.getElementById( this.root );
+        
+            this.renderer.setSize( parent.clientWidth, parent.clientHeight );
             this.renderer.setPixelRatio(window.devicePixelRatio);
         }
     }

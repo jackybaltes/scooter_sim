@@ -41,10 +41,12 @@ class IntroScene extends JBScene {
     }
 
     async preload( ) {
-        if ( this.loader === null ) {
-            this.loader = new TextureLoader( );
+        if ( this.textureName !== "" ) {
+            if ( this.loader === null ) {
+                this.loader = new TextureLoader( );
+            }
+            this.texture = this.loader.load( this.textureName );
         }
-        this.texture = this.loader.load( this.textureName );
     }
 
     labels : HTMLDivElement;
@@ -52,7 +54,7 @@ class IntroScene extends JBScene {
     createDOM( ) {
         let parent = document.getElementById( this.root );
 
-        this.renderer = new WebGLRenderer({ antialias: false });
+        this.renderer = new WebGLRenderer({ antialias: true, alpha: true });
         //renderer.outputEncoding = sRGBEncoding;
         //renderer.shadowMap.enabled = true;
         //renderer.shadowMap.type = PCFSoftShadowMap;
