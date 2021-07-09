@@ -490,8 +490,8 @@ export class Robot{
     move_arms()
     {
 
-        var left_handle  = this.get_grip_L_Fkin(0.0,this.phi,this.steering_angle);
-        var right_handle  = this.get_grip_R_Fkin(0.0,this.phi,this.steering_angle);
+        var left_handle  = this.get_grip_L_Fkin(0.0,0.0,this.steering_angle);
+        var right_handle  = this.get_grip_R_Fkin(0.0,0.0,this.steering_angle);
 
         var gen_L = this.pseudo_inverse(left_handle,this.last_pose_L, 500, true);
         var gen_R = this.pseudo_inverse(right_handle,this.last_pose_R, 500, false);
