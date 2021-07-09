@@ -56850,13 +56850,119 @@ ${indent}columns: ${matrix.columns}
 	    tick() { }
 	    _onResize() {
 	        if (this.renderer !== null) {
-	            this.renderer.setSize(window.innerWidth, window.innerHeight);
+	            let parent = document.getElementById(this.root);
+	            this.renderer.setSize(parent.clientWidth, parent.clientHeight);
 	            this.renderer.setPixelRatio(window.devicePixelRatio);
 	        }
 	    }
 	}
 
 	var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	class IntroScene extends JBScene {
+	    // "../assets/images/taiwan_drivers_licence_intro.png"
+	    constructor(name, game, content, prev, next, bg, root) {
+	        super(name, game, root);
+	        this.loader = null;
+	        this.loaded = false;
+	        this.content = content;
+	        this.prev = prev;
+	        this.next = next;
+	        this.textureName = bg;
+	    }
+	    preload() {
+	        return __awaiter$2(this, void 0, void 0, function* () {
+	            if (this.textureName !== "") {
+	                if (this.loader === null) {
+	                    this.loader = new TextureLoader();
+	                }
+	                this.texture = this.loader.load(this.textureName);
+	            }
+	        });
+	    }
+	    createDOM() {
+	        let parent = document.getElementById(this.root);
+	        this.renderer = new WebGLRenderer({ antialias: true, alpha: true });
+	        //renderer.outputEncoding = sRGBEncoding;
+	        //renderer.shadowMap.enabled = true;
+	        //renderer.shadowMap.type = PCFSoftShadowMap;
+	        this.renderer.domElement.id = "id_" + this.name;
+	        parent.appendChild(this.renderer.domElement);
+	        let l = document.createElement("div");
+	        l.className = "intro_scene";
+	        l.id = "id_" + this.name + "_labels";
+	        l.style.position = "absolute";
+	        l.innerHTML = this.content;
+	        parent.appendChild(l);
+	        console.log(`inner ${l.innerHTML}`);
+	        this.labels = l;
+	        if (this.next !== "") {
+	            let nb = document.getElementById(this.name + "_btn_next");
+	            nb.onclick = () => {
+	                console.log("intro scene next button pressed");
+	                this.game.switch(this.next);
+	            };
+	        }
+	        if (this.prev !== "") {
+	            let pb = document.getElementById(this.name + "_btn_prev");
+	            pb.onclick = () => {
+	                console.log("intro scene prev button pressed");
+	                this.game.switch(this.prev);
+	            };
+	        }
+	    }
+	    enter(prev) {
+	        return __awaiter$2(this, void 0, void 0, function* () {
+	            this.loaded = false;
+	            yield this.preload();
+	            this.createDOM();
+	            // camera
+	            let vWidth = 300;
+	            let vHeight = 300;
+	            this.camera = new OrthographicCamera(vWidth / -2, vWidth / 2, vHeight / -2, vHeight / 2, 1, 2);
+	            this.camera.position.x = 0;
+	            this.camera.position.y = 0;
+	            this.camera.position.z = 1;
+	            this.camera.rotation.x = 0.0 * (Math.PI / 180);
+	            this.add(this.camera);
+	            this.material = new MeshBasicMaterial({ map: this.texture, side: DoubleSide, });
+	            this.plane = new Mesh(new PlaneGeometry(vWidth, vHeight), this.material);
+	            this.add(this.plane);
+	            this._onResize();
+	            window.addEventListener('resize', this.onResize);
+	            this.loaded = true;
+	        });
+	    }
+	    tick() {
+	        if ((this.camera !== null) && (this.camera !== undefined)) {
+	            console.log(`intro scene tick ${this.camera}`);
+	            this.renderer.render(this, this.camera);
+	        }
+	    }
+	}
+
+	const content$2 = `<h1>Balance in a straight line<br>
+(One re-test is allowed)</h1> 
+<hr>
+<p>1. Balance in a straight line completed in fewer than seven seconds 
+<span style="color:red">- deduct 32 points</span></p>
+<p>2. Wheel crossing lines or either one or both feet touching the ground 
+<span style="color:red">- deduct 32 points</span></p>
+`;
+	class SlowDrivingPhaseIntro extends IntroScene {
+	    constructor(game) {
+	        super("slow_driving_control_phase", game, content$2, "", "", "../assets/images/taiwan traffic board.png", "id_sim_overlay");
+	    }
+	}
+
+	var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -56872,6 +56978,8 @@ ${indent}columns: ${matrix.columns}
 	    SimPhase["FreeDrivingDone"] = "Free Driving Done";
 	    SimPhase["SlowDrivingIntro"] = "Slow Driving Intro";
 	    SimPhase["SlowDriving"] = "Slow Driving";
+	    SimPhase["SlowDrivingSuccess"] = "Slow Driving Success";
+	    SimPhase["SlowDrivingFailure"] = "Slow Driving Failure";
 	    SimPhase["SlowDrivingDone"] = "Slow Driving Done";
 	    SimPhase["HookTurnIntro"] = "Hook Turn Intro";
 	    SimPhase["HookTurn"] = "Hook Turn";
@@ -56899,8 +57007,9 @@ ${indent}columns: ${matrix.columns}
 	        this.d_up = true;
 	        this.w_up = true;
 	        this.s_up = true;
+	        this.overlayPhase = null;
 	        this.html = `
-    <div class="sim_menu">
+    <div id="id_sim_menu" class="sim_menu">
         <div style="color: rgb(0, 0, 0);">
             <select id="cb_camera_view" class="combobox" type=text list=value>
                 <option value="cb_follow">Follow Camera</option>
@@ -56931,7 +57040,7 @@ ${indent}columns: ${matrix.columns}
 	        const _super = Object.create(null, {
 	            preload: { get: () => super.preload }
 	        });
-	        return __awaiter$2(this, void 0, void 0, function* () {
+	        return __awaiter$1(this, void 0, void 0, function* () {
 	            _super.preload.call(this);
 	            console.log("ScooterSimScene preload");
 	            const manager = new LoadingManager();
@@ -56997,13 +57106,20 @@ ${indent}columns: ${matrix.columns}
 	        this.score_element = document.getElementById("score");
 	        this.comment_element = document.getElementById("comment");
 	        this.timer_element = document.getElementById("timer");
+	        console.log(`createDom: phase ${this.phase}`);
+	        if (this.phase === SimPhase.SlowDrivingIntro) {
+	            this.overlayPhase = new SlowDrivingPhaseIntro(this.game);
+	            let r = document.getElementById(this.overlayPhase.root);
+	            r.hidden = false;
+	        }
 	        console.log("ScooterSimScene create");
 	    }
 	    enter(prev, phase) {
 	        const _super = Object.create(null, {
 	            enter: { get: () => super.enter }
 	        });
-	        return __awaiter$2(this, void 0, void 0, function* () {
+	        return __awaiter$1(this, void 0, void 0, function* () {
+	            this.phase = phase;
 	            yield this.preload();
 	            console.log(`ScooterSimScene enter ${prev}`);
 	            this.createDOM();
@@ -57050,6 +57166,9 @@ ${indent}columns: ${matrix.columns}
 	            this.clock = new Clock();
 	            //setting the server to port 8878
 	            this.controlServer = new ControlServer(8878);
+	            if (this.overlayPhase !== null) {
+	                yield this.overlayPhase.enter(prev);
+	            }
 	        });
 	    }
 	    tick() {
@@ -57103,6 +57222,9 @@ ${indent}columns: ${matrix.columns}
 	        }
 	        for (const object of this.updateables) {
 	            object.tick(this.dt);
+	        }
+	        if (this.overlayPhase !== null) {
+	            this.overlayPhase.tick();
 	        }
 	        this.renderer.render(this, this.camera);
 	    }
@@ -57290,95 +57412,6 @@ ${indent}columns: ${matrix.columns}
 	    }
 	}
 
-	var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-	    return new (P || (P = Promise))(function (resolve, reject) {
-	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-	        step((generator = generator.apply(thisArg, _arguments || [])).next());
-	    });
-	};
-	class IntroScene extends JBScene {
-	    // "../assets/images/taiwan_drivers_licence_intro.png"
-	    constructor(name, game, content, prev, next, bg, root) {
-	        super(name, game, root);
-	        this.loader = null;
-	        this.loaded = false;
-	        this.content = content;
-	        this.prev = prev;
-	        this.next = next;
-	        this.textureName = bg;
-	    }
-	    preload() {
-	        return __awaiter$1(this, void 0, void 0, function* () {
-	            if (this.loader === null) {
-	                this.loader = new TextureLoader();
-	            }
-	            this.texture = this.loader.load(this.textureName);
-	        });
-	    }
-	    createDOM() {
-	        let parent = document.getElementById(this.root);
-	        this.renderer = new WebGLRenderer({ antialias: false });
-	        //renderer.outputEncoding = sRGBEncoding;
-	        //renderer.shadowMap.enabled = true;
-	        //renderer.shadowMap.type = PCFSoftShadowMap;
-	        this.renderer.domElement.id = "id_" + this.name;
-	        parent.appendChild(this.renderer.domElement);
-	        let l = document.createElement("div");
-	        l.className = "intro_scene";
-	        l.id = "id_" + this.name + "_labels";
-	        l.style.position = "absolute";
-	        l.innerHTML = this.content;
-	        parent.appendChild(l);
-	        console.log(`inner ${l.innerHTML}`);
-	        this.labels = l;
-	        if (this.next !== "") {
-	            let nb = document.getElementById(this.name + "_btn_next");
-	            nb.onclick = () => {
-	                console.log("intro scene next button pressed");
-	                this.game.switch(this.next);
-	            };
-	        }
-	        if (this.prev !== "") {
-	            let pb = document.getElementById(this.name + "_btn_prev");
-	            pb.onclick = () => {
-	                console.log("intro scene prev button pressed");
-	                this.game.switch(this.prev);
-	            };
-	        }
-	    }
-	    enter(prev) {
-	        return __awaiter$1(this, void 0, void 0, function* () {
-	            this.loaded = false;
-	            yield this.preload();
-	            this.createDOM();
-	            // camera
-	            let vWidth = 300;
-	            let vHeight = 300;
-	            this.camera = new OrthographicCamera(vWidth / -2, vWidth / 2, vHeight / -2, vHeight / 2, 1, 2);
-	            this.camera.position.x = 0;
-	            this.camera.position.y = 0;
-	            this.camera.position.z = 1;
-	            this.camera.rotation.x = 0.0 * (Math.PI / 180);
-	            this.add(this.camera);
-	            this.material = new MeshBasicMaterial({ map: this.texture, side: DoubleSide, });
-	            this.plane = new Mesh(new PlaneGeometry(vWidth, vHeight), this.material);
-	            this.add(this.plane);
-	            this._onResize();
-	            window.addEventListener('resize', this.onResize);
-	            this.loaded = true;
-	        });
-	    }
-	    tick() {
-	        if ((this.camera !== null) && (this.camera !== undefined)) {
-	            console.log(`intro scene tick ${this.camera}`);
-	            this.renderer.render(this, this.camera);
-	        }
-	    }
-	}
-
 	const content$1 = `<h1>Taiwan Scooter Licence Test</h1> 
         
 <h2>National Taiwan Normal University, Taipei, Taiwan</h2>
@@ -57389,10 +57422,10 @@ that is able to pass the Taiwan scooter licence test.</p>
 <table>
 <tr>
 <td>
-<img height="300px" src="../assets/images/thormang2.png"></img>
+<img height="150vh" src="../assets/images/thormang2.png"></img>
 </td>
 <td>
-<img height="300px" src="../assets/images/thormang1.png"></img>
+<img height="150vh" src="../assets/images/thormang1.png"></img>
 </td>
 </tr>
 <tr>
@@ -57503,7 +57536,7 @@ that is able to pass the Taiwan scooter licence test.</p>
 	            nb = document.getElementById("chapter_slow_driving");
 	            nb.onclick = () => {
 	                console.log("chapter slow driving");
-	                this.game.switch("sim", SimPhase.SlowDriving);
+	                this.game.switch("sim", SimPhase.SlowDrivingIntro);
 	            };
 	            nb = document.getElementById("chapter_driving_test");
 	            nb.onclick = () => {

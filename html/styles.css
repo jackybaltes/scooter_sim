@@ -265,18 +265,18 @@ div#game {
     height: 100%;
     position: relative;
     overflow: hidden;
-    font-size: 24px;
+    font-size: 4vw;
 }
 
-div.intro_scene {
+div.game > div.intro_scene {
     position: absolute;
-    top: 50px;
-    left: 150px;
-    width: 50%;
-    height: 75%;
+    top: 0%;
+    left: 7%;
+    width: 60%;
+    height: 50%;
     color: black;
     background-color: transparent;
-    font-size: 28px;
+    font-size: 2vmin;
 }
 
 div.sim_render {
@@ -287,19 +287,31 @@ div.sim_render {
     height: 100%;
     color: black;
     background-color: "green";
-    font-size: 28px;
+    font-size: 4vw;
 }
 
 div.sim_overlay {
     position: absolute;
-    top: 50px;
-    left: 150px;
+    z-index: 5;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+}
+
+div.sim_overlay > div.intro_scene {
+    position: absolute;
+    z-index: 5;
+    top: 22%;
+    left: 27%;
     width: 50%;
-    height: 75%;
+    height: 50%;
     color: black;
     background-color: transparent;
-    font-size: 28px;
+    font-size: 2vmin;
 }
+
 
 button.game_button_prev {
     background: rgba(200,100,100);
@@ -337,8 +349,9 @@ div.intro_scene table td {
     padding: 10px;
 }
 
-div.menu {
+div.sim_menu {
     position: absolute;
+    z-index: 5;
     top: 0;
     left: 0;
     display: flex;
@@ -346,7 +359,16 @@ div.menu {
     max-height: 100%;
     margin: 20px;
     background:rgb(243, 243, 60);
+    font-size: 4vh;
 }
+
+hr { 
+    display: block; 
+    height: 1px;
+    border: 0; 
+    border-top: 1px solid red;
+    margin: 1em 0; 
+    padding: 0; 
 
 @keyframes fade {
     from { opacity: 0; }
