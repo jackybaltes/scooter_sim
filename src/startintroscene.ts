@@ -26,10 +26,10 @@ that is able to pass the Taiwan scooter licence test.</p>
 <table>
 <tr>
 <td>
-<img height="150vh" src="../assets/images/thormang2.png"></img>
+<img height="250vh" src="../assets/images/thormang2.png"></img>
 </td>
 <td>
-<img height="150vh" src="../assets/images/thormang1.png"></img>
+<img height="250vh" src="../assets/images/thormang1.png"></img>
 </td>
 </tr>
 <tr>

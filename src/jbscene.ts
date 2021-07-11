@@ -5,7 +5,7 @@ import { JBGame } from './jbgame';
 
 class JBScene extends Scene {
     name : string;
-    phase : string;
+    currentPhase : string;
     game : JBGame;
     camera : PerspectiveCamera | OrthographicCamera;
     root : string;
@@ -39,7 +39,7 @@ class JBScene extends Scene {
         let parent = document.getElementById( this.root );
         parent.appendChild( this.renderer.domElement );
 
-        this.phase = phase;
+        this.currentPhase = phase;
     }
     
     async leave( next : JBScene ) {

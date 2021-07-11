@@ -23,7 +23,7 @@ import { TaiwanBear } from './taiwanbear';
 import { TaiwanPolice, TaiwanCopMale } from './taiwancop';
 import { JBScene } from './jbscene';
 import { JBGame } from './jbgame';
-import { SlowDrivingPhaseIntro } from './slowdrivingphaseintro';
+import { ScooterSimPhaseOverlay } from './scootersimphaseoverlay';
 import { IntroScene } from './introscene.js';
 
 enum SimPhase {
@@ -46,6 +46,15 @@ enum SimPhase {
     DrivingTest = "Driving Test",
     DrivingTestDone = "Driving Test Done",
 }
+
+const contentSlowDrivingIntro = `<h1>Balance in a straight line<br>
+(One re-test is allowed)</h1> 
+<hr>
+<p>1. Balance in a straight line completed in fewer than seven seconds 
+<span style="color:red">- deduct 32 points</span></p>
+<p>2. Wheel crossing lines or either one or both feet touching the ground 
+<span style="color:red">- deduct 32 points</span></p>
+`;
 
 class ScooterSimScene extends JBScene {
     g = 9.81;
@@ -91,7 +100,7 @@ class ScooterSimScene extends JBScene {
     s_up :boolean=true;
 
     overlay : string;
-    overlayPhase : IntroScene = null;
+    overlayPhase : ScooterSimPhaseOverlay = null;
 
     constructor( name : string, game : JBGame, root: string, overlay : string ) {
         super( name, game, root );
@@ -207,17 +216,17 @@ class ScooterSimScene extends JBScene {
         this.comment_element = document.getElementById("comment");
         this.timer_element = document.getElementById("timer");
     
-        console.log(`createDom: phase ${this.phase}`);
-        if ( this.phase === SimPhase.SlowDrivingIntro ) {
-            this.overlayPhase = new SlowDrivingPhaseIntro( this.game );
-            let r = document.getElementById( this.overlayPhase.root );
-            r.hidden = false;
-        }
+        console.log(`createDom: phase ${this.currentPhase}`);
+        
+        this.overlayPhase = new ScooterSimPhaseOverlay( "scooter_sim_phase_overlay", this.game );
+
+        //this.overlayPhase.wrapper.hidden = true;
+
         console.log("ScooterSimScene create");
     }
 
     async enter( prev : JBScene, phase : string ) {
-        this.phase = phase;
+        this.currentPhase = phase;
 
         await this.preload(); 
         console.log( `ScooterSimScene enter ${prev}`);
@@ -281,35 +290,38 @@ class ScooterSimScene extends JBScene {
 
         if ( this.overlayPhase !== null ) {
             await this.overlayPhase.enter( prev );
+            this.overlayPhase.wrapper.hidden = true;
         }
     }
 
     clock : Clock = new Clock(); 
     dt: number;
 
-    tick() {
+    prevPhase : string = "";
+    nextPhase : string = "";
 
-        this.dt = this.clock.getDelta();
-        console.log("ScooterSimScene tick");
-        console.log( `ScooterSimScene tick scooter ${this.scooterObj} controlServer ${this.controlServer}` );
-    
-        console.log(`tick: updateables ${this.updateables} dt ${this.dt}`);
+    switchSlowDrivingPhase( prev: string, next: string ) {
+        if ( next === SimPhase.SlowDrivingIntro ) {
+            this.overlayPhase.updateDOM( contentSlowDrivingIntro );
+            this.overlayPhase.wrapper.hidden = false;
 
-        if( this.scooterObj == null ) {
-            return;
+            setTimeout( () => {
+                this.currentPhase = SimPhase.SlowDriving;
+            }, 5000 );
         }
 
-        if( this.controlServer.velocity != 0) {
-            this.scooterObj.velocity = this.controlServer.velocity;
-            this.scooterObj.steering_angle = this.controlServer.steering_angle;    
+        if ( ( prev === SimPhase.SlowDrivingIntro ) && ( next === SimPhase.SlowDriving ) ) {
+            this.overlayPhase.wrapper.hidden = true;
         }
-    
-        if( this.scooterObj ) {
-            this.steer_keyboard();
+    }
+
+    tickSlowDrivingPhase( ) {
+        
+        if ( this.prevPhase !== this.currentPhase ) {
+            this.switchSlowDrivingPhase( this.prevPhase, this.currentPhase );
         }
-    
-        this.timer_element.innerHTML = this.stopwatch.getShowTime();
-    
+        console.log(`SlowDriving tick phase ${this.currentPhase} dt ${this.dt}`);
+
         if( this.test_track && this.scooterObj ) {
             this.test_track.update( this.scooterObj.get_wheel_position(),
                                     this.scooterObj.scooter_yaw_rotation,
@@ -320,7 +332,7 @@ class ScooterSimScene extends JBScene {
         
             this.curent_score = this.test_track.getscore();
             
-            if (this.phase !== SimPhase.FreeDriving ) {
+            if (this.currentPhase !== SimPhase.FreeDriving ) {
                 if( this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= - this.max_phi ) {
                     this.stopwatch.resetTimer();
                     this.stopwatch.startTimer();
@@ -338,7 +350,7 @@ class ScooterSimScene extends JBScene {
         
         if( this.scooterObj ) {
             this.physics();
-            let cam_dist : number = 10;
+            let cam_dist : number = 8;
             let camdist_x : number = cam_dist*Math.cos( - this.scooterObj.scooter_yaw_rotation );
             let camdist_y : number = cam_dist*Math.sin( - this.scooterObj.scooter_yaw_rotation );
 
@@ -359,10 +371,98 @@ class ScooterSimScene extends JBScene {
             object.tick( this.dt );
         }
 
-        if ( this.overlayPhase !== null ) {
+        if ( ( this.overlayPhase !== null ) && ( ! this.overlayPhase.wrapper.hidden ) ) {
             this.overlayPhase.tick();
         }
+
+    }
+
+    tick() {
+        this.dt = this.clock.getDelta();
+        this.nextPhase = this.currentPhase;
+
+        if( this.scooterObj == null ) {
+            return;
+        }
+
+        if( this.controlServer.velocity != 0) {
+            this.scooterObj.velocity = this.controlServer.velocity;
+            this.scooterObj.steering_angle = this.controlServer.steering_angle;    
+        }
+    
+        if( this.scooterObj ) {
+            this.steer_keyboard();
+        }
+    
+        this.timer_element.innerHTML = this.stopwatch.getShowTime();
+
+        if ( ( this.currentPhase === SimPhase.SlowDrivingIntro ) || 
+             ( this.currentPhase === SimPhase.SlowDriving ) ||
+             ( this.currentPhase === SimPhase.SlowDrivingSuccess ) ||
+             ( this.currentPhase === SimPhase.SlowDrivingFailure ) ||
+             ( this.currentPhase === SimPhase.SlowDrivingDone ) ) {
+                if ( this.prevPhase !== this.currentPhase ) {
+                    this.switchSlowDrivingPhase ( this.prevPhase, this.currentPhase );
+                }
+                this.tickSlowDrivingPhase( );
+             }
+        else {
+            if( this.test_track && this.scooterObj ) {
+                this.test_track.update( this.scooterObj.get_wheel_position(),
+                                        this.scooterObj.scooter_yaw_rotation,
+                                        this.scooterObj.blinking_left,
+                                        this.scooterObj.velocity == 0 );
+                this.score_element.innerHTML = "SCORE : " + this.curent_score + "  |  BEST : " + this.best_score;
+                this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
+            
+                this.curent_score = this.test_track.getscore();
+                
+                if (this.currentPhase !== SimPhase.FreeDriving ) {
+                    if( this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= - this.max_phi ) {
+                        this.stopwatch.resetTimer();
+                        this.stopwatch.startTimer();
+                        this.test_track.init_track()
+                        this.scooterObj.init_position();
+                        
+                        this.phi =0.0;
+                        this.phi_vel = 0.001;
+            
+                        this.prev_rx = 0;
+                        this.prev_ry = 0;
+                    }
+                }
+            }
+            
+            if( this.scooterObj ) {
+                this.physics();
+                let cam_dist : number = 8;
+                let camdist_x : number = cam_dist*Math.cos( - this.scooterObj.scooter_yaw_rotation );
+                let camdist_y : number = cam_dist*Math.sin( - this.scooterObj.scooter_yaw_rotation );
+
+                let view = document.getElementById( "cb_camera_view" );
+
+                let e = (document.getElementById("cb_camera_view")) as HTMLSelectElement;
+                let sel = e.selectedIndex;
+                let opt = e.options[sel];
+                let cb_view = (<HTMLOptionElement>opt).value;
+
+                if ( cb_view == "cb_follow" ) {
+                    this.camera.position.set( this.scooterObj.get_position().x - camdist_x, this.scooterObj.get_position().y+5, this.scooterObj.get_position().z-camdist_y);
+                    this.camera.lookAt( this.scooterObj.get_position().x, this.scooterObj.get_position().y, this.scooterObj.get_position().z );
+                }
+            }
+                
+            for (const object of this.updateables) {
+                object.tick( this.dt );
+            }
+
+            if ( this.overlayPhase !== null ) {
+                this.overlayPhase.tick();
+            }
+        }
         this.renderer.render( this, this.camera );
+        this.prevPhase = this.currentPhase;
+        this.currentPhase = this.nextPhase;
     }
     
     physics() {   

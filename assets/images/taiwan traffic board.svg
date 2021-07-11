@@ -9,7 +9,7 @@
    id="svg5"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    sodipodi:docname="taiwan traffic board.svg"
-   inkscape:export-filename="C:\Users\Brunela Dalama\Desktop\taiwan traffic board.png"
+   inkscape:export-filename="D:\Scratch\scooter_sim\assets\images\taiwan traffic board.png"
    inkscape:export-xdpi="143.98322"
    inkscape:export-ydpi="143.98322"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -27,14 +27,14 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.1550064"
-     inkscape:cx="272.29287"
-     inkscape:cy="329.43541"
-     inkscape:window-width="1878"
-     inkscape:window-height="1131"
-     inkscape:window-x="220"
-     inkscape:window-y="220"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="layer1" />
+     inkscape:cx="81.817728"
+     inkscape:cy="329.8683"
+     inkscape:window-width="3840"
+     inkscape:window-height="2120"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2" />
   <defs
      id="defs2" />
   <g
@@ -42,19 +42,52 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:none;stroke-width:1;stroke:none"
+       style="fill:none;stroke-width:1;stroke:none;stroke-opacity:1;fill-opacity:1"
        id="rect857"
        width="300"
        height="300"
        x="-52.643707"
        y="-22.83927"
-       inkscape:export-filename="C:\Users\Brunela Dalama\Desktop\taiwan traffic board.png"
+       inkscape:export-filename="D:\Scratch\scooter_sim\assets\images\taiwan traffic board.png"
        inkscape:export-xdpi="143.98322"
        inkscape:export-ydpi="143.98322" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Layout"
+     style="display:inline">
     <g
-       id="g975"
-       transform="translate(1.6161686,32.857528)"
-       inkscape:export-filename="C:\Users\Brunela Dalama\Desktop\taiwan traffic board.png"
+       id="g1450">
+      <rect
+         style="fill:#0e9891;fill-opacity:1;stroke:none;stroke-width:1;stroke-opacity:1"
+         id="rect857-4"
+         width="300"
+         height="300"
+         x="-52.643707"
+         y="-22.839256"
+         inkscape:export-filename="D:\Scratch\scooter_sim\assets\images\taiwan traffic board.png"
+         inkscape:export-xdpi="143.98322"
+         inkscape:export-ydpi="143.98322" />
+      <path
+         style="fill:#8d0e98;fill-opacity:1;stroke:#ca1dbe;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M -52.643706,-22.839256 247.35629,277.16072"
+         id="path1241" />
+      <path
+         style="fill:#8d0e98;fill-opacity:1;stroke:#ca1dbe;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M -52.643697,277.16072 247.35629,-22.839256"
+         id="path1241-9" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Notice"
+     style="display:inline">
+    <g
+       id="g884"
+       transform="matrix(0.73013355,0,0,0.86149268,-13.484877,25.569716)"
+       inkscape:export-filename="D:\Scratch\scooter_sim\assets\images\taiwan traffic board.png"
        inkscape:export-xdpi="143.98322"
        inkscape:export-ydpi="143.98322">
       <rect
@@ -62,15 +95,15 @@
          id="rect53-3-3"
          width="163.96475"
          height="163.64053"
-         x="13.556849"
-         y="12.452461"
+         x="-49.389442"
+         y="-17.131704"
          rx="9.4687042"
          ry="11.006957"
          inkscape:transform-center-x="39.187308"
          inkscape:transform-center-y="-30.131406" />
       <g
          id="g9271"
-         transform="matrix(0.99501643,0,0,1,-0.07746072,-3.4015904)">
+         transform="matrix(0.99501643,0,0,1,-63.023751,-32.985756)">
         <rect
            style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.00639;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
            id="rect2523"
@@ -109,7 +142,7 @@
       </g>
       <g
          id="g9271-3"
-         transform="matrix(0,-0.98149951,1,0,-0.485938,189.03164)">
+         transform="matrix(0,-0.98425358,1,0,-63.432228,159.4836)">
         <rect
            style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.00639;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
            id="rect2523-5"
@@ -151,8 +184,8 @@
          id="rect53-3"
          width="149.07072"
          height="149.07047"
-         x="21.003763"
-         y="19.737495"
+         x="-41.942528"
+         y="-9.8466702"
          rx="8.6085978"
          ry="10.02693"
          inkscape:transform-center-x="35.627655"
