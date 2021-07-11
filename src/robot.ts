@@ -321,7 +321,7 @@ export class Robot{
             var euler = new Euler( 0, 0, 0, 'XYZ' ); 
             euler.setFromRotationMatrix(m4,'XYZ');
 
-            return new Matrix([[pos_end_eff_y,pos_end_eff_z,pos_end_eff_x,euler.x+Math.PI/2,euler.y,euler.z]])
+            return new Matrix([[pos_end_eff_y,pos_end_eff_z,pos_end_eff_x,0,0,0]])//euler.x+Math.PI/2,euler.y,euler.z]])
         }
         else
         {
@@ -370,7 +370,7 @@ export class Robot{
             m4.setFromMatrix3(m3);
             var euler = new Euler(0, 0, 0, 'XYZ');
             euler.setFromRotationMatrix(m4,'XYZ');
-            return new Matrix([[pos_end_eff_y,pos_end_eff_z,pos_end_eff_x,euler.x+Math.PI/2,euler.y,euler.z]])
+            return new Matrix([[pos_end_eff_y,pos_end_eff_z,pos_end_eff_x,0,0,0]])//,euler.x+Math.PI/2,euler.y,euler.z]])
         }
     }
 
@@ -452,70 +452,49 @@ export class Robot{
 
 
 
-    get_grip_L_pos()
+
+
+    get_grip_L_Fkin(yaw,phi,steering)
     {
-        var object = this.scooter.links["scooter_grip_L"];
-        object.updateWorldMatrix( true, true );
-        var vector = new Vector3( 0, 0, 0 );
-        var v = object.localToWorld(vector,object.worldMatrix);
-
-        var x = v.x-this.scooter.position.x
-        var z = v.z-this.scooter.position.z
-        var s = Math.sin(this.scooter_yaw_rotation);
-        var c = Math.cos(this.scooter_yaw_rotation);
-
-        var a =[Math.abs(x*s+z*c),
-                v.y-this.scooter.position.y-(0.17*Math.sin(this.phi)),
-                Math.abs(x*c)+Math.abs(z*s),
-                1.57,0,0];
-        /*
-        console.log("Scooter=",this.scooter_yaw_rotation);
-        console.log("PHI=",this.phi);
-        console.log("YAW=",a[3]);
-        console.log("sin=",s);
-        console.log("cos=",c);
-        console.log("x=",a[0]);
-        console.log("y=",a[1]);
-        console.log("z=",a[2]);
-        console.log("======");
-        */
-        var pos = new Matrix([a]);
-        return pos;
+        var s1=Math.sin(yaw);
+        var c1=Math.cos(yaw);
+        var s2=Math.sin(phi);
+        var c2=Math.cos(phi);
+        var s3=Math.sin(steering);
+        var c3=Math.cos(steering);
+    
+        var link_x3=((c1*c2+-s1*Math.cos(Math.PI/2)*s2)*0.25*c3+(c1*-s2*Math.cos(-2.0944)+-s1*Math.cos(Math.PI/2)*c2*Math.cos(-2.0944)+Math.sin(Math.PI/2)*s1*Math.sin(-2.0944))*0.25*s3+(c1*Math.sin(-2.0944)*s2+-s1*Math.cos(Math.PI/2)*-c2*Math.sin(-2.0944)+Math.sin(Math.PI/2)*s1*Math.cos(-2.0944))*0.25+(c1*0*c2+-s1*Math.cos(Math.PI/2)*0*s2+Math.sin(Math.PI/2)*s1*0.4718+0*c1));
+        var link_y3=((s1*c2+c1*Math.cos(Math.PI/2)*s2)*0.25*c3+(s1*-s2*Math.cos(-2.0944)+c1*Math.cos(Math.PI/2)*c2*Math.cos(-2.0944)+-c1*Math.sin(Math.PI/2)*Math.sin(-2.0944))*0.25*s3+(s1*Math.sin(-2.0944)*s2+c1*Math.cos(Math.PI/2)*-c2*Math.sin(-2.0944)+-c1*Math.sin(Math.PI/2)*Math.cos(-2.0944))*0.25+(s1*0*c2+c1*Math.cos(Math.PI/2)*0*s2+-c1*Math.sin(Math.PI/2)*0.4718+0*s1));
+        var link_z3=((Math.sin(Math.PI/2)*s2)*0.25*c3+(Math.sin(Math.PI/2)*c2*Math.cos(-2.0944)+Math.cos(Math.PI/2)*Math.sin(-2.0944))*0.25*s3+(Math.sin(Math.PI/2)*-c2*Math.sin(-2.0944)+Math.cos(Math.PI/2)*Math.cos(-2.0944))*0.25+(Math.sin(Math.PI/2)*0*s2+Math.cos(Math.PI/2)*0.4718+-0.1758));
+    
+        return new Matrix([[link_x3,link_z3,-link_y3,0,0,0]]);
     }
 
-    get_grip_R_pos()
+    get_grip_R_Fkin(yaw,phi,steering)
     {
-        var object = this.scooter.links["scooter_grip_R"];
-        object.updateWorldMatrix( true, true );
-        var vector = new Vector3( 0, 0, 0 );
-        var euler = new Euler()
-        euler.setFromQuaternion(object.getWorldQuaternion())
-        var v = object.localToWorld(vector,object.worldMatrix);
-
-        var x = v.x-this.scooter.position.x
-        var z = v.z-this.scooter.position.z
-        var s = Math.sin(this.scooter_yaw_rotation);
-        var c = Math.cos(this.scooter_yaw_rotation);
-
-
-
-        var a =[-Math.abs(x*s+z*c),
-                v.y-this.scooter.position.y+(0.17*Math.sin(this.phi)),
-                Math.abs(x*c)+Math.abs(z*s),
-                4.7,0,0];
-
+        var s1=Math.sin(yaw);
+        var c1=Math.cos(yaw);
+        var s2=Math.sin(phi);
+        var c2=Math.cos(phi);
+        var s3=Math.sin(steering);
+        var c3=Math.cos(steering);
+    
+        var link_x4=((c1*c2+-s1*Math.cos(Math.PI/2)*s2)*-0.25*c3+(c1*-s2*Math.cos(-2.0944)+-s1*Math.cos(Math.PI/2)*c2*Math.cos(-2.0944)+Math.sin(Math.PI/2)*s1*Math.sin(-2.0944))*-0.25*s3+(c1*Math.sin(-2.0944)*s2+-s1*Math.cos(Math.PI/2)*-c2*Math.sin(-2.0944)+Math.sin(Math.PI/2)*s1*Math.cos(-2.0944))*0.25+(c1*0*c2+-s1*Math.cos(Math.PI/2)*0*s2+Math.sin(Math.PI/2)*s1*0.4718+0*c1))
+        var link_y4=((s1*c2+c1*Math.cos(Math.PI/2)*s2)*-0.25*c3+(s1*-s2*Math.cos(-2.0944)+c1*Math.cos(Math.PI/2)*c2*Math.cos(-2.0944)+-c1*Math.sin(Math.PI/2)*Math.sin(-2.0944))*-0.25*s3+(s1*Math.sin(-2.0944)*s2+c1*Math.cos(Math.PI/2)*-c2*Math.sin(-2.0944)+-c1*Math.sin(Math.PI/2)*Math.cos(-2.0944))*0.25+(s1*0*c2+c1*Math.cos(Math.PI/2)*0*s2+-c1*Math.sin(Math.PI/2)*0.4718+0*s1))
+        var link_z4=((Math.sin(Math.PI/2)*s2)*-0.25*c3+(Math.sin(Math.PI/2)*c2*Math.cos(-2.0944)+Math.cos(Math.PI/2)*Math.sin(-2.0944))*-0.25*s3+(Math.sin(Math.PI/2)*-c2*Math.sin(-2.0944)+Math.cos(Math.PI/2)*Math.cos(-2.0944))*0.25+(Math.sin(Math.PI/2)*0*s2+Math.cos(Math.PI/2)*0.4718+-0.1758))
         
-
-        var pos = new Matrix([a]);
-        return pos;
+        return new Matrix([[link_x4,link_z4,-link_y4,0,0,0]]);
     }
+
 
     move_arms()
     {
-        var goal_p_L = this.get_grip_L_pos();
-        var goal_p_R = this.get_grip_R_pos();
-        var gen_L = this.pseudo_inverse(goal_p_L,this.last_pose_L, 500, true);
-        var gen_R = this.pseudo_inverse(goal_p_R,this.last_pose_R, 500, false);
+
+        var left_handle  = this.get_grip_L_Fkin(0.0,0.0,this.steering_angle);
+        var right_handle  = this.get_grip_R_Fkin(0.0,0.0,this.steering_angle);
+
+        var gen_L = this.pseudo_inverse(left_handle,this.last_pose_L, 500, true);
+        var gen_R = this.pseudo_inverse(right_handle,this.last_pose_R, 500, false);
         this.last_pose_R =gen_R;
         this.last_pose_L =gen_L;
         this.set_pose(this.last_pose_L,this.last_pose_R);
