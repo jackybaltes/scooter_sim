@@ -265,7 +265,7 @@ div#game {
     height: 100%;
     position: relative;
     overflow: hidden;
-    font-size: 4vw;
+    font-size: 4 vmin;
 }
 
 div.game > div.intro_scene {
@@ -276,7 +276,7 @@ div.game > div.intro_scene {
     height: 50%;
     color: black;
     background-color: transparent;
-    font-size: 1.5vw;
+    font-size: 1.5 vmin;
 }
 
 div.sim_render {
@@ -287,7 +287,7 @@ div.sim_render {
     height: 100%;
     color: black;
     background-color: "green";
-    font-size: 4vw;
+    font-size: 4 vmin;
 }
 
 div.sim_overlay {
@@ -309,7 +309,7 @@ div.sim_overlay > div.intro_scene {
     height: 30%;
     color: black;
     background-color: transparent;
-    font-size: 1.75vw;
+    font-size: 1.75 vmin;
 }
 
 button.game_button_prev {
@@ -358,7 +358,7 @@ div.sim_menu {
     max-height: 100%;
     margin: 20px;
     background:rgb(243, 243, 60);
-    font-size: 4vh;
+    font-size: 3vh;
 }
 
 hr { 

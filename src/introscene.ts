@@ -15,6 +15,7 @@ import {
 
 import { JBGame } from './jbgame';
 import { JBScene } from './jbscene';
+import { ScooterSimScene } from './scootersimscene';
 
 class IntroScene extends JBScene {
 
@@ -122,7 +123,7 @@ class IntroScene extends JBScene {
         this.loaded = true;    
     }
 
-    tick( ) {
+    tick( dt : number ) {
         if ( ( this.camera !== null ) && (this.camera !== undefined ) ){
             console.log(`intro scene tick ${this.camera}`);
             this.renderer.render( this, this.camera );

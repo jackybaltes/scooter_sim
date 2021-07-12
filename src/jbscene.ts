@@ -2,6 +2,7 @@ import { Camera, OrthographicCamera, PerspectiveCamera, WebGLRenderer } from 'th
 
 import { Scene } from 'three';
 import { JBGame } from './jbgame';
+import { ScooterSimScene } from './scootersimscene';
 
 class JBScene extends Scene {
     name : string;
@@ -49,7 +50,7 @@ class JBScene extends Scene {
         }
     }
     
-    tick() {}
+    tick( dt: number ) {}
 
     _onResize() {
         if (this.renderer !== null ) {

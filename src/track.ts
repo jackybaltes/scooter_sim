@@ -3,6 +3,16 @@ import {
     Color,
 } from 'three';
 
+enum TrackUpdateReturn {
+    OK,
+    SCOOTER_FALL,
+
+    SLOW_LINE_CROSSED,
+    SLOW_LINE_STOPPED,
+    SLOW_LINE_TOO_FAST,
+    
+};
+
 class Track {
     protected scooter_obj_blinker_state:boolean;
     protected start_score:number;
@@ -354,10 +364,10 @@ class Track {
         this.trun_traffic_red();
         this.blink_train();
     }
-
-
-    update( scooter_pos,scooter_yaw, blinker_left_state, scooter_stoped)
+   
+    update( scooter_pos,scooter_yaw, blinker_left_state, scooter_stoped) : TrackUpdateReturn
     {
+        let retValue = TrackUpdateReturn.OK;
 
         this.scooter_vel = scooter_stoped;
         this.scooter_obj_blinker_state = blinker_left_state
@@ -378,6 +388,7 @@ class Track {
             this.lost = true;
             this.line_failled = true;
             this.message = "You went off track !"
+            retValue = TrackUpdateReturn.SLOW_LINE_CROSSED;
         }
         
         
@@ -385,6 +396,7 @@ class Track {
         {
             this.lost = true;
             this.message = "You have to stay 7 sec on the line (without stoping)!"
+            retValue = TrackUpdateReturn.SLOW_LINE_TOO_FAST;
         }
 
         if(this.part1_after.is_in(scooter_pos) && !this.part1_cango_after)
@@ -423,7 +435,7 @@ class Track {
             this.message = "Got hit by a train"
 
         }
-        
+        return retValue;
     }
 
 
@@ -779,7 +791,7 @@ class Track {
     }
 }
 
-export {  Track }; 
+export {  Track, TrackUpdateReturn }; 
 
 
 

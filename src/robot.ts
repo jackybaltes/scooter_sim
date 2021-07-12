@@ -28,9 +28,6 @@ export class Robot{
     protected g:number;
     protected J:number;//aprox
     protected D:number;
-    public spawn_x:number;
-    public spawn_y:number;
-    public spawn_z:number;
 
     protected orange:Color;
     protected red:Color;
@@ -100,9 +97,6 @@ export class Robot{
         this.g= 9.806;
         this.J = this.m*Math.pow(this.h,2); //aprox
         this.D = this.m*this.a*this.h;
-        this.spawn_x =-12.2;
-        this.spawn_y =0.94;
-        this.spawn_z =-15;
 
         this.orange= new Color(255,69,0);
         this.red= new Color(255,0,0);
@@ -129,15 +123,16 @@ export class Robot{
 
 
 
-    init_position()
-    {
-        this.scooter.position.x = this.spawn_x;
-        this.scooter.position.y = this.spawn_y;
-        this.scooter.position.z = this.spawn_z;
-        this.scooter.rotation.y = -Math.PI/2;
+    init_position( pos) {
+        this.scooter.position.x = pos[0];
+        this.scooter.position.y = pos[1];
+        this.scooter.position.z = pos[2];
+        this.scooter.rotation.y = pos[3];
+
+        //this.scooter.rotation.y = -Math.PI/2;
         this.scooter_yaw_rotation = -Math.PI/2;
-        var r :number  = (Math.random()-0.5)*2; //random -1 to 1
-        this.steering_angle = r/5;
+        var r = (Math.random()-0.5)*2; //random -1 to 1
+        this.steering_angle = 0; // r/5;
         //this.steering_angle = 0.0;
         this.phi=0;
         this.velocity =0.0;

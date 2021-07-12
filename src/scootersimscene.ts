@@ -24,37 +24,12 @@ import { TaiwanPolice, TaiwanCopMale } from './taiwancop';
 import { JBScene } from './jbscene';
 import { JBGame } from './jbgame';
 import { ScooterSimPhaseOverlay } from './scootersimphaseoverlay';
-import { IntroScene } from './introscene.js';
+import { ScooterSimPhaseSlowDriving, ScooterSimPhaseSlowDrivingState } from './scootersimphaseslowdriving';
+import { ScooterSimPhaseFreeDriving, ScooterSimPhaseFreeDrivingState } from './scootersimphasefreedriving';
+import { ScooterSimPhaseDrivingTest, ScooterSimPhaseDrivingTestState } from './scootersimphasedrivingtest';
 
-enum SimPhase {
-    FreeDrivingIntro = "Free Driving Intro",
-    FreeDriving = "Free Driving",
-    FreeDrivingDone = "Free Driving Done",
-
-    SlowDrivingIntro = "Slow Driving Intro",
-    SlowDriving = "Slow Driving",
-    SlowDrivingSuccess = "Slow Driving Success",
-    SlowDrivingFailure = "Slow Driving Failure",
-    SlowDrivingDone = "Slow Driving Done",
-
-
-    HookTurnIntro = "Hook Turn Intro",
-    HookTurn = "Hook Turn",
-    HookTurnDone = "Hook Turn Done",
-
-    DrivingTestIntro = "Driving Test Intro",
-    DrivingTest = "Driving Test",
-    DrivingTestDone = "Driving Test Done",
-}
-
-const contentSlowDrivingIntro = `<h1>Balance in a straight line<br>
-(One re-test is allowed)</h1> 
-<hr>
-<p>1. Balance in a straight line completed in fewer than seven seconds 
-<span style="color:red">- deduct 32 points</span></p>
-<p>2. Wheel crossing lines or either one or both feet touching the ground 
-<span style="color:red">- deduct 32 points</span></p>
-`;
+const SimPhase = { ...ScooterSimPhaseSlowDrivingState, ...ScooterSimPhaseFreeDrivingState, ...ScooterSimPhaseDrivingTestState };
+type SimPhase = typeof SimPhase;
 
 class ScooterSimScene extends JBScene {
     g = 9.81;
@@ -117,11 +92,10 @@ class ScooterSimScene extends JBScene {
             this.scooter_three = result;
         });
 
-        let ref = this;
         manager.onLoad = () => {
-            ref.add( this.scooter_three );
-            ref.scooterObj = new Robot( this.scooter_three );
-            ref.scooterObj.init_position();
+            this.add( this.scooter_three );
+            this.scooterObj = new Robot( this.scooter_three );
+            //this.scooterObj.init_position(  this.overlayPhase.spawn );
         };
         
         const manager2 = new LoadingManager();
@@ -196,7 +170,7 @@ class ScooterSimScene extends JBScene {
     </div>
     `;
 
-    createDOM( ) {
+    createDOM( phase : string ) {
         let gel = document.getElementById("game");
 
         let h = document.createElement('div');
@@ -218,7 +192,11 @@ class ScooterSimScene extends JBScene {
     
         console.log(`createDom: phase ${this.currentPhase}`);
         
-        this.overlayPhase = new ScooterSimPhaseOverlay( "scooter_sim_phase_overlay", this.game );
+        if ( phase.toLowerCase().indexOf("free driving" ) !== -1 ) {
+            this.overlayPhase = new ScooterSimPhaseFreeDriving( this.game, phase );
+        } else if ( phase.toLowerCase().indexOf("slow driving" ) !== -1 ) {
+            this.overlayPhase = new ScooterSimPhaseSlowDriving( this.game, phase );
+        }
 
         //this.overlayPhase.wrapper.hidden = true;
 
@@ -231,7 +209,7 @@ class ScooterSimScene extends JBScene {
         await this.preload(); 
         console.log( `ScooterSimScene enter ${prev}`);
         
-        this.createDOM();
+        this.createDOM( phase );
 
         super.enter( prev, phase );
 
@@ -294,91 +272,77 @@ class ScooterSimScene extends JBScene {
         }
     }
 
-    clock : Clock = new Clock(); 
+    clock : Clock; 
     dt: number;
 
     prevPhase : string = "";
     nextPhase : string = "";
 
-    switchSlowDrivingPhase( prev: string, next: string ) {
-        if ( next === SimPhase.SlowDrivingIntro ) {
-            this.overlayPhase.updateDOM( contentSlowDrivingIntro );
-            this.overlayPhase.wrapper.hidden = false;
-
-            setTimeout( () => {
-                this.currentPhase = SimPhase.SlowDriving;
-            }, 5000 );
-        }
-
-        if ( ( prev === SimPhase.SlowDrivingIntro ) && ( next === SimPhase.SlowDriving ) ) {
-            this.overlayPhase.wrapper.hidden = true;
-        }
-    }
-
-    tickSlowDrivingPhase( ) {
+    // tickPhase( ) {
+    //     let finished = false;
         
-        if ( this.prevPhase !== this.currentPhase ) {
-            this.switchSlowDrivingPhase( this.prevPhase, this.currentPhase );
-        }
-        console.log(`SlowDriving tick phase ${this.currentPhase} dt ${this.dt}`);
+    //     if ( this.prevPhase !== this.currentPhase ) {
+    //         this.overlayPhase.switch( this.prevPhase, this.currentPhase );
+    //     }
+    //     console.log(`SlowDriving tick phase ${this.currentPhase} dt ${this.dt}`);
 
-        if( this.test_track && this.scooterObj ) {
-            this.test_track.update( this.scooterObj.get_wheel_position(),
-                                    this.scooterObj.scooter_yaw_rotation,
-                                    this.scooterObj.blinking_left,
-                                    this.scooterObj.velocity == 0 );
-            this.score_element.innerHTML = "SCORE : " + this.curent_score + "  |  BEST : " + this.best_score;
-            this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
+    //     if( this.test_track && this.scooterObj ) {
+    //         let tret = this.test_track.update( this.scooterObj.get_wheel_position(),
+    //                                            this.scooterObj.scooter_yaw_rotation,
+    //                                            this.scooterObj.blinking_left,
+    //                                            this.scooterObj.velocity == 0 );
+    //         this.score_element.innerHTML = "SCORE : " + this.curent_score + "  |  BEST : " + this.best_score;
+    //         this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
         
-            this.curent_score = this.test_track.getscore();
+    //         this.curent_score = this.test_track.getscore();
             
-            if (this.currentPhase !== SimPhase.FreeDriving ) {
-                if( this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= - this.max_phi ) {
-                    this.stopwatch.resetTimer();
-                    this.stopwatch.startTimer();
-                    this.test_track.init_track()
-                    this.scooterObj.init_position();
+    //         if (this.currentPhase !== SimPhase.FreeDriving ) {
+    //             if( this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= - this.max_phi ) {
+    //                 this.stopwatch.resetTimer();
+    //                 this.stopwatch.startTimer();
+    //                 this.test_track.init_track()
+    //                 this.scooterObj.init_position(  this.overlayPhase.spawn  );
                     
-                    this.phi =0.0;
-                    this.phi_vel = 0.001;
+    //                 this.phi =0.0;
+    //                 this.phi_vel = 0.001;
         
-                    this.prev_rx = 0;
-                    this.prev_ry = 0;
-                }
-            }
-        }
+    //                 this.prev_rx = 0;
+    //                 this.prev_ry = 0;
+    //             }
+    //         }
+    //     }
         
-        if( this.scooterObj ) {
-            this.physics();
-            let cam_dist : number = 8;
-            let camdist_x : number = cam_dist*Math.cos( - this.scooterObj.scooter_yaw_rotation );
-            let camdist_y : number = cam_dist*Math.sin( - this.scooterObj.scooter_yaw_rotation );
+    //     if( this.scooterObj ) {
+    //         this.physics();
+    //         let cam_dist : number = 8;
+    //         let camdist_x : number = cam_dist*Math.cos( - this.scooterObj.scooter_yaw_rotation );
+    //         let camdist_y : number = cam_dist*Math.sin( - this.scooterObj.scooter_yaw_rotation );
 
-            let view = document.getElementById( "cb_camera_view" );
+    //         let view = document.getElementById( "cb_camera_view" );
 
-            let e = (document.getElementById("cb_camera_view")) as HTMLSelectElement;
-            let sel = e.selectedIndex;
-            let opt = e.options[sel];
-            let cb_view = (<HTMLOptionElement>opt).value;
+    //         let e = (document.getElementById("cb_camera_view")) as HTMLSelectElement;
+    //         let sel = e.selectedIndex;
+    //         let opt = e.options[sel];
+    //         let cb_view = (<HTMLOptionElement>opt).value;
 
-            if ( cb_view == "cb_follow" ) {
-                this.camera.position.set( this.scooterObj.get_position().x - camdist_x, this.scooterObj.get_position().y+5, this.scooterObj.get_position().z-camdist_y);
-                this.camera.lookAt( this.scooterObj.get_position().x, this.scooterObj.get_position().y, this.scooterObj.get_position().z );
-            }
-        }
+    //         if ( cb_view == "cb_follow" ) {
+    //             this.camera.position.set( this.scooterObj.get_position().x - camdist_x, this.scooterObj.get_position().y+5, this.scooterObj.get_position().z-camdist_y);
+    //             this.camera.lookAt( this.scooterObj.get_position().x, this.scooterObj.get_position().y, this.scooterObj.get_position().z );
+    //         }
+    //     }
             
-        for (const object of this.updateables) {
-            object.tick( this.dt );
-        }
+    //     for (const object of this.updateables) {
+    //         object.tick( this.dt );
+    //     }
 
-        if ( ( this.overlayPhase !== null ) && ( ! this.overlayPhase.wrapper.hidden ) ) {
-            this.overlayPhase.tick();
-        }
+    //     if ( ( this.overlayPhase !== null ) && ( ! this.overlayPhase.wrapper.hidden ) ) {
+    //         this.overlayPhase.tick( this.clock.getDelta() );
+    //     }
+    //     return finished;
+    // }
 
-    }
-
-    tick() {
-        this.dt = this.clock.getDelta();
+    tick( dt: number ) {
+        this.dt = dt;
         this.nextPhase = this.currentPhase;
 
         if( this.scooterObj == null ) {
@@ -401,10 +365,8 @@ class ScooterSimScene extends JBScene {
              ( this.currentPhase === SimPhase.SlowDrivingSuccess ) ||
              ( this.currentPhase === SimPhase.SlowDrivingFailure ) ||
              ( this.currentPhase === SimPhase.SlowDrivingDone ) ) {
-                if ( this.prevPhase !== this.currentPhase ) {
-                    this.switchSlowDrivingPhase ( this.prevPhase, this.currentPhase );
-                }
-                this.tickSlowDrivingPhase( );
+                // tickPhase will automatically switch
+                this.overlayPhase.tickPhase( this.dt );
              }
         else {
             if( this.test_track && this.scooterObj ) {
@@ -422,7 +384,7 @@ class ScooterSimScene extends JBScene {
                         this.stopwatch.resetTimer();
                         this.stopwatch.startTimer();
                         this.test_track.init_track()
-                        this.scooterObj.init_position();
+                        this.scooterObj.init_position( this.overlayPhase.spawn );
                         
                         this.phi =0.0;
                         this.phi_vel = 0.001;
@@ -457,7 +419,7 @@ class ScooterSimScene extends JBScene {
             }
 
             if ( this.overlayPhase !== null ) {
-                this.overlayPhase.tick();
+                this.overlayPhase.tick( this.dt );
             }
         }
         this.renderer.render( this, this.camera );
@@ -469,10 +431,10 @@ class ScooterSimScene extends JBScene {
         //Velocity of the scooter on the X axis
         if( this.scooterObj.velocity !=0 ) {
             if( this.scooterObj.steering_angle<0 ) {   
-                var r :number  = Math.random()*-1; //random -1 to 1
+                var r :number  = (Math.random() -0.5)*2; //random -1 to 1
                 this.scooterObj.steering_angle = this.scooterObj.steering_angle + r/100;
             } else {
-                var r :number  = Math.random(); //random -1 to 1
+                var r :number  = (Math.random() - 0.5)*2; //random -1 to 1
                 this.scooterObj.steering_angle = this.scooterObj.steering_angle + r/100;
             }
         }

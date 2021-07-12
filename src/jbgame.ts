@@ -1,5 +1,6 @@
 import {
     Color,
+    Clock,
     WebGLRenderer,
 } from 'three';
 
@@ -16,6 +17,8 @@ class JBGame {
 
     currentSceneName: string;
     currentScene : JBScene;
+
+    clock : Clock = new Clock();
 
     constructor( name : string ) {
         console.log( `JBGame constructor ${name}` );
@@ -88,7 +91,7 @@ class JBGame {
             console.log( `JBGame render currentScene ${this.currentSceneName}`);
             let ci = this.currentScene;
             if ( ci !== null ) {
-                ci.tick();
+                ci.tick( this.clock.getDelta() );
             }
         } else {
             requestAnimationFrame( this.render_no_physics );
