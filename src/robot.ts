@@ -263,13 +263,13 @@ export class Robot{
         this.scooter.setJointValue("r_arm_wr_p",-q_list_R.get(0,8));
     }
 
-
+/*
     get_phi()
     {
         var phi = this.transfer_function_steer_to_tilt(this.steering_angle)-this.transfer_function_steer_to_tilt(0);
-        return phi*1000*this.velocity;    
+        return phi*(1/(this.velocity*10000));    
     }
-
+*/
 
     forward_kin(q_list,is_left_arm = true)
     {

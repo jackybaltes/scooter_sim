@@ -1,16 +1,33 @@
 import {
     WebGLRenderer,
     PerspectiveCamera,
-    Scene,
     DirectionalLight,
-    Color,
     AmbientLight,
     LoadingManager,
     Quaternion,
     Object3D,
     Euler,
     Clock,
+    PMREMGenerator,
+    sRGBEncoding,
+    UnsignedByteType,
+    FloatType,
+    ACESFilmicToneMapping,
+    RedIntegerFormat,
+    Mesh,
+    Color,
+    PCFSoftShadowMap,
+    MeshBasicMaterial,
+    SphereBufferGeometry,
+    CubeTextureLoader,
+    WebGLCubeRenderTarget,
+    TextureLoader,
+    Texture,
+
 } from 'three';
+import { RGBELoader } from '/home/ugo/Desktop/scooter_sim/node_modules/three/examples/jsm/loaders/RGBELoader.js';
+import { EXRLoader } from '/home/ugo/Desktop/scooter_sim/node_modules/three/examples/jsm/loaders/EXRLoader.js';
+
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import URDFLoader, { URDFRobot } from '../urdf/src/URDFLoader.js';
 import {Track} from './track';
@@ -29,7 +46,7 @@ class ScooterSimScene extends JBScene {
     phi_vel=0.001;
     max_phi = 0.5
     phi = 0.0;
-
+    z_offset = 0;
     prev_rx = 0;
     prev_ry = 0;
 
@@ -46,10 +63,9 @@ class ScooterSimScene extends JBScene {
     stopwatch :Timer;
 
     controlServer : ControlServer;
-    background : Color;
     //camera : PerspectiveCamera;
     controls : OrbitControls;
-
+    //background : Color;
     updateables = new Array<JBAnimation>(); 
 
     //Objects ThreeJs of the track and robot
@@ -71,6 +87,8 @@ class ScooterSimScene extends JBScene {
     }
 
     async preload() {
+
+
         super.preload();
         console.log("ScooterSimScene preload");
 
@@ -91,6 +109,7 @@ class ScooterSimScene extends JBScene {
         const loader2 = new URDFLoader(manager2);
         loader2.load('../assets/urdf/track/urdf/model.urdf', result => {
             this.track = result;
+            this.track.position.y = this.z_offset;
         });
         
         manager2.onLoad = () => {
@@ -164,11 +183,16 @@ class ScooterSimScene extends JBScene {
 
         gel.appendChild( h );
 
-        this.renderer = new WebGLRenderer({ antialias: false });
-        //renderer.outputEncoding = sRGBEncoding;
-        //renderer.shadowMap.enabled = true;
-        //renderer.shadowMap.type = PCFSoftShadowMap;
+        this.renderer = new WebGLRenderer({ antialias: false,preserveDrawingBuffer: true});
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = PCFSoftShadowMap;
+        this.renderer.setPixelRatio( window.devicePixelRatio );
+        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        //this.renderer.toneMapping = ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1;
+        this.renderer.outputEncoding = sRGBEncoding;
         gel.appendChild( this.renderer.domElement );
+
 
         this.score_element = document.getElementById("score");
         this.comment_element = document.getElementById("comment");
@@ -190,25 +214,56 @@ class ScooterSimScene extends JBScene {
             //creating the stopwatch
             this.stopwatch = new Timer();
 
-            this.background = new Color(0x92fffb);
+            //this.background = new Color(0x92fffb);
             
+            /*
+            JPG TEST
+            const loader = new TextureLoader();
+            const texture = loader.load(
+                '../assets/images/tears_of_steel_bridge_2k.jpg',
+                () => {
+                    const rt = new WebGLCubeRenderTarget(texture.image.height);
+                    rt.fromEquirectangularTexture(this.renderer, texture);
+                    this.background = rt.texture;
+                });
+            */
+            
+            
+            const loader = new CubeTextureLoader();
+            const texture = loader.load([
+              '../assets/images/px.png',
+              '../assets/images/nx.png',
+              '../assets/images/py.png',
+              '../assets/images/ny.png',
+              '../assets/images/pz.png',
+              '../assets/images/nz.png',
+            ]);
+            this.background = texture;
+            this.environment = texture;
+
+            /*
+            var pmremGenerator = new PMREMGenerator(this.renderer);
+            pmremGenerator.compileEquirectangularShader();
+            const loader = new RGBELoader();
+            loader.setDataType( UnsignedByteType );
+            loader.setPath( '../assets/images/' );
+            var texture = loader.load( 'lilienstein_1k.hdr')
+            const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+            texture.flipY = false;
+            this.environment = envMap;
+            this.background = envMap;//new Color(0x92fffb);//pmremGenerator.fromEquirectangular( texture );
+            */
             this.camera = new PerspectiveCamera();
             this.camera.position.set( -11, 10, 17 );
             this.camera.lookAt( -11, 0, 17 );
-            
-            // this.renderer = new WebGLRenderer({ antialias: false });
-            // //renderer.outputEncoding = sRGBEncoding;
-            // //renderer.shadowMap.enabled = true;
-            // //renderer.shadowMap.type = PCFSoftShadowMap;
-            // document.body.appendChild( this.renderer.domElement );
-        
+                    
             const directionalLight : DirectionalLight = new DirectionalLight(0xffffff, 1.0);
             directionalLight.castShadow = true;
             directionalLight.shadow.mapSize.setScalar(1024);
             directionalLight.position.set(30, 100, 5);
             directionalLight.target.position.set( 0, 0, 0 );
         
-            const ambientLight : AmbientLight = new AmbientLight(0xffffff, 0.01);
+            const ambientLight : AmbientLight = new AmbientLight(0xffffff, 0.03);
             //ading the stuff to the scene
             this.add( directionalLight );
             this.add(ambientLight);
@@ -334,35 +389,80 @@ class ScooterSimScene extends JBScene {
         this.scooterObj.scooter.setJointValue( "steering_joint",this.scooterObj.steering_angle );
         this.scooterObj.scooter.position.x += y_vel;
         this.scooterObj.scooter.position.z += x_vel;
-    
-        this.phi = this.scooterObj.transfer_function_steer_to_tilt( this.scooterObj.steering_angle ) - this.scooterObj.transfer_function_steer_to_tilt( 0 );
-        this.phi = this.phi * 1000 * this.scooterObj.velocity;
-    
-        if( this.scooterObj.steering_angle>0 && this.phi_vel>0 ) {
-            this.phi_vel *= 1 + this.scooterObj.velocity;
-        } else if( ( this.scooterObj.steering_angle > 0 ) && ( this.phi_vel < 0 ) ) {
-            this.phi_vel += 0.01;
-        } else if( ( this.scooterObj.steering_angle < 0 ) && ( this.phi_vel > 0 ) ) {
-            this.phi_vel -= 0.01;
-        } else if( ( this.scooterObj.steering_angle < 0 ) && ( this.phi_vel < 0 ) ) {
-            this.phi_vel = - Math.abs( this.phi_vel ) * ( 1 + this.scooterObj.velocity );//-Math.abs(phi_vel)*1.1;
+        
+        if(this.scooterObj.velocity>0)
+        {
+
+            this.phi_vel =this.scooterObj.transfer_function_steer_to_tilt( this.scooterObj.steering_angle/2 ) - this.scooterObj.transfer_function_steer_to_tilt( 0 );
+            this.phi_vel = this.phi_vel/((0.1+this.scooterObj.velocity)**1.2)
+        }else 
+        {
+            this.phi = 0;
+        }
+        /*
+            this.phi=this.phi*(1/this.scooterObj.velocity**1.6);
+        }*/
+        console.log("Phi =",this.phi);
+        console.log("Vel =",this.scooterObj.velocity);
+        console.log("Phi_vel =",this.phi_vel);
+        console.log("Coef =",  ((0.1+this.scooterObj.velocity)**1.2) );
+
+        console.log("=====================");
+
+        
+        if( this.scooterObj.steering_angle>0 && this.phi>0 )
+        {
+            this.phi_vel = -0.01;
+            console.log("USER CORRECTION");
+
+        }
+        else if( ( this.scooterObj.steering_angle < 0 ) && ( this.phi < 0 ) ) 
+        {
+            this.phi_vel = 0.01;
+            console.log("USER CORRECTION");
+
+            //this.phi_vel = - Math.abs( this.phi_vel ) * ( 1 + this.scooterObj.velocity );//-Math.abs(phi_vel)*1.1;
         }
         
+        /*
+        if( ( this.scooterObj.steering_angle > 0 ) && ( this.phi_vel < 0 ) ) 
+        {
+            this.phi_vel += 0.01;
+        }
+        else if( ( this.scooterObj.steering_angle < 0 ) && ( this.phi_vel > 0 ) ) 
+        {
+            this.phi_vel -= 0.01;
+        }
+        */
+
+
+        /*
+        //velocity limits
         if( this.phi_vel > 0.8 ) {
             this.phi_vel = 0.8;
         }
-
         if( this.phi_vel < -0.8 ) {
             this.phi_vel = -0.8;
         }
-    
-        this.phi += this.phi_vel;
         
+        */
+
+        this.phi += this.phi_vel;
+        //phi limits
         if( this.phi < - this.max_phi ) {
             this.phi = - this.max_phi;
         } else if( this.phi > this.max_phi ) {
             this.phi = this.max_phi;
         }
+
+
+
+
+
+
+
+
+
     
         if( this.test != this.phi ) {
             let delta = this.test - this.phi
@@ -518,6 +618,17 @@ class ScooterSimScene extends JBScene {
     }
 
     onResize = this._onResize.bind( this );
+
+    //return a base64 encoding of the current frame
+    // can be sqved as jpeg using :
+    //saveFile(imgdata.replace(strMime, strDownloadMime), "test.jpg");
+    get_screenshot()
+    {
+        var strMime = "image/jpeg";
+        var imgdata = this.renderer.domElement.toDataURL(strMime);
+        return imgdata
+    }
+
 
 }
 

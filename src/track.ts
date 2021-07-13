@@ -201,7 +201,7 @@ export class Track {
 
     get_done()
     {
-        return this.lost;
+        return false;//this.lost;
     }
 
     
