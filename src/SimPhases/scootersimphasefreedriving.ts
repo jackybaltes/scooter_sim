@@ -1,5 +1,6 @@
 import { ScooterSimPhaseOverlay } from "../scootersimphaseoverlay";
 import { JBGame } from '../jbgame';
+import { ScooterSimScene } from "../scootersimscene";
 
 const content = `<h1>Balance in a straight line<br>
 (One re-test is allowed)</h1> 
@@ -21,6 +22,7 @@ class ScooterSimPhaseFreeDriving extends ScooterSimPhaseOverlay {
     constructor( game : JBGame, state : string ) {
         super( "scooter_sim_phase_free_driving_intro", game, content, [ -12.2, 0.94, -15, -Math.PI/2 ] );
         this.state = ScooterSimPhaseFreeDrivingState[ state.toLowerCase() ];
+
     }
 }
 
