@@ -1,6 +1,6 @@
-import { ScooterSimPhaseOverlay } from "./scootersimphaseoverlay";
-import { JBGame } from './jbgame';
-import { ScooterSimScene } from "./scootersimscene";
+import { ScooterSimPhaseOverlay } from "../scootersimphaseoverlay";
+import { JBGame } from '../jbgame';
+import { ScooterSimScene } from "../scootersimscene";
 
 const content = `<h1>Balance in a straight line<br>
 (One re-test is allowed)</h1> 
@@ -27,43 +27,52 @@ class ScooterSimPhaseSlowDriving extends ScooterSimPhaseOverlay {
         this.state = ScooterSimPhaseSlowDrivingState[ state.toLowerCase() ];
     }
 
-    
+
     switchPhase( prev: string, next: string ) {
         let sim : ScooterSimScene = this.game.currentScene as ScooterSimScene;
-
-        if ( next === ScooterSimPhaseSlowDrivingState.SlowDrivingIntro ) {
+        if ( next === ScooterSimPhaseSlowDrivingState.SlowDrivingIntro ) 
+        {
             this.updateDOM( );
             this.show( true );
+            sim.reset();
+            sim.lock_imputs = true;
+            setTimeout(()=>{sim.currentPhase = ScooterSimPhaseSlowDrivingState.SlowDriving;}, 5000 );
+        }
+        else if ( next === ScooterSimPhaseSlowDrivingState.SlowDriving )
+        {
+            sim.reset();
+        }
+        else if ( next === ScooterSimPhaseSlowDrivingState.SlowDrivingSuccess )
+        {
 
-            sim.stopwatch.resetTimer();
-            sim.stopwatch.startTimer();
-            sim.test_track.init_track()
-            sim.scooterObj.init_position(  sim.overlayPhase.spawn  );
-            
-            sim.phi =0.0;
-            sim.phi_vel = 0.001;
-    
-            sim.prev_rx = 0;
-            sim.prev_ry = 0;
+            sim.scooterObj.velocity = 0.0;
+            sim.lock_imputs = true;
 
-            setTimeout( () => {
-                sim.currentPhase = ScooterSimPhaseSlowDrivingState.SlowDriving;
-            }, 5000 );
-        } else if ( next === ScooterSimPhaseSlowDrivingState.SlowDriving ) {
-            sim.stopwatch.resetTimer();
-            sim.stopwatch.startTimer();
-            sim.test_track.init_track()
-            sim.scooterObj.init_position(  sim.overlayPhase.spawn  );
-            
-            sim.phi =0.0;
-            sim.phi_vel = 0.001;
-    
-            sim.prev_rx = 0;
-            sim.prev_ry = 0;
-        
+            this.updateDOM( );
+            this.content = `<h1 style="color:green">Well done !<br></h1> 
+            <hr>
+            <span style="color:green">You passed the straight line training !</span></p>
+            <p>You will be brought back into the menu in 5sec<p>
+            `;
+            this.show( true );
+            setTimeout(()=>{sim.currentPhase = ScooterSimPhaseSlowDrivingState.SlowDrivingDone;},5000);
+        }
+        else if ( next === ScooterSimPhaseSlowDrivingState.SlowDrivingDone )
+        {
+            //go to menu 
+            this.stop();
+            this.hide();
+            this.game.switch("chapter_select");
+        }
+        else if(next === ScooterSimPhaseSlowDrivingState.SlowDrivingFailure)
+        {
+            sim.test_track.setMessage("You have to stay 7 sec on the line (without stoping)!");
+            sim.reset();
         }
 
-        if ( ( prev === ScooterSimPhaseSlowDrivingState.SlowDrivingIntro ) && ( next === ScooterSimPhaseSlowDrivingState.SlowDriving ) ) {
+
+        if (next === ScooterSimPhaseSlowDrivingState.SlowDriving) 
+        {
             this.show( false );
         }
     }
@@ -74,13 +83,13 @@ class ScooterSimPhaseSlowDriving extends ScooterSimPhaseOverlay {
         if ( sim.prevPhase !== sim.currentPhase ) {
             sim.overlayPhase.switchPhase( sim.prevPhase, sim.currentPhase );
         }
-        console.log(`SlowDriving tick phase ${sim.currentPhase} dt ${dt}`);
+        //console.log(`SlowDriving tick phase ${sim.currentPhase} dt ${dt}`);
 
         if( sim.test_track && sim.scooterObj ) {
-            let tret = sim.test_track.update( sim.scooterObj.get_wheel_position(),
-                                               sim.scooterObj.scooter_yaw_rotation,
-                                               sim.scooterObj.blinking_left,
-                                               sim.scooterObj.velocity == 0 );
+            let tret = sim.test_track.update(   sim.scooterObj.get_wheel_position(),
+                                                sim.scooterObj.scooter_yaw_rotation,
+                                                sim.scooterObj.blinking_left,
+                                                sim.scooterObj.velocity == 0 );
             sim.score_element.innerHTML = "SCORE : " + sim.curent_score + "  |  BEST : " + sim.best_score;
             sim.comment_element.innerHTML = "COMMENTS : <br><br>" + sim.test_track.getMessage();
         
@@ -105,6 +114,20 @@ class ScooterSimPhaseSlowDriving extends ScooterSimPhaseOverlay {
                 sim.camera.lookAt( sim.scooterObj.get_position().x, sim.scooterObj.get_position().y, sim.scooterObj.get_position().z );
             }
         }
+        //updating the state of the training challenge
+        //checking the reset conditions of this part 
+        if(sim.is_done())
+        {
+            this.switchPhase(sim.prevPhase,ScooterSimPhaseSlowDrivingState.SlowDrivingFailure)
+        }
+        //if challenge completed 
+        if( sim.test_track.part0_after.is_in(sim.scooterObj.get_wheel_position()) && sim.test_track.part0_cango_after)
+        {
+            //sim.reset();
+            this.switchPhase(sim.prevPhase,ScooterSimPhaseSlowDrivingState.SlowDrivingSuccess )
+        }
+        
+
             
         for (const object of sim.updateables) {
             object.tick( sim.dt );

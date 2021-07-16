@@ -14,7 +14,7 @@ enum TrackUpdateReturn {
 };
 
 class Track {
-    protected scooter_obj_blinker_state:boolean;
+    public scooter_obj_blinker_state:boolean;
     protected start_score:number;
     protected lost:boolean;
     protected message:string;
@@ -45,41 +45,41 @@ class Track {
     protected black:Color;
 
     //crosswalk
-    protected part1:CheckPoint;
-    protected part1_after:CheckPoint;
-    protected part1_cango_after:boolean;
-    protected part1_on:boolean;
+    public part1:CheckPoint;
+    public part1_after:CheckPoint;
+    public part1_cango_after:boolean;
+    public part1_on:boolean;
 
     //Traffic light
-    protected part2:CheckPoint;
-    protected part2_after:CheckPoint;
-    protected part2_cango_after:boolean;
-    protected part2_on:boolean;
+    public part2:CheckPoint;
+    public part2_after:CheckPoint;
+    public part2_cango_after:boolean;
+    public part2_on:boolean;
 
     //position part
-    protected part3:CheckPoint;
-    protected part3_after:CheckPoint;
-    protected part3_cango_after:boolean;
-    protected part3_on:boolean;
+    public part3:CheckPoint;
+    public part3_after:CheckPoint;
+    public part3_cango_after:boolean;
+    public part3_on:boolean;
 
-    protected part4:CheckPoint;
-    protected part4_after:CheckPoint;
-    protected part4_cango_after:boolean;
-    protected part4_on:boolean;
+    public part4:CheckPoint;
+    public part4_after:CheckPoint;
+    public part4_cango_after:boolean;
+    public part4_on:boolean;
 
-    protected part5:CheckPoint;
-    protected part5_after:CheckPoint;
-    protected part5_cango_after:boolean;
-    protected part5_on:boolean;
+    public part5:CheckPoint;
+    public part5_after:CheckPoint;
+    public part5_cango_after:boolean;
+    public part5_on:boolean;
 
-    protected part0:CheckPoint;
-    protected part0_after:CheckPoint;
+    public part0:CheckPoint;
+    public part0_after:CheckPoint;
 
-    protected part0_on:boolean;
-    protected part0_cango_after:boolean;
+    public part0_on:boolean;
+    public part0_cango_after:boolean;
 
-    protected part35:CheckPoint;
-    protected part35_on:boolean;
+    public part35:CheckPoint;
+    public part35_on:boolean;
 
 
     protected part0_failled:boolean;
@@ -241,7 +241,8 @@ class Track {
                 await this.sleep(500);
             }
         }
-        
+        this.change_color(this.zebra_l,this.black);
+        this.change_color(this.zebra_r,this.black);
     }
 
 
@@ -272,7 +273,8 @@ class Track {
             }
             this.train_blink = false;
         }
-        
+        this.change_color(this.train_l,this.black);
+        this.change_color(this.train_r,this.black);
     }
 
 
@@ -418,8 +420,6 @@ class Track {
         {
             this.part3_failled = true;
             this.message = "Wait a bit inside the rectangle";
-
-
         }
         if(this.part4_after.is_in(scooter_pos) && !this.part4_cango_after)
         {
@@ -481,6 +481,10 @@ class Track {
     }
 
 
+    setMessage(s:string)
+    {
+        this.message = s;
+    }
 
 
 

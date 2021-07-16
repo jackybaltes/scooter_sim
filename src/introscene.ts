@@ -125,7 +125,7 @@ class IntroScene extends JBScene {
 
     tick( dt : number ) {
         if ( ( this.camera !== null ) && (this.camera !== undefined ) ){
-            console.log(`intro scene tick ${this.camera}`);
+            //console.log(`intro scene tick ${this.camera}`);
             this.renderer.render( this, this.camera );
         }
     }

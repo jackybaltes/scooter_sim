@@ -34,11 +34,26 @@ class ChapterSelectScene extends IntroScene {
         <td><button id="chapter_slow_driving" class="chapter_select">Practice: Slow Driving</button></td>
         </tr>
         <tr>
-        <td><button id="chapter_railway_crossing" class="chapter_select">Practice: Railway Crossing</button></td>
+        <td><button id="chapter_zebra_crossing" class="chapter_select">Practice: Zebra Crossing</button></td>
         </tr>
         <tr>
-        <td><button id="chapter_hook_turn" class="chapter_select">Practice: Hook Turn</button></td>
+        <td><button id="chapter_zebra_hook_turn" class="chapter_select">Practice: Hook turn</button></td>
         </tr>
+        <tr>
+        <td><button id="chapter_line_changing" class="chapter_select">Practice: Lane Changing</button></td>
+        </tr>
+        <tr>
+        <td><button id="chapter_hair_pin" class="chapter_select">Practice: Hairpin Bend</button></td>
+        </tr>
+        <tr>
+        <td><button id="chapter_rail_crossing" class="chapter_select">Practice: Railroad crossing</button></td>
+        </tr>
+
+        <tr>
+        \n
+        </tr>
+
+
         <tr>
         <td><button id="chapter_driving_test" class="chapter_select">Take the Driving Test</button></td>
         </tr>
@@ -72,11 +87,52 @@ class ChapterSelectScene extends IntroScene {
             this.game.switch( "sim", SimPhase.SlowDrivingIntro );
         };
 
+        nb =  document.getElementById( "chapter_zebra_crossing");
+        nb.onclick = () => {
+            console.log("chapter zebra crossing");
+            this.game.switch( "sim", SimPhase.ZebraIntro );
+        };
+
+        nb =  document.getElementById( "chapter_zebra_hook_turn");
+        nb.onclick = () => {
+            console.log("chapter_zebra_hook_turn");
+            this.game.switch( "sim", SimPhase.HookTurnIntro );
+        };
+
+        nb =  document.getElementById( "chapter_zebra_hook_turn");
+        nb.onclick = () => {
+            console.log("chapter_zebra_hook_turn");
+            this.game.switch( "sim", SimPhase.HookTurnIntro );
+        };
+
+        nb =  document.getElementById( "chapter_rail_crossing");
+        nb.onclick = () => {
+            console.log("chapter_rail_crossing");
+            this.game.switch( "sim", SimPhase.RailCrossIntro );
+        };
+
+        nb =  document.getElementById( "chapter_hair_pin");
+        nb.onclick = () => {
+            console.log("chapter_hair_pin");
+            this.game.switch( "sim", SimPhase.HairPinIntro );
+        };
+
+
+        nb =  document.getElementById( "chapter_line_changing");
+        nb.onclick = () => {
+            
+            console.log("chapter_line_changing");
+            this.game.switch( "sim", SimPhase.LineCrossIntro );
+        };
+
         nb =  document.getElementById( "chapter_driving_test");
         nb.onclick = () => {
+            
             console.log("chapter driving test");
             this.game.switch( "sim", SimPhase.DrivingTest );
         };
+
+
     }
 }
 
