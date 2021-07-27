@@ -1,10 +1,10 @@
 import { Vector2 } from "three";
 
-import { ScooterSimPhaseOverlay } from "./scootersimphaseoverlay";
-import { JBGame } from './jbgame';
-import { ScooterSimScene, SimPhase } from "./scootersimscene";
-import { CheckPoint } from "./track";
-import { Robot } from "./robot";
+import { ScooterSimPhaseOverlay } from "../scootersimphaseoverlay";
+import { JBGame } from '../jbgame';
+import { ScooterSimScene, SimPhase } from "../scootersimscene";
+import { CheckPoint } from "../track";
+import { Robot } from "../robot";
 
 
 const content = `<h1>Balance in a straight line<br>

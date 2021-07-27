@@ -37,7 +37,7 @@ class ScooterSimPhaseRailCross extends ScooterSimPhaseOverlay {
             sim.lock_imputs = true;
             sim.reset();
             //to avoid unrelated messages
-            sim.test_track.part0_cango_after = true;
+            
             sim.test_track.part1_cango_after = true;
             sim.test_track.part2_cango_after = true;  
             sim.test_track.part3_cango_after = true;    
@@ -49,7 +49,7 @@ class ScooterSimPhaseRailCross extends ScooterSimPhaseOverlay {
         else if ( next === ScooterSimPhaseRailCrossState.RailCross )
         {
             sim.reset();
-            sim.test_track.part0_cango_after = true;
+            
             sim.test_track.part1_cango_after = true;
             sim.test_track.part2_cango_after = true;    
             sim.test_track.part3_cango_after = true;    
@@ -96,7 +96,7 @@ class ScooterSimPhaseRailCross extends ScooterSimPhaseOverlay {
     tickPhase( dt : number ) {
         let sim : ScooterSimScene = this.game.currentScene as ScooterSimScene;
 
-        sim.test_track.part0_cango_after = true;
+        
         sim.test_track.part1_cango_after = true;
         sim.test_track.part2_cango_after = true;    
         sim.test_track.part3_cango_after = true;    

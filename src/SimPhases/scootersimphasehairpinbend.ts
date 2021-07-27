@@ -37,7 +37,6 @@ class ScooterSimPhaseHairPin extends ScooterSimPhaseOverlay {
             sim.reset();
             sim.lock_imputs = true;
             //to avoid unrelated messages
-            sim.test_track.part0_cango_after = true;
             sim.test_track.part1_cango_after = true;
             sim.test_track.part2_cango_after = true;  
             sim.test_track.part3_cango_after = true;    
@@ -48,7 +47,6 @@ class ScooterSimPhaseHairPin extends ScooterSimPhaseOverlay {
         else if ( next === ScooterSimPhaseHairPinState.HairPin )
         {
             sim.reset();
-            sim.test_track.part0_cango_after = true;
             sim.test_track.part1_cango_after = true;
             sim.test_track.part2_cango_after = true;    
             sim.test_track.part3_cango_after = true;    
@@ -94,7 +92,6 @@ class ScooterSimPhaseHairPin extends ScooterSimPhaseOverlay {
     tickPhase( dt : number ) {
         let sim : ScooterSimScene = this.game.currentScene as ScooterSimScene;
 
-        sim.test_track.part0_cango_after = true;
         sim.test_track.part1_cango_after = true;
         sim.test_track.part2_cango_after = true;    
         sim.test_track.part3_cango_after = true;    

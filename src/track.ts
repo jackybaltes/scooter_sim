@@ -68,7 +68,7 @@ class Track {
     public part5_cango_after:boolean;
     public part5_on:boolean;
 
-    protected part35:CheckPoint;
+    public part35:CheckPoint;
     protected part35_on:boolean;
 
     protected part1_failled:boolean;
