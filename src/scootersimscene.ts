@@ -16,7 +16,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import URDFLoader, { URDFRobot } from '../urdf/src/URDFLoader.js';
 import {Track} from './track';
 import {Timer} from './timer';
-import {Robot} from './robot'
+import {Robot} from './robot';
 import {ControlServer} from './controlserver';
 import { JBAnimation } from './jbanimation';
 import { TaiwanBear } from './taiwanbear';
@@ -49,7 +49,7 @@ class ScooterSimScene extends JBScene {
 
     //Score variables
     curent_score :number = 100
-    best_score :number= 999
+    best_score :number;
         
     //elements to modify the html page
     score_element : HTMLElement;
@@ -86,6 +86,10 @@ class ScooterSimScene extends JBScene {
     overlay : string;
     overlayPhase : ScooterSimPhaseOverlay = null;
 
+
+    numer_animation_L_count: number = 0;
+    numer_animation_R_count: number = 0;
+
     constructor( name : string, game : JBGame, root: string, overlay : string ) {
         super( name, game, root );
         this.overlay = overlay;
@@ -118,7 +122,7 @@ class ScooterSimScene extends JBScene {
             manager2.onLoad = () => {
                 this.track.rotation.x = -Math.PI/2;
                 this.add( this.track );
-                this.test_track = new Track( this.track ); //, render_no_physics );
+                this.test_track = new Track(this.track); //, render_no_physics );
                 this.test_track.init_track()
             };
             
@@ -155,7 +159,7 @@ class ScooterSimScene extends JBScene {
 
             this.add( m );
             this.updateables.push( pol2 );
-            this.loaded = true
+            
 
             const directionalLight : DirectionalLight = new DirectionalLight(0xffffff, 1.0);
             directionalLight.castShadow = true;
@@ -166,7 +170,9 @@ class ScooterSimScene extends JBScene {
             const ambientLight : AmbientLight = new AmbientLight( 0xffffff, 0.25 );
             //ading the stuff to the scene
             this.add( directionalLight );
-            this.add(ambientLight);    
+            this.add(ambientLight);   
+            
+            this.loaded = true
         }
     }
 
@@ -241,11 +247,22 @@ class ScooterSimScene extends JBScene {
         {
             this.overlayPhase = new ScooterSimPhaseLineCross( this.game, phase );
         }
+        else if ( phase.toLowerCase().indexOf("driving test" ) !== -1 )
+        {
+            this.overlayPhase = new ScooterSimPhaseDrivingTest( this.game, phase );
+        }
+        else
+        {
+            console.log("ScooterSimScene ERROR Scene not found");
+        }
+
+
+
+
         this.scooterObj.init_position( this.overlayPhase.spawn );
 
         //this.overlayPhase.wrapper.hidden = true;
 
-        console.log("ScooterSimScene create");
     }
 
     async enter( prev : JBScene, phase : string ) {
@@ -302,6 +319,8 @@ class ScooterSimScene extends JBScene {
             await this.overlayPhase.enter( prev );
             this.overlayPhase.wrapper.hidden = true;
         }
+
+        this.reset();
     }
 
     clock : Clock; 
@@ -326,6 +345,8 @@ class ScooterSimScene extends JBScene {
         this.phi =0.0;
         this.lean =0.0;
 
+        this.best_score = this.test_track.get_best_score();
+        
         this.phi_vel = 0.001;
         this.prev_rx = 0;
         this.prev_ry = 0;
@@ -433,6 +454,8 @@ class ScooterSimScene extends JBScene {
                 if (this.currentPhase !== SimPhase.FreeDriving ) {
                     if( this.is_done() )
                     {
+                        this.test_track.update_score_timer(this.stopwatch);
+                        this.test_track.save_curent_score();                
                         this.reset();
                     }
                 }
@@ -492,6 +515,7 @@ class ScooterSimScene extends JBScene {
         this.scooterObj.scooter.position.z += x_vel;
         this.g = 5.0;
         var zero = 0.001
+        
         var pendulum = (this.g/this.scooterObj.h)*Math.sin(this.phi);
         if( this.scooterObj.steering_angle<0.0 &&  (-0.001<=this.phi && this.phi<=0.001))
         {
@@ -512,9 +536,68 @@ class ScooterSimScene extends JBScene {
             pendulum = 0;
         }
 
-        
+        if(this.scooterObj.velocity ==0)
+        {
+            pendulum = 0;
+        }
 
-        console.log("steering_angle = ",this.scooterObj.steering_angle);
+        if(this.scooterObj.velocity ==0 && this.scooterObj.steering_angle<0.01)
+        {
+            var prct = this.numer_animation_L_count/100;
+            
+            if(this.numer_animation_R_count>0)
+            {
+                this.numer_animation_R_count--;
+                this.scooterObj.set_stop_pause_rigth(this.numer_animation_R_count/100);           
+                this.applyRotation( this.scooter_three, [0.3*this.numer_animation_R_count/100, this.scooterObj.scooter_yaw_rotation, 0 ] );
+ 
+            }else if(this.numer_animation_L_count<100)
+            {
+                this.numer_animation_L_count++;
+                this.scooterObj.set_stop_pause_left(prct);
+                this.applyRotation( this.scooter_three, [-0.3*prct, this.scooterObj.scooter_yaw_rotation, 0 ] );
+    
+            }
+
+
+        }else if(this.scooterObj.velocity ==0 && this.scooterObj.steering_angle>0.01)
+        {
+            var prct = this.numer_animation_R_count/100;
+
+            
+            if(this.numer_animation_L_count>0)
+            {
+                this.numer_animation_L_count--;
+                this.scooterObj.set_stop_pause_left(this.numer_animation_L_count/100);
+                this.applyRotation( this.scooter_three, [-0.3*this.numer_animation_L_count/100, this.scooterObj.scooter_yaw_rotation, 0 ] );
+
+            }else if(this.numer_animation_R_count<100)
+            {
+                this.numer_animation_R_count++;
+                this.scooterObj.set_stop_pause_rigth(prct);            
+                this.applyRotation( this.scooter_three, [0.3*prct, this.scooterObj.scooter_yaw_rotation, 0 ] );
+    
+            }
+
+        }
+        else
+        {
+            this.scooterObj.set_sit_pose();
+
+
+
+            if(this.numer_animation_R_count>0)
+            {
+                this.numer_animation_R_count--;
+                this.scooterObj.set_stop_pause_rigth(this.numer_animation_R_count/100);            
+            }
+            if(this.numer_animation_L_count>0)
+            {
+                this.numer_animation_L_count--;
+                this.scooterObj.set_stop_pause_left(this.numer_animation_L_count/100);
+            }
+
+
 
 
 
@@ -542,33 +625,12 @@ class ScooterSimScene extends JBScene {
         }
 
 
-        /*
-        if(this.phi<0)
-        {
-            this.scooterObj.steering_angle = ((this.scooterObj.b*Math.cos(this.phi))/r);//Math.cos(0.52);
-        }
-        else
-        {
-            this.scooterObj.steering_angle =((this.scooterObj.b*Math.cos(this.phi))/r);//Math.cos(0.52);
-        }
-        */
-        console.log("velocity coef = ",(1/(1+this.scooterObj.velocity*5)));
-        console.log("lean = ",this.lean);
-
-        console.log("pendulum = ",pendulum);
-        console.log("dt = ",this.dt);
-
-        console.log("phi = ",this.phi);
-        console.log("angle = ",this.scooterObj.steering_angle);
 
         if( this.test != this.phi ) {
-            let delta = this.test - this.phi
             let a = Math.sin( this.phi+this.lean ) * ( this.scooterObj.h );
             let [rx,ry] = this.rotate_around( 0, 0, 0, a, - ( this.scooterObj.scooter_yaw_rotation + ( Math.PI/2 ) ) );
-    
             this.scooterObj.scooter.position.x -= ry - this.prev_ry;
             this.scooterObj.scooter.position.z -= rx - this.prev_rx;
-    
             this.prev_rx = rx;
             this.prev_ry = ry;
         }
@@ -576,8 +638,15 @@ class ScooterSimScene extends JBScene {
         this.test = this.phi;
     
         this.applyRotation( this.scooter_three, [ this.phi+this.lean, this.scooterObj.scooter_yaw_rotation, 0 ] );
+
+
+
+        }
     }
     
+
+
+
     applyRotation( obj, rpy, additive = false) {
         var tempQuaternion:Quaternion = new Quaternion();
         var tempEuler:Euler = new Euler();

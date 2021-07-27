@@ -11,6 +11,7 @@
         "src/main.ts",
         "src/controlserver.ts",
         "src/track.ts",
+        "src/score.ts",
         "src/robot.ts",
         "src/timer.ts",
         "src/taiwanbear.ts",

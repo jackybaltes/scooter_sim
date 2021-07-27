@@ -145,7 +145,7 @@ export class Robot{
     }
 
 
-    change_color(obj,color)
+    change_color(obj,color):void
     {
         obj.color.set(color);
         obj.emissive.set(color);
@@ -155,7 +155,7 @@ export class Robot{
 
 
 
-    get_wheel_position()
+    get_wheel_position(): Vector3
     {
 
         var point_x = this.a*Math.cos(-this.scooter_yaw_rotation);
@@ -504,5 +504,57 @@ export class Robot{
         this.last_pose_L =gen_L;
         this.set_pose(this.last_pose_L,this.last_pose_R);
     }
+
+
+
+
+    set_sit_pose()
+    {
+        this.scooter.setJointValue("r_leg_hip_y",0);
+        this.scooter.setJointValue("r_leg_hip_p",1.);
+        this.scooter.setJointValue("r_leg_kn_p",-0.7);
+        this.scooter.setJointValue("r_leg_an_p",0.52);
+
+        this.scooter.setJointValue("l_leg_hip_y",0);
+        this.scooter.setJointValue("l_leg_hip_p",-1.);
+        this.scooter.setJointValue("l_leg_kn_p",0.7);
+        this.scooter.setJointValue("l_leg_an_p",-0.52);
+    }
+
+    set_stop_pause_rigth(prct:number)
+    {
+        this.scooter.setJointValue("l_leg_hip_y",0);
+        this.scooter.setJointValue("l_leg_hip_p",-1.0*prct);
+        this.scooter.setJointValue("l_leg_kn_p",0.7*prct);
+        this.scooter.setJointValue("l_leg_an_p",-0.52*prct);
+
+        this.scooter.setJointValue("r_leg_hip_y",0.7*prct);
+        this.scooter.setJointValue("r_leg_hip_r",0.2*prct);
+        this.scooter.setJointValue("r_leg_hip_p",0.8*prct);
+        this.scooter.setJointValue("r_leg_kn_p",-0.5*prct);
+    }
+
+
+    set_stop_pause_left(prct:number)
+    {
+
+        this.scooter.setJointValue("r_leg_hip_y",0);
+        this.scooter.setJointValue("r_leg_hip_p",1.0*prct);
+        this.scooter.setJointValue("r_leg_kn_p",-0.7*prct);
+        this.scooter.setJointValue("r_leg_an_p",0.52*prct);
+        this.scooter.setJointValue("l_leg_hip_y",-0.7*prct);
+        this.scooter.setJointValue("l_leg_hip_r",-0.2*prct);
+        this.scooter.setJointValue("l_leg_hip_p",-0.8*prct);
+        this.scooter.setJointValue("l_leg_kn_p",0.5*prct);
+
+
+    }
+
+
+
+
+
+
+
 }
 

@@ -2,6 +2,7 @@ import {
     Vector2,
     Color,
 } from 'three';
+import {Timer} from './timer';
 
 enum TrackUpdateReturn {
     OK,
@@ -12,10 +13,11 @@ enum TrackUpdateReturn {
     SLOW_LINE_TOO_FAST,
     
 };
+import {Score} from './score'
 
 class Track {
+
     public scooter_obj_blinker_state:boolean;
-    protected start_score:number;
     protected lost:boolean;
     protected message:string;
     protected zebra_blink:boolean;
@@ -28,7 +30,6 @@ class Track {
 
     // protected render;
     protected track_; // the track described as a threeJS object
-
 
     //Parsing the track to find visuals
     protected zebra_l;
@@ -95,22 +96,23 @@ class Track {
     protected arrayX:Array<number>;
     protected arrayY:Array<number>;
 
+    protected score:Score;
     
-    constructor(track_threejs ) // ,render)
+    constructor(track_threejs) 
     {
-//        this.render = render
+
+
+        this.score = new Score(null);
+
         this.track_ = track_threejs; // the track described as a threeJS object
     
         this.scooter_obj_blinker_state = false;
-        this.start_score = 100;
         this.lost=false;
         this.message = "";
         this.zebra_blink = false;
         this.traffic_state = 0;
         this.train_blink = false;
         this.scooter_yaw = 0;
-    
-
 
         this.zebra_l = this.track_.links["left_1"].children[0].children[0].material
         this.zebra_r = this.track_.links["right_1"].children[0].children[0].material
@@ -172,8 +174,6 @@ class Track {
         this.part35 = new CheckPoint(new Vector2(4.15,-5.29),new Vector2(2.84,-12.94)); 
         this.part35_on = false;
     
-
-
         this.part0_failled = false;
         this.part1_failled = false;
         this.part2_failled = false;
@@ -183,8 +183,6 @@ class Track {
         this.part5_failled = false;
         this.line_failled = false;
     
-
-
         this.part_1_collision_callback(3000,this.stop_blink_zebra);
         this.part_2_collision_callback(3000,this.trun_traffic_green);
         this.part_3_collision_callback(3000);
@@ -333,6 +331,9 @@ class Track {
         //this.stop_blink_zebra();
         //this.sleep(1000);
 
+        //this.score.save_to_file();
+        this.score.reset();
+
         this.part0_cango_after = false;
         this.part0_on= false;
         this.part1_cango_after = false;
@@ -439,39 +440,53 @@ class Track {
     }
 
 
+    save_curent_score()
+    {
+        //this.score.
+    }
 
+
+    update_score_timer(timer:Timer)
+    {
+        this.score.account_time_in_score(timer);
+    }
+
+
+    get_best_score():number
+    {
+        return this.score.get_best_score();
+    }
 
 
     getscore()
     {
-        var curent_score = this.start_score;
         if(this.part1_failled)
         {
-            curent_score-=32;
+            this.score.remove_points(32);
         }
         if(this.part2_failled)
         {
-            curent_score-=32;
+            this.score.remove_points(32);
         }
         if(this.part3_failled)
         {
-            curent_score-=32;
+            this.score.remove_points(32);
         }
         if(this.part35_failled)
         {
-            curent_score-=32;
+            this.score.remove_points(32);
         }
         if(this.part4_failled)
         {
-            curent_score-=32;
+            this.score.remove_points(32);
         }
         if(this.part5_failled)
         {
-            curent_score-=32;
+            this.score.remove_points(32);
         }
 
 
-        return curent_score
+        return this.score.get_number_of_points();
     }
 
 
