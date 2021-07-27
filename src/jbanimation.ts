@@ -60,7 +60,6 @@ class JBAnimation {
 
     home( ) {
         console.log(`home: this.model ${this.model}`);
-        
         return this.model;
     }
 }
