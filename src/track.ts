@@ -5,19 +5,14 @@ import {
 
 enum TrackUpdateReturn {
     OK,
-    SCOOTER_FALL,
-
-    SLOW_LINE_CROSSED,
-    SLOW_LINE_STOPPED,
-    SLOW_LINE_TOO_FAST,
-    
+    SCOOTER_FALL
 };
 
 class Track {
     protected scooter_obj_blinker_state:boolean;
     protected start_score:number;
     protected lost:boolean;
-    protected message:string;
+    message:string;
     protected zebra_blink:boolean;
     protected traffic_state:number;
     protected train_blink:boolean;
@@ -72,17 +67,9 @@ class Track {
     protected part5_cango_after:boolean;
     protected part5_on:boolean;
 
-    protected part0:CheckPoint;
-    protected part0_after:CheckPoint;
-
-    protected part0_on:boolean;
-    protected part0_cango_after:boolean;
-
     protected part35:CheckPoint;
     protected part35_on:boolean;
 
-
-    protected part0_failled:boolean;
     protected part1_failled:boolean;
     protected part2_failled:boolean;
     protected part3_failled:boolean;
@@ -109,8 +96,6 @@ class Track {
         this.traffic_state = 0;
         this.train_blink = false;
         this.scooter_yaw = 0;
-    
-
 
         this.zebra_l = this.track_.links["left_1"].children[0].children[0].material
         this.zebra_r = this.track_.links["right_1"].children[0].children[0].material
@@ -164,17 +149,11 @@ class Track {
         this.part5_cango_after = false;
         this.part5_on = false;
     
-        this.part0 = new CheckPoint(new Vector2(-10,12.7),new Vector2(-13.8,-2.35)); 
-        this.part0_after = new CheckPoint(new Vector2(-10.7,-2.4),new Vector2(-14.8,-7.57)); 
-        this.part0_on = false;
-        this.part0_cango_after = false;
-
         this.part35 = new CheckPoint(new Vector2(4.15,-5.29),new Vector2(2.84,-12.94)); 
         this.part35_on = false;
     
 
 
-        this.part0_failled = false;
         this.part1_failled = false;
         this.part2_failled = false;
         this.part3_failled = false;
@@ -190,7 +169,7 @@ class Track {
         this.part_3_collision_callback(3000);
         this.part_4_collision_callback(3000);
         this.part_5_collision_callback(3000,this.stop_blink_train);
-        this.part_0_collision_callback(7000);
+        //this.part_0_collision_callback(7000);
         this.part_35_collision_callback();
 
 
@@ -330,9 +309,7 @@ class Track {
         //this.stop_blink_train();
         //this.stop_blink_zebra();
         //this.sleep(1000);
-
-        this.part0_cango_after = false;
-        this.part0_on= false;
+``
         this.part1_cango_after = false;
         this.part1_on= false;
         this.part2_cango_after= false;
@@ -345,8 +322,6 @@ class Track {
         this.part5_cango_after = false;
         this.part5_on = false;
         
-
-        this.part0_failled = false;
         this.part1_failled = false;
         this.part2_failled = false;
         this.part3_failled = false;
@@ -374,7 +349,6 @@ class Track {
         //can opti the code a lot here
         this.scooter_yaw = scooter_yaw;
 
-        this.part0_on =this.part0.is_in(scooter_pos); 
         this.part1_on =this.part1.is_in(scooter_pos); 
         this.part2_on =this.part2.is_in(scooter_pos); 
         this.part3_on =this.part3.is_in(scooter_pos); 
@@ -383,21 +357,21 @@ class Track {
         this.part5_on =this.part5.is_in(scooter_pos); 
 
         
-        if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY))
-        {
-            this.lost = true;
-            this.line_failled = true;
-            this.message = "You went off track !"
-            retValue = TrackUpdateReturn.SLOW_LINE_CROSSED;
-        }
+        // if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY))
+        // {
+        //     this.lost = true;
+        //     this.line_failled = true;
+        //     this.message = "You went off track !"
+        //     retValue = TrackUpdateReturn.SLOW_LINE_CROSSED;
+        // }
         
         
-        if((this.part0_after.is_in(scooter_pos) && !this.part0_cango_after) || (this.part0_on && this.part0_failled) )
-        {
-            this.lost = true;
-            this.message = "You have to stay 7 sec on the line (without stoping)!"
-            retValue = TrackUpdateReturn.SLOW_LINE_TOO_FAST;
-        }
+        // if((this.slowdriving_after.is_in(scooter_pos) && !this.slowdriving_cango_after) || (this.slowdriving_on && this.slowdriving_failled) )
+        // {
+        //     this.lost = true;
+        //     this.message = "You have to stay 7 sec on the line (without stoping)!"
+        //     retValue = TrackUpdateReturn.SLOW_LINE_TOO_FAST;
+        // }
 
         if(this.part1_after.is_in(scooter_pos) && !this.part1_cango_after)
         {
@@ -484,7 +458,7 @@ class Track {
 
 
 
-    is_in_track(point,cornersX, cornersY)
+    is_in_track(point, cornersX, cornersY)
     {
 
         var x = point.x;
@@ -524,7 +498,7 @@ class Track {
             while(this.part1_on)
             {
                 /*
-                if(!this.part0_cango_after)
+                if(!this.slowdriving_cango_after)
                 {
                     this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
                 }
@@ -552,12 +526,6 @@ class Track {
             await this.sleep(1000);
         }
     }
-
-
-
-
-
-
 
     async part_2_collision_callback(time_needed_ms,function_ = null)
     {
@@ -736,45 +704,6 @@ class Track {
         }
     }
 
-
-
-    async part_0_collision_callback(time_needed_ms,function_ = null)
-    {
-        this.part0_cango_after = false; 
-        while(true)
-        {   
-            var var_counter = 0;
-            while(this.part0_on)
-            {
-                if(!this.part0_cango_after)
-                {
-                    this.message = (var_counter/10)+" seconds | (min 7 seconds)";
-                }
-
-                if(this.scooter_vel)
-                {
-                    this.part0_failled = true;
-                    break;
-                }
-
-                var_counter++;
-                await this.sleep(100);
-                if(var_counter*100>=time_needed_ms)
-                {
-                    this.part0_cango_after = true
-                    this.message = "you lasted more than 7 sec !";
-                    break;
-                }
-            }
-            //delay to not kill the computer
-            await this.sleep(100);
-        }        
-    }
-
-
-
-
-
     async part_35_collision_callback()
     {
         while(true)
@@ -791,25 +720,8 @@ class Track {
     }
 }
 
-export {  Track, TrackUpdateReturn }; 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export class CheckPoint
+class CheckPoint
 {
     protected top_left :Vector2;
     protected bottom_right :Vector2;
@@ -828,6 +740,9 @@ export class CheckPoint
 
 
 }
+
+export {  Track, TrackUpdateReturn, CheckPoint }; 
+
 
 
 

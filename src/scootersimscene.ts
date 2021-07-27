@@ -394,34 +394,35 @@ class ScooterSimScene extends JBScene {
                     }
                 }
             }
-            
-            if( this.scooterObj ) {
-                this.physics();
-                let cam_dist : number = 8;
-                let camdist_x : number = cam_dist*Math.cos( - this.scooterObj.scooter_yaw_rotation );
-                let camdist_y : number = cam_dist*Math.sin( - this.scooterObj.scooter_yaw_rotation );
+        }            
+        
+        if( this.scooterObj ) {
+            this.physics();
+            let cam_dist : number = 8;
+            let camdist_x : number = cam_dist*Math.cos( - this.scooterObj.scooter_yaw_rotation );
+            let camdist_y : number = cam_dist*Math.sin( - this.scooterObj.scooter_yaw_rotation );
 
-                let view = document.getElementById( "cb_camera_view" );
+            let view = document.getElementById( "cb_camera_view" );
 
-                let e = (document.getElementById("cb_camera_view")) as HTMLSelectElement;
-                let sel = e.selectedIndex;
-                let opt = e.options[sel];
-                let cb_view = (<HTMLOptionElement>opt).value;
+            let e = (document.getElementById("cb_camera_view")) as HTMLSelectElement;
+            let sel = e.selectedIndex;
+            let opt = e.options[sel];
+            let cb_view = (<HTMLOptionElement>opt).value;
 
-                if ( cb_view == "cb_follow" ) {
-                    this.camera.position.set( this.scooterObj.get_position().x - camdist_x, this.scooterObj.get_position().y+5, this.scooterObj.get_position().z-camdist_y);
-                    this.camera.lookAt( this.scooterObj.get_position().x, this.scooterObj.get_position().y, this.scooterObj.get_position().z );
-                }
-            }
-                
-            for (const object of this.updateables) {
-                object.tick( this.dt );
-            }
-
-            if ( this.overlayPhase !== null ) {
-                this.overlayPhase.tick( this.dt );
+            if ( cb_view == "cb_follow" ) {
+                this.camera.position.set( this.scooterObj.get_position().x - camdist_x, this.scooterObj.get_position().y+5, this.scooterObj.get_position().z-camdist_y);
+                this.camera.lookAt( this.scooterObj.get_position().x, this.scooterObj.get_position().y, this.scooterObj.get_position().z );
             }
         }
+            
+        for (const object of this.updateables) {
+            object.tick( this.dt );
+        }
+
+        if ( this.overlayPhase !== null ) {
+            this.overlayPhase.tick( this.dt );
+        }
+
         this.renderer.render( this, this.camera );
         this.prevPhase = this.currentPhase;
         this.currentPhase = this.nextPhase;
