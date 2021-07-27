@@ -121,8 +121,10 @@ class ScooterSimScene extends JBScene {
         m = bear.home();
         console.log("Pooh", m );
         console.dir(m);
-        //scene.add( m );
-        //updateables.push( bear );
+        bear.velocities = [ 0.5, 15.0/180.0*Math.PI, 3.0 ];
+
+        this.add( m );
+        this.updateables.push( bear );
     
         const pol1 = new TaiwanPolice( "marry" );
         const pol2 = new TaiwanCopMale( "chi tai" );
