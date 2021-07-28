@@ -112,9 +112,9 @@ class ScooterSimPhaseRailCross extends ScooterSimPhaseOverlay {
                                                 sim.scooterObj.scooter_yaw_rotation,
                                                 sim.scooterObj.blinking_left,
                                                 sim.scooterObj.velocity == 0 );
-            sim.score_element.innerHTML = "SCORE : " + sim.curent_score + "  |  BEST : " + sim.best_score;
+            sim.score_element.innerHTML = "SCORE = " + sim.curent_score + "  |  BEST SCORE = " + sim.best_score +" ("+sim.best_user+")";
             sim.comment_element.innerHTML = "COMMENTS : <br><br>" + sim.test_track.getMessage();
-        
+                                            
             sim.curent_score = sim.test_track.getscore();
         }
         

@@ -50,7 +50,8 @@ class ScooterSimScene extends JBScene {
     //Score variables
     curent_score :number = 100
     best_score :number;
-        
+    best_user :string;
+
     //elements to modify the html page
     score_element : HTMLElement;
     comment_element : HTMLElement;
@@ -348,7 +349,9 @@ class ScooterSimScene extends JBScene {
         this.phi =0.0;
         this.lean =0.0;
 
-        this.best_score = this.test_track.get_best_score();
+        var retrunarr = this.test_track.get_best_score();
+        this.best_score= retrunarr[0];
+        this.best_user = retrunarr[1];
         
         this.phi_vel = 0.001;
         this.prev_rx = 0;
@@ -449,7 +452,7 @@ class ScooterSimScene extends JBScene {
                                         this.scooterObj.scooter_yaw_rotation,
                                         this.scooterObj.blinking_left,
                                         this.scooterObj.velocity == 0 );
-                this.score_element.innerHTML = "SCORE : " + this.curent_score + "  |  BEST : " + this.best_score;
+                this.score_element.innerHTML = "SCORE = " + this.curent_score + "  |  BEST SCORE = " + this.best_score +" ("+this.best_user+")";
                 this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
             
                 this.curent_score = this.test_track.getscore();
@@ -457,8 +460,7 @@ class ScooterSimScene extends JBScene {
                 if (this.currentPhase !== SimPhase.FreeDriving ) {
                     if( this.is_done() )
                     {
-                        this.test_track.update_score_timer(this.stopwatch);
-                        this.test_track.save_curent_score();                
+                        this.test_track.save_curent_score(this.stopwatch);                
                         this.reset();
                     }
                 }

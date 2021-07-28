@@ -415,19 +415,13 @@ class Track {
     }
 
 
-    save_curent_score()
-    {
-        //this.score.
-    }
-
-
-    update_score_timer(timer:Timer)
+    save_curent_score(timer:Timer)
     {
         this.score.account_time_in_score(timer);
+        this.score.save_to_file();
     }
 
-
-    get_best_score():number
+    get_best_score():any
     {
         return this.score.get_best_score();
     }

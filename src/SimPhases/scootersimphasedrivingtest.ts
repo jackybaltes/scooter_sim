@@ -1,6 +1,5 @@
 import { ScooterSimPhaseOverlay } from "../scootersimphaseoverlay";
 import { JBGame } from '../jbgame';
-import { ScooterSimScene } from "../scootersimscene";
 
 const content = `<h1>Balance in a straight line<br>
 (One re-test is allowed)</h1> 
