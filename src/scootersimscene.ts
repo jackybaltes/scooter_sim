@@ -18,7 +18,7 @@ import {Track} from './track';
 import {Timer} from './timer';
 import {Robot} from './robot'
 import {ControlServer} from './controlserver';
-import { JBAnimation } from './jbanimation';
+import { JBAnimation, JBObjectType } from './jbanimation';
 import { TaiwanBear } from './taiwanbear';
 import { TaiwanPolice, TaiwanCopMale } from './taiwancop';
 import { JBScene } from './jbscene';
@@ -82,6 +82,8 @@ class ScooterSimScene extends JBScene {
         this.overlay = overlay;
     }
 
+    bears : Array<JBAnimation> = new Array<JBAnimation>();
+
     async preload() {
         super.preload();
         console.log("ScooterSimScene preload");
@@ -111,7 +113,7 @@ class ScooterSimScene extends JBScene {
             this.test_track.init_track()
         };
         
-        const bear = new TaiwanBear( "pooh" );
+        const bear = new TaiwanBear( "pooh" )
 
         await bear.init()
         
@@ -121,11 +123,12 @@ class ScooterSimScene extends JBScene {
         m = bear.home();
         console.log("Pooh", m );
         console.dir(m);
-        bear.velocities = [ 0.5, 15.0/180.0*Math.PI, 3.0 ];
+        //bear.velocities = [ 1.0, 15.0/180.0*Math.PI ];
 
         this.add( m );
         this.updateables.push( bear );
-    
+        this.bears.push( bear );
+
         const pol1 = new TaiwanPolice( "marry" );
         const pol2 = new TaiwanCopMale( "chi tai" );
         
@@ -254,7 +257,9 @@ class ScooterSimScene extends JBScene {
         setInterval( function () {
             let msg = `State message ${count}`;  
             console.log( `Trying to send message ${msg}`);
-            this.controlServer.send( msg ); 
+            if ( ( this.controlServer !== null) && ( this.controlServer !== undefined) ) {
+                this.controlServer.send( msg );
+            } 
             count++; }
         , 5000 );
 
@@ -362,7 +367,12 @@ class ScooterSimScene extends JBScene {
     
         this.timer_element.innerHTML = this.stopwatch.getShowTime();
 
-        if ( ( this.currentPhase === SimPhase.SlowDrivingIntro ) || 
+        if ( ( this.currentPhase === SimPhase.FreeDriving ) || 
+            ( this.currentPhase === SimPhase.FreeDrivingDone ) ) {
+            // tickPhase will automatically switch
+                this.overlayPhase.tickPhase( this.dt );
+            }
+        else if ( ( this.currentPhase === SimPhase.SlowDrivingIntro ) || 
              ( this.currentPhase === SimPhase.SlowDriving ) ||
              ( this.currentPhase === SimPhase.SlowDrivingSuccess ) ||
              ( this.currentPhase === SimPhase.SlowDrivingFailure ) ||
@@ -381,20 +391,19 @@ class ScooterSimScene extends JBScene {
             
                 this.curent_score = this.test_track.getscore();
                 
-                if (this.currentPhase !== SimPhase.FreeDriving ) {
-                    if( this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= - this.max_phi ) {
-                        this.stopwatch.resetTimer();
-                        this.stopwatch.startTimer();
-                        this.test_track.init_track()
-                        this.scooterObj.init_position( this.overlayPhase.spawn );
-                        
-                        this.phi =0.0;
-                        this.phi_vel = 0.001;
-            
-                        this.prev_rx = 0;
-                        this.prev_ry = 0;
-                    }
+                if( this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= - this.max_phi ) {
+                    this.stopwatch.resetTimer();
+                    this.stopwatch.startTimer();
+                    this.test_track.init_track()
+                    this.scooterObj.init_position( this.overlayPhase.spawn );
+                    
+                    this.phi =0.0;
+                    this.phi_vel = 0.001;
+        
+                    this.prev_rx = 0;
+                    this.prev_ry = 0;
                 }
+                
             }
         }            
         
@@ -403,6 +412,13 @@ class ScooterSimScene extends JBScene {
             let cam_dist : number = 8;
             let camdist_x : number = cam_dist*Math.cos( - this.scooterObj.scooter_yaw_rotation );
             let camdist_y : number = cam_dist*Math.sin( - this.scooterObj.scooter_yaw_rotation );
+
+            // for (let obj of this.updateables) {
+            //     if ( obj.cls === JBObjectType.TaiwanBear ) {
+            //         let bear = obj as TaiwanBear;
+            //         bear.tick( dt, this );
+            //     }
+            // }
 
             let view = document.getElementById( "cb_camera_view" );
 
@@ -417,8 +433,9 @@ class ScooterSimScene extends JBScene {
             }
         }
             
+
         for (const object of this.updateables) {
-            object.tick( this.dt );
+            object.tick( this.dt, this );
         }
 
         if ( this.overlayPhase !== null ) {

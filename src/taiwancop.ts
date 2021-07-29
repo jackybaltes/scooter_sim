@@ -15,7 +15,7 @@ class TaiwanPolice extends JBAnimation {
 
 class TaiwanCopMale extends JBAnimation {
     constructor ( name : string ) {
-        super( name, "../assets/tlgf/taiwan cops male 1.glb", JBObjectType.TaiwanBear );
+        super( name, "../assets/tlgf/taiwan cops male 1.glb", JBObjectType.TaiwanPolice );
     }
 
     home( ) {

@@ -1,7 +1,7 @@
 import { Vector2 } from "three";
 
-import { ScooterSimPhaseOverlay } from "./scootersimphaseoverlay";
 import { JBGame } from './jbgame';
+import { ScooterSimPhaseOverlay } from "./scootersimphaseoverlay";
 import { ScooterSimScene, SimPhase } from "./scootersimscene";
 import { CheckPoint } from "./track";
 import { Robot } from "./robot";

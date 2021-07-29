@@ -130,7 +130,7 @@ export class Robot{
         this.scooter.rotation.y = pos[3];
 
         //this.scooter.rotation.y = -Math.PI/2;
-        this.scooter_yaw_rotation = -Math.PI/2;
+        this.scooter_yaw_rotation = pos[3];
         var r = (Math.random()-0.5)*2; //random -1 to 1
         this.steering_angle = 0; // r/5;
         //this.steering_angle = 0.0;
@@ -173,11 +173,7 @@ export class Robot{
         //return ((this.a*this.velocity)/(this.b*this.h)) * ( (s+(this.velocity/this.a) )/( (Math.pow(s,2)-(this.g/this.h))  ));
     }
 
-
-
-
-    stop_signal()
-    {
+    stop_signal() {
         this.change_color(this.stop_light,this.red);
     }
 

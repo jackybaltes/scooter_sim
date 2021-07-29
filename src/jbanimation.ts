@@ -2,9 +2,11 @@ import {
     Object3D,
     AnimationMixer,
     AnimationClip,
+    AnimationAction,
  } from 'three';
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { ScooterSimScene } from './scootersimscene';
 
 interface ILoaderObject {
     animations : Array<AnimationClip>;
@@ -46,7 +48,7 @@ class JBAnimation {
         this.mixer = new AnimationMixer( this.model );
     } 
 
-    tick( delta : number ) {
+    tick( delta : number, sim : ScooterSimScene ) {
         return this.mixer.update( delta );
     }
 
@@ -61,6 +63,48 @@ class JBAnimation {
     home( ) {
         console.log(`home: this.model ${this.model}`);
         return this.model;
+    }
+
+    findAnimation( name : string ) {
+        let anims = this.data["animations"];
+        let ani : AnimationClip = null;
+
+        for( const a of anims ) {
+            if ( a.name === name ) {
+                ani = a;
+                break;
+            }
+        }
+        return ani;
+    }
+
+    currentClip : AnimationClip;
+    currentAction : AnimationAction;
+
+    playAnimation( name : string ) {
+        if ( ( this.currentClip === undefined ) || ( this.currentClip === null ) || ( this.currentClip.name !== name ) ) {                
+            let clip : AnimationClip = this.findAnimation( name ); 
+            if ( clip !== null ) {
+                if ( ( this.currentClip !== undefined ) && ( this.currentClip !== null ) ) {
+                    if ( this.currentClip.name !== name ) {
+                        this.stopAnimation();
+                    }
+                }
+                this.currentClip = clip;
+                this.currentAction = this.mixer.clipAction(this.currentClip);
+                if ( this.currentAction !== null ) {
+                    this.currentAction.play();
+                }
+            }
+        }
+    }
+
+    stopAnimation( ) {
+        if ( (this.currentAction !== undefined ) && ( this.currentAction !== null ) ) {
+            this.currentAction.stop();
+            this.currentAction = null;
+            this.currentClip = null;
+        }
     }
 }
 
