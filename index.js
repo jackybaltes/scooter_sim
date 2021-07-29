@@ -52395,7 +52395,7 @@ ${indent}columns: ${matrix.columns}
 	        this.scooter.position.z = pos[2];
 	        this.scooter.rotation.y = pos[3];
 	        //this.scooter.rotation.y = -Math.PI/2;
-	        this.scooter_yaw_rotation = -Math.PI / 2;
+	        this.scooter_yaw_rotation = pos[3];
 	        this.steering_angle = 0; // r/5;
 	        //this.steering_angle = 0.0;
 	        this.phi = 0;
@@ -56691,7 +56691,7 @@ ${indent}columns: ${matrix.columns}
 	            this.mixer = new AnimationMixer(this.model);
 	        });
 	    }
-	    tick(delta) {
+	    tick(delta, sim) {
 	        return this.mixer.update(delta);
 	    }
 	    translate(tx, ty, tz) {
@@ -56704,6 +56704,41 @@ ${indent}columns: ${matrix.columns}
 	        console.log(`home: this.model ${this.model}`);
 	        return this.model;
 	    }
+	    findAnimation(name) {
+	        let anims = this.data["animations"];
+	        let ani = null;
+	        for (const a of anims) {
+	            if (a.name === name) {
+	                ani = a;
+	                break;
+	            }
+	        }
+	        return ani;
+	    }
+	    playAnimation(name) {
+	        if ((this.currentClip === undefined) || (this.currentClip === null) || (this.currentClip.name !== name)) {
+	            let clip = this.findAnimation(name);
+	            if (clip !== null) {
+	                if ((this.currentClip !== undefined) && (this.currentClip !== null)) {
+	                    if (this.currentClip.name !== name) {
+	                        this.stopAnimation();
+	                    }
+	                }
+	                this.currentClip = clip;
+	                this.currentAction = this.mixer.clipAction(this.currentClip);
+	                if (this.currentAction !== null) {
+	                    this.currentAction.play();
+	                }
+	            }
+	        }
+	    }
+	    stopAnimation() {
+	        if ((this.currentAction !== undefined) && (this.currentAction !== null)) {
+	            this.currentAction.stop();
+	            this.currentAction = null;
+	            this.currentClip = null;
+	        }
+	    }
 	}
 
 	var __awaiter$5 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -56715,9 +56750,33 @@ ${indent}columns: ${matrix.columns}
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
+	var States;
+	(function (States) {
+	    States[States["Roaming"] = 0] = "Roaming";
+	    States[States["Chase"] = 1] = "Chase";
+	    States[States["Attack"] = 2] = "Attack";
+	    States[States["AttackDone"] = 3] = "AttackDone";
+	    States[States["AttackCoolDown"] = 4] = "AttackCoolDown";
+	})(States || (States = {}));
 	class TaiwanBear extends JBAnimation {
 	    constructor(name) {
 	        super(name, "../assets/tlgf/taiwan bear.glb", JBObjectType.TaiwanBear);
+	        this.state = States.Roaming;
+	        this.freq = 2.0;
+	        this.kpa = 10;
+	        this.kda = 0;
+	        this.kia = 0;
+	        this.kpv = 1;
+	        this.kdv = 0;
+	        this.kiv = 0;
+	        this.prevDiff = 0;
+	        this.maxVelocity = 5;
+	        this.updateClock = new Clock();
+	        this.roamX = 0;
+	        this.roamZ = 0;
+	        this.attackTime = 0;
+	        this.clock = new Clock();
+	        this.clock.start();
 	    }
 	    init() {
 	        const _super = Object.create(null, {
@@ -56725,7 +56784,8 @@ ${indent}columns: ${matrix.columns}
 	        });
 	        return __awaiter$5(this, void 0, void 0, function* () {
 	            yield _super.init.call(this);
-	            this.model.scale.x = this.model.scale.y = this.model.scale.z = 0.3;
+	            this.model.scale.x = this.model.scale.y = this.model.scale.z = 0.4;
+	            this.state = States.Roaming;
 	        });
 	    }
 	    home() {
@@ -56733,25 +56793,124 @@ ${indent}columns: ${matrix.columns}
 	        this.rotate(0.0, 0.0 / 360.0 * Math.PI, 0.0);
 	        console.log(`TaiwanBear home. data=${typeof (this.data)} animation=`);
 	        console.dir(this.data);
-	        let anims = this.data['animations'];
 	        this.velocities = [0, 0, 1];
-	        let clip = anims[1];
-	        let action = this.mixer.clipAction(clip);
-	        action.play();
+	        //this.playAnimation( "slow walking" );
+	        //this.playAnimation( "slow_walking" );
 	        //this.model.tick = (delta) => this.mixer.update(delta);
 	        let m = super.home();
 	        //m.scale.x = m.scale.y = m.scale.z = 0.5;
 	        return m;
 	    }
-	    tick(delta) {
-	        let [v_lin, theta_d, freq] = this.velocities;
+	    normalizeAngle(theta) {
+	        while (theta < -180.0 / 180.0 * Math.PI) {
+	            theta = theta + 360.0 / 180.0 * Math.PI;
+	        }
+	        while (theta > 180.0 / 180.0 * Math.PI) {
+	            theta = theta - 360.0 / 180.0 * Math.PI;
+	        }
+	        return theta;
+	    }
+	    // angleDifference( a1, a2 ) {
+	    //     let sign = a1 > a2 ? +1 : -1;
+	    //     let diff;
+	    //     if ( sign === 1 ) {
+	    //         diff = a1 - a2;
+	    //     } else {
+	    //         diff = a2 - a1;
+	    //     }
+	    //     while ( diff > 180.0/360.0 * Math.PI ) {
+	    //         sign = - sign;
+	    //         diff = diff - 360.0/360.0 * Math.PI;
+	    //     }
+	    //     return sign * diff;
+	    // }
+	    angleDifference(a1, a2) {
+	        let diff = a2 - a1;
+	        if (diff > 180.0 / 180.0 * Math.PI) {
+	            diff = diff - 360.0 / 180.0 * Math.PI;
+	        }
+	        if (diff < -180.0 / 180.0 * Math.PI) {
+	            diff = diff + 360.0 / 180.0 * Math.PI;
+	        }
+	        return diff;
+	    }
+	    update() {
+	        const delta = this.updateClock.getDelta();
 	        let { x, y, z } = this.model.position;
-	        let theta = this.model.rotation.y;
-	        let xd = v_lin * delta * Math.sin(theta);
-	        let zd = v_lin * delta * Math.cos(theta);
-	        this.translate(x + xd, 0, z + zd);
-	        this.rotate(0, theta + delta * theta_d, 0);
-	        return super.tick(delta * freq);
+	        let theta = this.normalizeAngle(this.model.rotation.y);
+	        const [v_lin, theta_d] = this.velocities;
+	        let dx = Math.sin(theta) * v_lin * delta;
+	        let dz = Math.cos(theta) * v_lin * delta;
+	        this.translate(x + dx, y, z + dz);
+	        this.rotate(0, this.normalizeAngle(theta + theta_d * delta), 0);
+	    }
+	    chase(xt, zt, vel = 0.4) {
+	        let { x, y, z } = this.model.position;
+	        let dist = Math.hypot(z - zt, x - xt);
+	        let theta = this.normalizeAngle(this.model.rotation.y);
+	        let phi = this.normalizeAngle(Math.atan2(xt - x, zt - z));
+	        let diff = this.angleDifference(theta, phi);
+	        this.velocities[1] = diff * this.kpa + this.kda * (diff - this.prevDiff);
+	        this.velocities[0] = vel;
+	        this.prevDiff = diff;
+	        console.log(`dist ${dist} x ${x} z ${z} theta ${theta} xt ${xt} zt ${zt} phi ${phi} diff ${diff} theta_d ${this.velocities[1]} v_lin ${this.velocities[0]}`);
+	    }
+	    tick(delta, sim) {
+	        let scooter = sim.scooterObj;
+	        if (this.state === States.Roaming) {
+	            this.playAnimation("slow_walking");
+	            if (Math.random() < 0.01) {
+	                this.roamX = -10 + Math.random() * 20.0;
+	                this.roamZ = -10 + Math.random() * 20.0;
+	            }
+	            this.chase(this.roamX, this.roamZ, 0.4);
+	            let xt = scooter.get_position().x;
+	            let zt = scooter.get_position().z;
+	            let { x, y, z } = this.model.position;
+	            let dist = Math.hypot(z - zt, x - xt);
+	            if (dist < 7.0) {
+	                this.state = States.Chase;
+	            }
+	        }
+	        else if (this.state === States.Chase) {
+	            this.playAnimation("slow walking");
+	            if ((scooter !== undefined) && (scooter !== null)) {
+	                let xt = scooter.get_position().x;
+	                let zt = scooter.get_position().z;
+	                this.chase(xt, zt);
+	                let { x, y, z } = this.model.position;
+	                let dist = Math.hypot(z - zt, x - xt);
+	                if (dist >= 10.0) {
+	                    this.state = States.Roaming;
+	                }
+	                else if (dist < 2.0) {
+	                    this.state = States.Attack;
+	                }
+	            }
+	        }
+	        else if (this.state === States.Attack) {
+	            this.playAnimation("standup");
+	            this.attackTime = this.clock.getElapsedTime();
+	            this.velocities = [0, 0];
+	            this.state = States.AttackDone;
+	        }
+	        else if (this.state === States.AttackDone) {
+	            if (this.clock.getElapsedTime() > this.attackTime + 2.5) {
+	                this.playAnimation("slow_walking");
+	                this.rotate(0, this.normalizeAngle(this.model.rotation.y + 180.0 / 180.0 * Math.PI), 0);
+	                this.state = States.AttackCoolDown;
+	                this.attackTime = this.clock.getElapsedTime();
+	                this.velocities[0] = 0.4;
+	            }
+	        }
+	        else if (this.state === States.AttackCoolDown) {
+	            if (this.clock.getElapsedTime() > this.attackTime + 7.0) {
+	                this.state = States.Roaming;
+	                this.attackTime = this.clock.getElapsedTime();
+	            }
+	        }
+	        this.update();
+	        return super.tick(delta, sim);
 	    }
 	}
 
@@ -56767,7 +56926,7 @@ ${indent}columns: ${matrix.columns}
 	}
 	class TaiwanCopMale extends JBAnimation {
 	    constructor(name) {
-	        super(name, "../assets/tlgf/taiwan cops male 1.glb", JBObjectType.TaiwanBear);
+	        super(name, "../assets/tlgf/taiwan cops male 1.glb", JBObjectType.TaiwanPolice);
 	    }
 	    home() {
 	        this.translate(-7, 0.0, -12.0);
@@ -57200,13 +57359,7 @@ ${indent}columns: ${matrix.columns}
 	    }
 	}
 
-	const content$2 = `<h1>Balance in a straight line<br>
-(One re-test is allowed)</h1> 
-<hr>
-<p>1. Balance in a straight line completed in fewer than seven seconds 
-<span style="color:red">- deduct 32 points</span></p>
-<p>2. Wheel crossing lines or either one or both feet touching the ground 
-<span style="color:red">- deduct 32 points</span></p>
+	const content$2 = `<h1>Free Driving</h1>
 `;
 	var ScooterSimPhaseFreeDrivingState;
 	(function (ScooterSimPhaseFreeDrivingState) {
@@ -57215,8 +57368,25 @@ ${indent}columns: ${matrix.columns}
 	})(ScooterSimPhaseFreeDrivingState || (ScooterSimPhaseFreeDrivingState = {}));
 	class ScooterSimPhaseFreeDriving extends ScooterSimPhaseOverlay {
 	    constructor(game, state) {
-	        super("scooter_sim_phase_slow_driving_intro", game, content$2, [-12.2, 0.94, -15, -Math.PI / 2]);
+	        super("scooter_sim_phase_free_driving_intro", game, content$2, [0, 0.94, 0, Math.PI / 2]);
 	        this.state = ScooterSimPhaseFreeDrivingState[state.toLowerCase()];
+	    }
+	    switchPhase(prev, next) {
+	        if (next === ScooterSimPhaseFreeDrivingState.FreeDriving) {
+	            let sim = this.game.currentScene;
+	            let scooter = sim.scooterObj;
+	            sim.test_track;
+	            scooter.init_position(sim.overlayPhase.spawn);
+	        }
+	    }
+	    tickPhase(dt) {
+	        let sim = this.game.currentScene;
+	        sim.scooterObj;
+	        sim.test_track;
+	        if (sim.prevPhase !== sim.currentPhase) {
+	            sim.overlayPhase.switchPhase(sim.prevPhase, sim.currentPhase);
+	        }
+	        console.log(`SlowDriving tick phase ${sim.currentPhase} dt ${dt}`);
 	    }
 	}
 
@@ -57259,6 +57429,7 @@ ${indent}columns: ${matrix.columns}
 	        this.w_up = true;
 	        this.s_up = true;
 	        this.overlayPhase = null;
+	        this.bears = new Array();
 	        this.html = `
     <div id="id_sim_menu" class="sim_menu">
         <div style="color: rgb(0, 0, 0);">
@@ -57323,9 +57494,10 @@ ${indent}columns: ${matrix.columns}
 	            m = bear.home();
 	            console.log("Pooh", m);
 	            console.dir(m);
-	            bear.velocities = [0.5, 15.0 / 180.0 * Math.PI, 3.0];
+	            //bear.velocities = [ 1.0, 15.0/180.0*Math.PI ];
 	            this.add(m);
 	            this.updateables.push(bear);
+	            this.bears.push(bear);
 	            const pol1 = new TaiwanPolice("marry");
 	            const pol2 = new TaiwanCopMale("chi tai");
 	            yield pol1.init();
@@ -57410,7 +57582,9 @@ ${indent}columns: ${matrix.columns}
 	            setInterval(function () {
 	                let msg = `State message ${count}`;
 	                console.log(`Trying to send message ${msg}`);
-	                this.controlServer.send(msg);
+	                if ((this.controlServer !== null) && (this.controlServer !== undefined)) {
+	                    this.controlServer.send(msg);
+	                }
 	                count++;
 	            }, 5000);
 	            this._onResize();
@@ -57490,7 +57664,12 @@ ${indent}columns: ${matrix.columns}
 	            this.steer_keyboard();
 	        }
 	        this.timer_element.innerHTML = this.stopwatch.getShowTime();
-	        if ((this.currentPhase === SimPhase.SlowDrivingIntro) ||
+	        if ((this.currentPhase === SimPhase.FreeDriving) ||
+	            (this.currentPhase === SimPhase.FreeDrivingDone)) {
+	            // tickPhase will automatically switch
+	            this.overlayPhase.tickPhase(this.dt);
+	        }
+	        else if ((this.currentPhase === SimPhase.SlowDrivingIntro) ||
 	            (this.currentPhase === SimPhase.SlowDriving) ||
 	            (this.currentPhase === SimPhase.SlowDrivingSuccess) ||
 	            (this.currentPhase === SimPhase.SlowDrivingFailure) ||
@@ -57504,17 +57683,15 @@ ${indent}columns: ${matrix.columns}
 	                this.score_element.innerHTML = "SCORE : " + this.curent_score + "  |  BEST : " + this.best_score;
 	                this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
 	                this.curent_score = this.test_track.getscore();
-	                if (this.currentPhase !== SimPhase.FreeDriving) {
-	                    if (this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= -this.max_phi) {
-	                        this.stopwatch.resetTimer();
-	                        this.stopwatch.startTimer();
-	                        this.test_track.init_track();
-	                        this.scooterObj.init_position(this.overlayPhase.spawn);
-	                        this.phi = 0.0;
-	                        this.phi_vel = 0.001;
-	                        this.prev_rx = 0;
-	                        this.prev_ry = 0;
-	                    }
+	                if (this.test_track.get_done() || this.phi >= this.max_phi || this.phi <= -this.max_phi) {
+	                    this.stopwatch.resetTimer();
+	                    this.stopwatch.startTimer();
+	                    this.test_track.init_track();
+	                    this.scooterObj.init_position(this.overlayPhase.spawn);
+	                    this.phi = 0.0;
+	                    this.phi_vel = 0.001;
+	                    this.prev_rx = 0;
+	                    this.prev_ry = 0;
 	                }
 	            }
 	        }
@@ -57523,6 +57700,12 @@ ${indent}columns: ${matrix.columns}
 	            let cam_dist = 8;
 	            let camdist_x = cam_dist * Math.cos(-this.scooterObj.scooter_yaw_rotation);
 	            let camdist_y = cam_dist * Math.sin(-this.scooterObj.scooter_yaw_rotation);
+	            // for (let obj of this.updateables) {
+	            //     if ( obj.cls === JBObjectType.TaiwanBear ) {
+	            //         let bear = obj as TaiwanBear;
+	            //         bear.tick( dt, this );
+	            //     }
+	            // }
 	            document.getElementById("cb_camera_view");
 	            let e = (document.getElementById("cb_camera_view"));
 	            let sel = e.selectedIndex;
@@ -57534,7 +57717,7 @@ ${indent}columns: ${matrix.columns}
 	            }
 	        }
 	        for (const object of this.updateables) {
-	            object.tick(this.dt);
+	            object.tick(this.dt, this);
 	        }
 	        if (this.overlayPhase !== null) {
 	            this.overlayPhase.tick(this.dt);
