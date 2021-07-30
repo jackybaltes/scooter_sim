@@ -2,7 +2,7 @@ import { JBAnimation, JBObjectType } from "./jbanimation";
 
 class TaiwanPolice extends JBAnimation {
     constructor ( name : string ) {
-        super( name, "../assets/tlgf/taiwan police.glb", JBObjectType.TaiwanPolice );
+        super( name, "../assets/tlgf/taiwan police.glb", JBObjectType.TaiwanPolice, 1.0 );
     }
 
     home( ) {
@@ -15,7 +15,7 @@ class TaiwanPolice extends JBAnimation {
 
 class TaiwanCopMale extends JBAnimation {
     constructor ( name : string ) {
-        super( name, "../assets/tlgf/taiwan cops male 1.glb", JBObjectType.TaiwanBear );
+        super( name, "../assets/tlgf/taiwan cops male 1.glb", JBObjectType.TaiwanPolice, 1.0 );
     }
 
     home( ) {

@@ -18,22 +18,19 @@ enum JBObjectType {
 };
 
 class JBAnimation {
-    name: string;
-    cls: JBObjectType;
-    model : Object3D; // Not sure if there are type annotations for gltfloader
-    mixer : AnimationMixer;
-    data: ILoaderObject;
-    path : string;
-
-    constructor( name : string, path : string, cls : JBObjectType ) {
+    constructor( public name : string, public path : string, public cls : JBObjectType, public timeScale : number ) {
         this.name = name;
         this.path = path;
-        this.cls = cls;
+        this.cls = cls;       
     }
 
     async init() {
         await this.preload();
     }
+
+    model : Object3D; 
+    mixer : AnimationMixer;
+    data: ILoaderObject;
 
     async preload() {
         const gltfLoader = new GLTFLoader();

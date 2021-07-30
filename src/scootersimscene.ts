@@ -35,15 +35,7 @@ const SimPhase = { ...ScooterSimPhaseSlowDrivingState, ...ScooterSimPhaseFreeDri
 type SimPhase = typeof SimPhase;
 
 class ScooterSimScene extends JBScene {
-    g = 9.81;
-    test = 0.0;
-    phi_vel=0.001;
-    max_phi = 0.5
-    phi = 0.0;
-    lean = 0.0;
     
-    prev_rx = 0;
-    prev_ry = 0;
 
     //Score variables
     curent_score :number = 100
@@ -85,7 +77,7 @@ class ScooterSimScene extends JBScene {
     overlay : string;
     overlayPhase : ScooterSimPhaseOverlay = null;
 
-
+    
     numer_animation_L_count: number = 0;
     numer_animation_R_count: number = 0;
 
@@ -336,7 +328,7 @@ class ScooterSimScene extends JBScene {
 
     is_done()
     {
-        return this.test_track.get_done() || this.phi+this.lean >= this.max_phi || this.phi+this.lean <= - this.max_phi
+        return this.test_track.get_done() || this.scooterObj.phi+this.scooterObj.lean >= this.scooterObj.max_phi || this.scooterObj.phi+this.scooterObj.lean <= - this.scooterObj.max_phi
     }
 
     reset()
@@ -346,18 +338,12 @@ class ScooterSimScene extends JBScene {
         this.stopwatch.startTimer();
         this.test_track.init_track();
         this.scooterObj.init_position( this.overlayPhase.spawn );
-        this.phi =0.0;
-        this.lean =0.0;
 
 
         this.best_score = this.test_track.get_best_score();
         var retrunarr = this.test_track.get_best_score();
         this.best_score= retrunarr[0];
         this.best_user = retrunarr[1];
-
-        this.phi_vel = 0.001;
-        this.prev_rx = 0;
-        this.prev_ry = 0;
     }
     
 
@@ -502,56 +488,14 @@ class ScooterSimScene extends JBScene {
     
     physics() {   
         //Velocity of the scooter on the X axis
-        if( this.scooterObj.velocity !=0 ) {
-            if( this.scooterObj.steering_angle<0 ) {   
-                var r :number  = (Math.random() -0.5)*2; //random -1 to 1
-                this.scooterObj.steering_angle = this.scooterObj.steering_angle + r/100;
-            } else {
-                var r :number  = (Math.random() - 0.5)*2; //random -1 to 1
-                this.scooterObj.steering_angle = this.scooterObj.steering_angle+ r/100;
-            }
-        }
+        this.scooterObj.apply_steering();
+        this.scooterObj.apply_position();
         this.scooterObj.move_arms();
-    
-        let yaw_velocity:number = this.scooterObj.velocity * this.scooterObj.steering_angle / this.scooterObj.b;
-        this.scooterObj.scooter_yaw_rotation += yaw_velocity;
-        let x_vel:number = this.scooterObj.velocity * Math.cos( this.scooterObj.scooter_yaw_rotation + Math.PI/2 );
-        let y_vel:number = this.scooterObj.velocity * Math.sin( this.scooterObj.scooter_yaw_rotation + Math.PI/2 );
-        this.scooterObj.scooter.setJointValue( "steering_joint",this.scooterObj.steering_angle );
-        this.scooterObj.scooter.position.x += y_vel;
-        this.scooterObj.scooter.position.z += x_vel;
-        this.g = 5.0;
-        var zero = 0.001
         
-        var pendulum = (this.g/this.scooterObj.h)*Math.sin(this.phi);
-        if( this.scooterObj.steering_angle<0.0 &&  (-0.001<=this.phi && this.phi<=0.001))
-        {
-            this.phi=-zero;
-        }
-        else if(0.0<this.scooterObj.steering_angle &&  (-0.001<=this.phi && this.phi<=0.001))
-        {
-            this.phi=zero;
-        }
-        else if(0.0<this.scooterObj.steering_angle &&  this.phi<=0.0)
-        {
-            this.phi +=0.01;
-            pendulum = 0;
-        }
-        else if(this.scooterObj.steering_angle<0.0 && 0.0<=this.phi)
-        {
-            this.phi -=0.01;
-            pendulum = 0;
-        }
-
-        if(this.scooterObj.velocity ==0)
-        {
-            pendulum = 0;
-        }
-
+        //setting the robot to the rest pose
         if(this.scooterObj.velocity ==0 && this.scooterObj.steering_angle<0.01)
         {
             var prct = this.numer_animation_L_count/100;
-            
             if(this.numer_animation_R_count>0)
             {
                 this.numer_animation_R_count--;
@@ -563,10 +507,7 @@ class ScooterSimScene extends JBScene {
                 this.numer_animation_L_count++;
                 this.scooterObj.set_stop_pause_left(prct);
                 this.applyRotation( this.scooter_three, [-0.3*prct, this.scooterObj.scooter_yaw_rotation, 0 ] );
-    
             }
-
-
         }else if(this.scooterObj.velocity ==0 && this.scooterObj.steering_angle>0.01)
         {
             var prct = this.numer_animation_R_count/100;
@@ -589,10 +530,8 @@ class ScooterSimScene extends JBScene {
         }
         else
         {
+        //if not in the rest pose apply physics 
             this.scooterObj.set_sit_pose();
-
-
-
             if(this.numer_animation_R_count>0)
             {
                 this.numer_animation_R_count--;
@@ -603,56 +542,14 @@ class ScooterSimScene extends JBScene {
                 this.numer_animation_L_count--;
                 this.scooterObj.set_stop_pause_left(this.numer_animation_L_count/100);
             }
-
-
-
-
-
-        //var coef = 1.3
-        var rad = (this.scooterObj.b/(this.scooterObj.steering_angle*Math.cos(0.52)));
-        if(this.scooterObj.velocity !=0)
-        {
-            this.lean = Math.atan(((this.scooterObj.velocity*30)**2)/(this.g*(rad)));
-        }
-
-        this.phi += pendulum*0.01*(1/(1+this.scooterObj.velocity*50));//-Math.atan(((this.scooterObj.velocity*100)**2)/(this.g*(r))) +pendulum*0.1;
-        
-
-
-        if( this.phi < - this.max_phi ) {
-            this.phi = - this.max_phi;
-        } else if( this.phi > this.max_phi ) {
-            this.phi = this.max_phi;
-        }
-
-        if( this.phi-this.lean < - this.max_phi ) {
-            this.lean = -(this.max_phi-this.phi);
-        } else if( this.phi+this.lean > this.max_phi ) {
-            this.lean = (this.max_phi-this.phi);
-        }
-
-
-
-        if( this.test != this.phi ) {
-            let a = Math.sin( this.phi+this.lean ) * ( this.scooterObj.h );
-            let [rx,ry] = this.rotate_around( 0, 0, 0, a, - ( this.scooterObj.scooter_yaw_rotation + ( Math.PI/2 ) ) );
-            this.scooterObj.scooter.position.x -= ry - this.prev_ry;
-            this.scooterObj.scooter.position.z -= rx - this.prev_rx;
-            this.prev_rx = rx;
-            this.prev_ry = ry;
-        }
-        
-        this.test = this.phi;
     
-        this.applyRotation( this.scooter_three, [ this.phi+this.lean, this.scooterObj.scooter_yaw_rotation, 0 ] );
+        this.applyRotation( this.scooter_three, [ this.scooterObj.get_phi(), this.scooterObj.scooter_yaw_rotation, 0 ] );
 
 
 
         }
     }
     
-
-
 
     applyRotation( obj, rpy, additive = false) {
         var tempQuaternion:Quaternion = new Quaternion();
@@ -670,13 +567,6 @@ class ScooterSimScene extends JBScene {
     }
     
     
-    rotate_around( cx, cy, x, y, radians) {
-        var cos = Math.cos( radians ),
-            sin = Math.sin( radians ),
-            nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
-            ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
-        return [nx, ny];
-    }
     
     steer_keyboard() { 
         const vel_update :number= 0.12;

@@ -1,6 +1,7 @@
 import { JBObjectType, JBAnimation } from './jbanimation';
 import { ScooterSimScene } from './scootersimscene';
 import { Clock } from 'three';
+
 enum States {
     Roaming,
     Chase,
@@ -15,7 +16,7 @@ class TaiwanBear extends JBAnimation {
     clock : Clock;
 
     constructor ( name : string ) {
-        super( name, "../assets/tlgf/taiwan bear.glb", JBObjectType.TaiwanBear );
+        super( name, "../assets/tlgf/taiwan bear.glb", JBObjectType.TaiwanBear, 2.0 );
         this.clock = new Clock();
         this.clock.start();
     }
@@ -131,7 +132,17 @@ class TaiwanBear extends JBAnimation {
     roamZ: number = 0;
     attackTime : number = 0;
 
+    ChargeDistanceParam = 10.0;
+    AttackDistanceParam = 2.0;
+    AttackTimeParam = 2.5;
+    AttackCoolDownTimeParam = 7.0;
+    AttackSpeedParam = 2.5;
+    WalkSpeedParam = 0.5;
+
+    AniSpeedFactor = 0.3;
+
     tick( delta : number, sim : ScooterSimScene ) {
+        let aniSpeed = 1.0;
         let scooter = sim.scooterObj;
         if ( this.state === States.Roaming ) {
             this.playAnimation("slow_walking");
@@ -140,16 +151,17 @@ class TaiwanBear extends JBAnimation {
                 this.roamX = - 10 + Math.random() * 20.0;
                 this.roamZ = - 10 + Math.random() * 20.0;
             }
-            this.chase( this.roamX, this.roamZ, 0.4 );
+            this.chase( this.roamX, this.roamZ, this.WalkSpeedParam );
             let xt = scooter.get_position().x;
             let zt = scooter.get_position().z;
 
             let { x, y, z } = this.model.position;
             let dist = Math.hypot( z - zt, x - xt );
 
-            if ( dist < 7.0 ) {
+            if ( dist < this.ChargeDistanceParam ) {
                 this.state = States.Chase;
             }
+            aniSpeed = this.velocities[0] / this.AniSpeedFactor;
         } else if ( this.state === States.Chase ) {
             this.playAnimation("slow walking");
 
@@ -157,16 +169,17 @@ class TaiwanBear extends JBAnimation {
                 let xt = scooter.get_position().x;
                 let zt = scooter.get_position().z;
                 
-                this.chase( xt, zt );
+                this.chase( xt, zt, this.AttackSpeedParam );
 
                 let { x, y, z } = this.model.position;
                 let dist = Math.hypot( z - zt, x - xt );
 
-                if ( dist >= 10.0 ) {
+                if ( dist >= this.ChargeDistanceParam ) {
                     this.state = States.Roaming;
-                } else if ( dist < 2.0 ) {
+                } else if ( dist < this.AttackDistanceParam ) {
                     this.state = States.Attack;
                 }
+                aniSpeed = this.velocities[0] / this.AniSpeedFactor;
             }
         } else if ( this.state === States.Attack ) {
             this.playAnimation("standup");
@@ -174,24 +187,37 @@ class TaiwanBear extends JBAnimation {
             this.velocities = [0, 0];
             
             this.state = States.AttackDone;
-
+            aniSpeed = 1.0;
         } else if ( this.state === States.AttackDone ) {
-            if ( this.clock.getElapsedTime() > this.attackTime + 2.5 ) {
+            if ( this.clock.getElapsedTime() > this.attackTime + this.AttackTimeParam ) {
+                let xt = scooter.get_position().x;
+                let zt = scooter.get_position().z;
+                
+                let { x, y, z } = this.model.position;
+                let dist = Math.hypot( z - zt, x - xt );
+
+                if ( dist <= this.AttackDistanceParam ) {
+                    console.log("CRASH");
+                    scooter.crash();
+                }
                 this.playAnimation("slow_walking");
 
                 this.rotate( 0, this.normalizeAngle( this.model.rotation.y + 180.0/180.0 * Math.PI ), 0 );
                 this.state = States.AttackCoolDown;
                 this.attackTime = this.clock.getElapsedTime();
-                this.velocities[0] = 0.4;
+                this.velocities[0] = this.WalkSpeedParam;
+                aniSpeed = this.velocities[0] / this.AniSpeedFactor
+
             }
         } else if ( this.state === States.AttackCoolDown ) {
-            if ( this.clock.getElapsedTime() > this.attackTime + 7.0 ) {
+            if ( this.clock.getElapsedTime() > this.attackTime + this.AttackCoolDownTimeParam ) {
                 this.state = States.Roaming;
                 this.attackTime = this.clock.getElapsedTime();
             }
+            aniSpeed = this.velocities[0] / this.AniSpeedFactor;
         }
         this.update();
-        return super.tick( delta, sim );
+        return super.tick( delta * aniSpeed, sim );
     }
 }
 
