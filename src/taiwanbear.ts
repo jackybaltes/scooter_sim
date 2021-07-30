@@ -137,7 +137,7 @@ class TaiwanBear extends JBAnimation {
     AttackDistanceParam = 2.0;
     AttackTimeParam = 2.5;
     AttackCoolDownTimeParam = 7.0;
-    AttackSpeedParam = 3.0;
+    AttackSpeedParam = 2.5;
     WalkSpeedParam = 0.5;
 
     AniSpeedFactor = 0.3;
