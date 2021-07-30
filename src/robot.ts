@@ -441,10 +441,6 @@ export class Robot{
         return curent_q_pos
     }
 
-
-
-
-
     get_grip_L_Fkin(yaw,phi,steering)
     {
         var s1=Math.sin(yaw);
@@ -461,7 +457,7 @@ export class Robot{
         return new Matrix([[link_x3,link_z3,-link_y3,0,0,0]]);
     }
 
-    get_grip_R_Fkin(yaw,phi,steering)
+    get_grip_R_Fkin(yaw : number, phi : number, steering : number )
     {
         var s1=Math.sin(yaw);
         var c1=Math.cos(yaw);
@@ -480,7 +476,6 @@ export class Robot{
 
     move_arms()
     {
-
         var left_handle  = this.get_grip_L_Fkin(0.0,0.0,this.steering_angle);
         var right_handle  = this.get_grip_R_Fkin(0.0,0.0,this.steering_angle);
 
@@ -489,6 +484,11 @@ export class Robot{
         this.last_pose_R =gen_R;
         this.last_pose_L =gen_L;
         this.set_pose(this.last_pose_L,this.last_pose_R);
+    }
+
+    crash() {
+        this.velocity = 0.0;
+        this.phi = 45.0/180.0 * Math.PI;
     }
 }
 

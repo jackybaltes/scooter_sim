@@ -133,7 +133,7 @@ class TaiwanBear extends JBAnimation {
     roamZ: number = 0;
     attackTime : number = 0;
 
-    ChargeDistanceParam = 7.0;
+    ChargeDistanceParam = 10.0;
     AttackDistanceParam = 2.0;
     AttackTimeParam = 2.5;
     AttackCoolDownTimeParam = 7.0;
@@ -191,6 +191,15 @@ class TaiwanBear extends JBAnimation {
             aniSpeed = 1.0;
         } else if ( this.state === States.AttackDone ) {
             if ( this.clock.getElapsedTime() > this.attackTime + this.AttackTimeParam ) {
+                let xt = scooter.get_position().x;
+                let zt = scooter.get_position().z;
+                
+                let { x, y, z } = this.model.position;
+                let dist = Math.hypot( z - zt, x - xt );
+
+                if ( dist >= this.ChargeDistanceParam ) {
+                    scooter.crash();
+                }
                 this.playAnimation("slow_walking");
 
                 this.rotate( 0, this.normalizeAngle( this.model.rotation.y + 180.0/180.0 * Math.PI ), 0 );
@@ -198,6 +207,7 @@ class TaiwanBear extends JBAnimation {
                 this.attackTime = this.clock.getElapsedTime();
                 this.velocities[0] = this.WalkSpeedParam;
                 aniSpeed = this.velocities[0] / this.AniSpeedFactor
+
             }
         } else if ( this.state === States.AttackCoolDown ) {
             if ( this.clock.getElapsedTime() > this.attackTime + this.AttackCoolDownTimeParam ) {
