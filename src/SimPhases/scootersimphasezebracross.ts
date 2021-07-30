@@ -5,89 +5,73 @@ import { ScooterSimScene } from "../scootersimscene";
 const content = `<h1>Balance in a straight line<br>
 (One re-test is allowed)</h1> 
 <hr>
-<p>1. Not stoping to check for trains or running railroad crossing when signal is flashing 
+<p>1. Not stopping for pedestrians or not allowing them to cross first 
 <span style="color:red">- deduct 32 points</span></p>
-<p>2. Stalling or stopping on the rails 
+<p>2. Letting front wheel cross stop line
 <span style="color:red">- deduct 32 points</span></p>
 `;
 
-enum ScooterSimPhaseRailCrossState {
-    RailCross = "rail cross",
-    RailCrossIntro = "rail cross-intro",
-    RailCrossSuccess = "rail cross-success",
-    RailCrossFailure = "rail cross-failure",
-    RailCrossDone = "rail cross-done"
+enum ScooterSimPhaseZebraState {
+    Zebra = "Zebra Crossing",
+    ZebraIntro = "Zebra Crossing-intro",
+    ZebraSuccess = "Zebra Crossing-success",
+    ZebraFailure = "Zebra Crossing-failure",
+    ZebraDone = "Zebra Crossing-done"
 }
 
-class ScooterSimPhaseRailCross extends ScooterSimPhaseOverlay {
-    state : ScooterSimPhaseRailCrossState;
+class ScooterSimPhaseZebra extends ScooterSimPhaseOverlay {
+    state : ScooterSimPhaseZebraState;
 
     constructor( game : JBGame, state : string ) {
-        super( "scooter_sim_phase_rail_cross_intro", game, content, [ 2, 0.94, -1.7, 0.0 ] );
-        this.state = ScooterSimPhaseRailCrossState[ state.toLowerCase() ];
+        super( "scooter_sim_phase_zebra_crossing_intro", game, content, [ -12.2, 0.94, 7, -Math.PI/2 ] );
+        this.state = ScooterSimPhaseZebraState[ state.toLowerCase() ];
     }
 
 
     switchPhase( prev: string, next: string ) {
         let sim : ScooterSimScene = this.game.currentScene as ScooterSimScene;
-        if ( next === ScooterSimPhaseRailCrossState.RailCrossIntro ) 
+        if ( next === ScooterSimPhaseZebraState.ZebraIntro ) 
         {
             this.updateDOM( );
             this.show( true );
-            sim.lock_imputs = true;
             sim.reset();
-            //to avoid unrelated messages
-            
-            sim.test_track.part1_cango_after = true;
-            sim.test_track.part2_cango_after = true;  
-            sim.test_track.part3_cango_after = true;    
-            sim.test_track.part4_cango_after = true;    
-            sim.test_track.setMessage("");
-
-            setTimeout(()=>{sim.currentPhase = ScooterSimPhaseRailCrossState.RailCross;}, 5000 );
+            sim.lock_imputs = true;
+            setTimeout(()=>{sim.currentPhase = ScooterSimPhaseZebraState.Zebra;}, 5000 );
         }
-        else if ( next === ScooterSimPhaseRailCrossState.RailCross )
+        else if ( next === ScooterSimPhaseZebraState.Zebra )
         {
             sim.reset();
-            
-            sim.test_track.part1_cango_after = true;
-            sim.test_track.part2_cango_after = true;    
-            sim.test_track.part3_cango_after = true;    
-            sim.test_track.part4_cango_after = true;    
-
-            sim.test_track.setMessage("");
-
         }
-        else if ( next === ScooterSimPhaseRailCrossState.RailCrossSuccess )
+        else if ( next === ScooterSimPhaseZebraState.ZebraSuccess )
         {
 
             sim.scooterObj.velocity = 0.0;
             sim.lock_imputs = true;
 
-            this.updateDOM( );
             this.content = `<h1 style="color:green">Well done !<br></h1> 
             <hr>
-            <span>You passed the rail crossing training !</span></p>
+            <span>You passed the zebra crossing training !</span></p>
             <p>You will be brought back into the menu in 5sec<p>
             `;
+            this.updateDOM( );
             this.show( true );
-            setTimeout(()=>{sim.currentPhase = ScooterSimPhaseRailCrossState.RailCrossDone;},5000);
+            setTimeout(()=>{sim.currentPhase = ScooterSimPhaseZebraState.ZebraDone;},5000);
         }
-        else if ( next === ScooterSimPhaseRailCrossState.RailCrossDone )
+        else if ( next === ScooterSimPhaseZebraState.ZebraDone )
         {
             //go to menu 
             this.stop();
             this.game.switch("chapter_select");
 
         }
-        else if(next === ScooterSimPhaseRailCrossState.RailCrossFailure)
+        else if(next === ScooterSimPhaseZebraState.ZebraFailure)
         {
-            sim.test_track.setMessage("Wait for the train to pass  !");
+            sim.test_track.setMessage("Wait for the light before crossing !");
             sim.reset();
         }
 
 
-        if (next === ScooterSimPhaseRailCrossState.RailCross) 
+        if (next === ScooterSimPhaseZebraState.Zebra) 
         {
             this.show( false );
         }
@@ -95,26 +79,20 @@ class ScooterSimPhaseRailCross extends ScooterSimPhaseOverlay {
 
     tickPhase( dt : number ) {
         let sim : ScooterSimScene = this.game.currentScene as ScooterSimScene;
-
         
-        sim.test_track.part1_cango_after = true;
-        sim.test_track.part2_cango_after = true;    
-        sim.test_track.part3_cango_after = true;    
-        sim.test_track.part4_cango_after = true;    
-
         if ( sim.prevPhase !== sim.currentPhase ) {
             sim.overlayPhase.switchPhase( sim.prevPhase, sim.currentPhase );
         }
-        console.log(`RailCross tick phase ${sim.currentPhase} dt ${dt}`);
+        console.log(`Zebra tick phase ${sim.currentPhase} dt ${dt}`);
 
         if( sim.test_track && sim.scooterObj ) {
             let tret = sim.test_track.update(   sim.scooterObj.get_wheel_position(),
                                                 sim.scooterObj.scooter_yaw_rotation,
                                                 sim.scooterObj.blinking_left,
                                                 sim.scooterObj.velocity == 0 );
-            sim.score_element.innerHTML = "SCORE = " + sim.curent_score + "  |  BEST SCORE = " + sim.best_score +" ("+sim.best_user+")";
+            sim.score_element.innerHTML = "SCORE : " + sim.curent_score + "  |  BEST : " + sim.best_score;
             sim.comment_element.innerHTML = "COMMENTS : <br><br>" + sim.test_track.getMessage();
-                                            
+        
             sim.curent_score = sim.test_track.getscore();
         }
         
@@ -136,23 +114,22 @@ class ScooterSimPhaseRailCross extends ScooterSimPhaseOverlay {
                 sim.camera.lookAt( sim.scooterObj.get_position().x, sim.scooterObj.get_position().y, sim.scooterObj.get_position().z );
             }
         }
-        //updating the state of the training challenge
-        //checking the reset conditions of this part 
-        if(sim.is_done() || (sim.test_track.part5_after.is_in(sim.scooterObj.get_wheel_position()) && !sim.test_track.part5_cango_after) )
-        {
-            this.switchPhase(sim.prevPhase,ScooterSimPhaseRailCrossState.RailCrossFailure)
+
+        if(sim.is_done() || (sim.test_track.part1_after.is_in(sim.scooterObj.get_wheel_position()) && !sim.test_track.part1_cango_after) )
+        {            
+            this.switchPhase(sim.prevPhase,ScooterSimPhaseZebraState.ZebraFailure)
         }
         //if challenge completed 
-        if( sim.test_track.part5_after.is_in(sim.scooterObj.get_wheel_position()) && sim.test_track.part5_cango_after)
+        if( sim.test_track.part2.is_in(sim.scooterObj.get_wheel_position()))
         {
             //sim.reset();
-            this.switchPhase(sim.prevPhase,ScooterSimPhaseRailCrossState.RailCrossSuccess )
+            this.switchPhase(sim.prevPhase,ScooterSimPhaseZebraState.ZebraSuccess )
         }
         
 
             
         for (const object of sim.updateables) {
-            object.tick( sim.dt );
+            object.tick( sim.dt,sim );
         }
 
         if ( ! this.wrapper.hidden ) {
@@ -161,4 +138,4 @@ class ScooterSimPhaseRailCross extends ScooterSimPhaseOverlay {
     }
 }
 
-export { ScooterSimPhaseRailCross, ScooterSimPhaseRailCrossState };
+export { ScooterSimPhaseZebra, ScooterSimPhaseZebraState };

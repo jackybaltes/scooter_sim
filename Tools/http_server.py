@@ -9,8 +9,6 @@ csv_path = '../data/scores.csv'
 
 class TestHandler(http.server.SimpleHTTPRequestHandler):
 
-    
-
     def do_POST(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
@@ -54,7 +52,7 @@ class TestHandler(http.server.SimpleHTTPRequestHandler):
         for s in scores:
             if(s>max):
                 max = s
-        
+
         return max
 
 
@@ -69,4 +67,4 @@ def start_server():
     server.serve_forever()
 
 if __name__ == "__main__":
-    start_server()
+    start_server() 

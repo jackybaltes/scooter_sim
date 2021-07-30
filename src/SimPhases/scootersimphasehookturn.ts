@@ -5,44 +5,58 @@ import { ScooterSimScene } from "../scootersimscene";
 const content = `<h1>Balance in a straight line<br>
 (One re-test is allowed)</h1> 
 <hr>
-<p>1. Not stopping for pedestrians or not allowing them to cross first 
+<p>1. Failure to comply with the regultations for two part turn or direct turn
 <span style="color:red">- deduct 32 points</span></p>
-<p>2. Letting front wheel cross stop line
-<span style="color:red">- deduct 32 points</span></p>
+<p>2. Failure to comply with the regultations for reducing speed to enter the turn waiting area
+<span style="color:red">- deduct 16 points</span></p>
+<p>3. Failure to comply with the regultations for stopping in the turn waiting area
+<span style="color:red">- deduct 16 points</span></p>
+
 `;
 
-enum ScooterSimPhaseZebraState {
-    Zebra = "Zebra Crossing",
-    ZebraIntro = "Zebra Crossing-intro",
-    ZebraSuccess = "Zebra Crossing-success",
-    ZebraFailure = "Zebra Crossing-failure",
-    ZebraDone = "Zebra Crossing-done"
+enum ScooterSimPhaseHookTurnState {
+    HookTurn = "hook turn",
+    HookTurnIntro = "hook turn-intro",
+    HookTurnSuccess = "hook turn-success",
+    HookTurnFailure = "hook turn-failure",
+    HookTurnDone = "hook turn-done"
 }
 
-class ScooterSimPhaseZebra extends ScooterSimPhaseOverlay {
-    state : ScooterSimPhaseZebraState;
+class ScooterSimPhaseHookTurn extends ScooterSimPhaseOverlay {
+    state : ScooterSimPhaseHookTurnState;
 
     constructor( game : JBGame, state : string ) {
-        super( "scooter_sim_phase_zebra_crossing_intro", game, content, [ -12.2, 0.94, 7, -Math.PI/2 ] );
-        this.state = ScooterSimPhaseZebraState[ state.toLowerCase() ];
+        super( "scooter_sim_phase_hook_turn_intro", game, content, [ -4, 0.94, 16.7, 0.0 ] );
+        this.state = ScooterSimPhaseHookTurnState[ state.toLowerCase() ];
     }
 
 
     switchPhase( prev: string, next: string ) {
         let sim : ScooterSimScene = this.game.currentScene as ScooterSimScene;
-        if ( next === ScooterSimPhaseZebraState.ZebraIntro ) 
+        if ( next === ScooterSimPhaseHookTurnState.HookTurnIntro ) 
         {
             this.updateDOM( );
             this.show( true );
             sim.reset();
             sim.lock_imputs = true;
-            setTimeout(()=>{sim.currentPhase = ScooterSimPhaseZebraState.Zebra;}, 5000 );
+            //to avoid unrelated messages
+            sim.test_track.part0_cango_after = true;
+            sim.test_track.part1_cango_after = true;
+            sim.test_track.part2_cango_after = true;    
+            sim.test_track.setMessage("");
+
+            setTimeout(()=>{sim.currentPhase = ScooterSimPhaseHookTurnState.HookTurn;}, 5000 );
         }
-        else if ( next === ScooterSimPhaseZebraState.Zebra )
+        else if ( next === ScooterSimPhaseHookTurnState.HookTurn )
         {
             sim.reset();
+            sim.test_track.part0_cango_after = true;
+            sim.test_track.part1_cango_after = true;
+            sim.test_track.part2_cango_after = true;    
+            sim.test_track.setMessage("");
+
         }
-        else if ( next === ScooterSimPhaseZebraState.ZebraSuccess )
+        else if ( next === ScooterSimPhaseHookTurnState.HookTurnSuccess )
         {
 
             sim.scooterObj.velocity = 0.0;
@@ -50,40 +64,47 @@ class ScooterSimPhaseZebra extends ScooterSimPhaseOverlay {
 
             this.content = `<h1 style="color:green">Well done !<br></h1> 
             <hr>
-            <span>You passed the zebra crossing training !</span></p>
+            <span>You passed the hook turn training !</span></p>
             <p>You will be brought back into the menu in 5sec<p>
             `;
             this.updateDOM( );
             this.show( true );
-            setTimeout(()=>{sim.currentPhase = ScooterSimPhaseZebraState.ZebraDone;},5000);
+            setTimeout(()=>{sim.currentPhase = ScooterSimPhaseHookTurnState.HookTurnDone;},5000);
         }
-        else if ( next === ScooterSimPhaseZebraState.ZebraDone )
+        else if ( next === ScooterSimPhaseHookTurnState.HookTurnDone )
         {
             //go to menu 
             this.stop();
+            this.show( false );
             this.game.switch("chapter_select");
 
         }
-        else if(next === ScooterSimPhaseZebraState.ZebraFailure)
+        else if(next === ScooterSimPhaseHookTurnState.HookTurnFailure)
         {
-            sim.test_track.setMessage("Wait for the light before crossing !");
+            sim.test_track.setMessage("Wait a bit inside the rectangle with the good orientation !");
             sim.reset();
         }
+        console.log("prev=",prev);
+        console.log("next=",next);
 
-
-        if (next === ScooterSimPhaseZebraState.Zebra) 
+        if (next === ScooterSimPhaseHookTurnState.HookTurn) 
         {
+            this.updateDOM( );
             this.show( false );
         }
     }
 
     tickPhase( dt : number ) {
         let sim : ScooterSimScene = this.game.currentScene as ScooterSimScene;
-        
+
+        sim.test_track.part0_cango_after = true;
+        sim.test_track.part1_cango_after = true;
+        sim.test_track.part2_cango_after = true;
+
         if ( sim.prevPhase !== sim.currentPhase ) {
             sim.overlayPhase.switchPhase( sim.prevPhase, sim.currentPhase );
         }
-        console.log(`Zebra tick phase ${sim.currentPhase} dt ${dt}`);
+        //console.log(`HookTurn tick phase ${sim.currentPhase} dt ${dt}`);
 
         if( sim.test_track && sim.scooterObj ) {
             let tret = sim.test_track.update(   sim.scooterObj.get_wheel_position(),
@@ -92,7 +113,7 @@ class ScooterSimPhaseZebra extends ScooterSimPhaseOverlay {
                                                 sim.scooterObj.velocity == 0 );
             sim.score_element.innerHTML = "SCORE = " + sim.curent_score + "  |  BEST SCORE = " + sim.best_score +" ("+sim.best_user+")";
             sim.comment_element.innerHTML = "COMMENTS : <br><br>" + sim.test_track.getMessage();
-                                    
+        
             sim.curent_score = sim.test_track.getscore();
         }
         
@@ -114,22 +135,23 @@ class ScooterSimPhaseZebra extends ScooterSimPhaseOverlay {
                 sim.camera.lookAt( sim.scooterObj.get_position().x, sim.scooterObj.get_position().y, sim.scooterObj.get_position().z );
             }
         }
-
-        if(sim.is_done() || (sim.test_track.part1_after.is_in(sim.scooterObj.get_wheel_position()) && !sim.test_track.part1_cango_after) )
-        {            
-            this.switchPhase(sim.prevPhase,ScooterSimPhaseZebraState.ZebraFailure)
+        //updating the state of the training challenge
+        //checking the reset conditions of this part 
+        if(sim.is_done() || (sim.test_track.part3_after.is_in(sim.scooterObj.get_wheel_position()) && !sim.test_track.part3_cango_after) )
+        {
+            this.switchPhase(sim.prevPhase,ScooterSimPhaseHookTurnState.HookTurnFailure)
         }
         //if challenge completed 
-        if( sim.test_track.part2.is_in(sim.scooterObj.get_wheel_position()))
+        if( !sim.test_track.part3_after.is_in(sim.scooterObj.get_wheel_position()) && sim.test_track.part3_cango_after)
         {
             //sim.reset();
-            this.switchPhase(sim.prevPhase,ScooterSimPhaseZebraState.ZebraSuccess )
+            this.switchPhase(sim.prevPhase,ScooterSimPhaseHookTurnState.HookTurnSuccess )
         }
         
 
             
         for (const object of sim.updateables) {
-            object.tick( sim.dt );
+            object.tick( sim.dt,sim );
         }
 
         if ( ! this.wrapper.hidden ) {
@@ -138,4 +160,4 @@ class ScooterSimPhaseZebra extends ScooterSimPhaseOverlay {
     }
 }
 
-export { ScooterSimPhaseZebra, ScooterSimPhaseZebraState };
+export { ScooterSimPhaseHookTurn, ScooterSimPhaseHookTurnState };

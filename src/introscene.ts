@@ -72,14 +72,14 @@ class IntroScene extends JBScene {
             l.innerHTML = this.content;
 
             parent.appendChild( l );
-            console.log(`inner ${l.innerHTML}`);
+            //console.log(`inner ${l.innerHTML}`);
             
             this.labels = l;
 
             if (this.next !== "" ) {
                 let nb =  document.getElementById( this.name + "_btn_next");
                 nb.onclick = () => {
-                    console.log("intro scene next button pressed");
+                    //console.log("intro scene next button pressed");
                     this.game.switch( this.next );
                 };
             }
@@ -87,7 +87,7 @@ class IntroScene extends JBScene {
             if ( this.prev !== "" ) {
                 let pb =  document.getElementById( this.name + "_btn_prev");
                 pb.onclick = () => {
-                    console.log("intro scene prev button pressed");
+                    //console.log("intro scene prev button pressed");
                     this.game.switch( this.prev );
                 };
             }

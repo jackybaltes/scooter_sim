@@ -1,7 +1,6 @@
 import {
     WebGLRenderer,
     PerspectiveCamera,
-    Scene,
     DirectionalLight,
     Color,
     AmbientLight,
@@ -10,7 +9,6 @@ import {
     Object3D,
     Euler,
     Clock,
-    Texture,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import URDFLoader, { URDFRobot } from '../urdf/src/URDFLoader.js';
@@ -18,7 +16,7 @@ import {Track} from './track';
 import {Timer} from './timer';
 import {Robot} from './robot';
 import {ControlServer} from './controlserver';
-import { JBAnimation } from './jbanimation';
+import { JBAnimation,JBObjectType } from './jbanimation';
 import { TaiwanBear } from './taiwanbear';
 import { TaiwanPolice, TaiwanCopMale } from './taiwancop';
 import { JBScene } from './jbscene';
@@ -51,7 +49,7 @@ class ScooterSimScene extends JBScene {
     curent_score :number = 100
     best_score :number;
     best_user :string;
-
+    
     //elements to modify the html page
     score_element : HTMLElement;
     comment_element : HTMLElement;
@@ -96,6 +94,8 @@ class ScooterSimScene extends JBScene {
         this.overlay = overlay;
     }
 
+    bears : Array<JBAnimation> = new Array<JBAnimation>();
+
     async preload() {
         if(!this.loaded)
         {
@@ -127,39 +127,39 @@ class ScooterSimScene extends JBScene {
                 this.test_track.init_track()
             };
             
-            const bear = new TaiwanBear( "pooh" );
+            const bear = new TaiwanBear( "pooh" )
 
             await bear.init()
             
-            console.log("loaded taiwan bear Pooh", bear.model );
+            //console.log("loaded taiwan bear Pooh", bear.model );
             let m;
 
             m = bear.home();
-            console.log("Pooh", m );
-            console.dir(m);
-            bear.velocities = [ 0.5, 15.0/180.0*Math.PI, 3.0 ];
+            //console.log("Pooh", m );
+            //console.dir(m);
+            //bear.velocities = [ 1.0, 15.0/180.0*Math.PI ];
 
             this.add( m );
             this.updateables.push( bear );
-        
-            
+            this.bears.push( bear );
+
             const pol1 = new TaiwanPolice( "marry" );
             const pol2 = new TaiwanCopMale( "chi tai" );
             
             await pol1.init()
-            console.log("loaded taiwan police Marry", pol1.model );
+            //console.log("loaded taiwan police Marry", pol1.model );
             m = pol1.home();
-            console.log("Police 1", m );
-            console.dir(m);
+            //console.log("Police 1", m );
+            //console.dir(m);
             this.add( m );
             this.updateables.push( pol1 );
         
             await pol2.init()
             
-            console.log("loaded taiwan police Chi Tai", pol2.model );
+            //console.log("loaded taiwan police Chi Tai", pol2.model );
             m = pol2.home();
-            console.log("Police Chi tai" );
-            console.dir(m)
+            //console.log("Police Chi tai" );
+            //console.dir(m)
 
             this.add( m );
             this.updateables.push( pol2 );
@@ -349,10 +349,12 @@ class ScooterSimScene extends JBScene {
         this.phi =0.0;
         this.lean =0.0;
 
+
+        this.best_score = this.test_track.get_best_score();
         var retrunarr = this.test_track.get_best_score();
         this.best_score= retrunarr[0];
         this.best_user = retrunarr[1];
-        
+
         this.phi_vel = 0.001;
         this.prev_rx = 0;
         this.prev_ry = 0;
@@ -452,9 +454,7 @@ class ScooterSimScene extends JBScene {
                                         this.scooterObj.scooter_yaw_rotation,
                                         this.scooterObj.blinking_left,
                                         this.scooterObj.velocity == 0 );
-                this.score_element.innerHTML = "SCORE = " + this.curent_score + "  |  BEST SCORE = " + this.best_score +" ("+this.best_user+")";
-                this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
-            
+                this.score_element.innerHTML = "SCORE = " + this.curent_score + "  |  BEST SCORE = " + this.best_score +" ("+this.best_user+")";                this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
                 this.curent_score = this.test_track.getscore();
                 //if not in free driving we restart when died
                 if (this.currentPhase !== SimPhase.FreeDriving ) {
@@ -465,35 +465,36 @@ class ScooterSimScene extends JBScene {
                     }
                 }
             }
-        }            
-        
-        if( this.scooterObj ) {
-            this.physics();
-            let cam_dist : number = 8;
-            let camdist_x : number = cam_dist*Math.cos( - this.scooterObj.scooter_yaw_rotation );
-            let camdist_y : number = cam_dist*Math.sin( - this.scooterObj.scooter_yaw_rotation );
-
-            let view = document.getElementById( "cb_camera_view" );
-
-            let e = (document.getElementById("cb_camera_view")) as HTMLSelectElement;
-            let sel = e.selectedIndex;
-            let opt = e.options[sel];
-            let cb_view = (<HTMLOptionElement>opt).value;
-
-            if ( cb_view == "cb_follow" ) {
-                this.camera.position.set( this.scooterObj.get_position().x - camdist_x, this.scooterObj.get_position().y+5, this.scooterObj.get_position().z-camdist_y);
-                this.camera.lookAt( this.scooterObj.get_position().x, this.scooterObj.get_position().y, this.scooterObj.get_position().z );
-            }
-        }
             
-        for (const object of this.updateables) {
-            object.tick( this.dt );
-        }
+            if( this.scooterObj ) {
+                this.physics();
+                let cam_dist : number = 8;
+                let camdist_x : number = cam_dist*Math.cos( - this.scooterObj.scooter_yaw_rotation );
+                let camdist_y : number = cam_dist*Math.sin( - this.scooterObj.scooter_yaw_rotation );
 
-        if ( this.overlayPhase !== null ) {
-            this.overlayPhase.tick( this.dt );
-        }
+                let view = document.getElementById( "cb_camera_view" );
 
+                let e = (document.getElementById("cb_camera_view")) as HTMLSelectElement;
+                let sel = e.selectedIndex;
+                let opt = e.options[sel];
+                let cb_view = (<HTMLOptionElement>opt).value;
+
+                if ( cb_view == "cb_follow" ) {
+                    this.camera.position.set( this.scooterObj.get_position().x - camdist_x, this.scooterObj.get_position().y+5, this.scooterObj.get_position().z-camdist_y);
+                    this.camera.lookAt( this.scooterObj.get_position().x, this.scooterObj.get_position().y, this.scooterObj.get_position().z );
+                }
+            }
+
+
+            for (const object of this.updateables) {
+                object.tick( this.dt, this );
+            }
+
+            if ( this.overlayPhase !== null ) {
+                this.overlayPhase.tick( this.dt );
+            }
+            
+        }
         this.renderer.render( this, this.camera );
         this.prevPhase = this.currentPhase;
         this.currentPhase = this.nextPhase;

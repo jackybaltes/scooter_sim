@@ -16,7 +16,6 @@ export class Score
     {
         this.user_name =  username;
         this.reset();
-
         console.log("TEST CSV");
         console.log(this.get_scores_csv());
 
@@ -57,51 +56,74 @@ export class Score
     //is no user is given it will just use 'anonymous'
     save_to_file():void
     {
-        var xmlHttp = new XMLHttpRequest();
-        if(this.user_name)
+        try
         {
-            var string_posted = "{\"username\":\""+this.user_name+"\",\"score\":\""+this.curent_score+"\"}"
+            var xmlHttp = new XMLHttpRequest();
+            if(this.user_name)
+            {
+                var string_posted = "{\"username\":\""+this.user_name+"\",\"score\":\""+this.curent_score+"\"}"
+            }
+            else
+            {
+                var string_posted = "{\"username\":\"Anonymous\",\"score\":\""+this.curent_score+"\"}"
+            }
+            console.log(this.score_server_ip_set_csv);
+            xmlHttp.open( "POST", this.score_server_ip_set_csv, false ); // false for synchronous request
+            xmlHttp.send(string_posted);
         }
-        else
+        catch(err) 
         {
-            var string_posted = "{\"username\":\"Anonymous\",\"score\":\""+this.curent_score+"\"}"
+            console.log(err);
         }
-        console.log(this.score_server_ip_set_csv);
-        xmlHttp.open( "POST", this.score_server_ip_set_csv, false ); // false for synchronous request
-        xmlHttp.send(string_posted);
-
     }
 
     get_scores_csv()
     {
-        var xmlHttp = new XMLHttpRequest();
-        console.log(this.score_server_ip_get_csv);
-        xmlHttp.open( "GET", this.score_server_ip_get_csv, false ); // false for synchronous request
-        xmlHttp.send( null );
-        return xmlHttp.responseText;
+        try
+        {
+            var xmlHttp = new XMLHttpRequest();
+            console.log(this.score_server_ip_get_csv);
+            xmlHttp.open( "GET", this.score_server_ip_get_csv, false ); // false for synchronous request
+            xmlHttp.send( null );
+            return xmlHttp.responseText;
+        }
+        catch(err)
+        {
+            console.log(err);
+            return "0,0\n0,Server not responding\n";
+        }
+    
     }
     
     get_best_score_server():any
     {
-        //spliting the csv to lines
-        var line_array = this.get_scores_csv().split("\n");
-        console.log(line_array);
-        //removing the first eleemnt (csv header)
-        line_array.shift();
-        var max:number  = parseInt(line_array[0].split(",")[1]);
-        var best_user:string = line_array[0].split(",")[0];
-        for (let index = 0; index < line_array.length; index++)
+        try
         {
-            var username = line_array[index].split(",")[0];
-            var score = parseInt(line_array[index].split(",")[1]);
-
-            if(max<score)
+            //spliting the csv to lines
+            var line_array = this.get_scores_csv().split("\n");
+            console.log(line_array);
+            //removing the first eleemnt (csv header)
+            line_array.shift();
+            var max:number  = parseInt(line_array[0].split(",")[1]);
+            var best_user:string = line_array[0].split(",")[0];
+            for (let index = 0; index < line_array.length; index++)
             {
-                max=score;
-                best_user=username;
+                var username = line_array[index].split(",")[0];
+                var score = parseInt(line_array[index].split(",")[1]);
+
+                if(max<score)
+                {
+                    max=score;
+                    best_user=username;
+                }
             }
+            return [max,best_user];
         }
-        return [max,best_user];
+        catch(err)
+        {
+            console.log(err);
+            return [0,"Server not responding"];
+        }
     }
 
 }
