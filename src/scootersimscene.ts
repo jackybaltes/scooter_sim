@@ -77,6 +77,7 @@ class ScooterSimScene extends JBScene {
     overlay : string;
     overlayPhase : ScooterSimPhaseOverlay = null;
 
+    jingle_played : boolean;
     
     numer_animation_L_count: number = 0;
     numer_animation_R_count: number = 0;
@@ -336,14 +337,15 @@ class ScooterSimScene extends JBScene {
         this.lock_imputs = false;
         this.stopwatch.resetTimer();
         this.stopwatch.startTimer();
-        this.test_track.init_track();
         this.scooterObj.init_position( this.overlayPhase.spawn );
+        this.test_track.init_track();
 
-
+        this.jingle_played = false;
         this.best_score = this.test_track.get_best_score();
         var retrunarr = this.test_track.get_best_score();
         this.best_score= retrunarr[0];
         this.best_user = retrunarr[1];
+        this.comment_element.innerHTML = "COMMENTS : <br><br>";
     }
     
 
@@ -440,16 +442,33 @@ class ScooterSimScene extends JBScene {
                                         this.scooterObj.scooter_yaw_rotation,
                                         this.scooterObj.blinking_left,
                                         this.scooterObj.velocity == 0 );
-                this.score_element.innerHTML = "SCORE = " + this.curent_score + "  |  BEST SCORE = " + this.best_score +" ("+this.best_user+")";                this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
+                this.score_element.innerHTML = "SCORE = " + this.curent_score + "  |  BEST SCORE = " + this.best_score +" ("+this.best_user+")";
+                if(!this.jingle_played)
+                {
+                    this.comment_element.innerHTML = "COMMENTS : <br><br>" + this.test_track.getMessage();
+                }
                 this.curent_score = this.test_track.getscore();
                 //if not in free driving we restart when died
-                if (this.currentPhase !== SimPhase.FreeDriving ) {
+                if (this.currentPhase !== SimPhase.FreeDriving ){
                     if( this.is_done() )
                     {
                         this.test_track.save_curent_score(this.stopwatch);                
                         this.reset();
                     }
+                    //put this outside of the if (this.currentPhase !== SimPhase.FreeDriving  if you want to try it on free driving
+                    if(this.test_track.get_won(this.scooterObj.get_position()) && !this.jingle_played)
+                    {
+                        this.jingle_played = true;
+                        var audio = new Audio('../assets/sound/Stimme_5.mp3');
+                        audio.play();
+                        this.comment_element.innerHTML = "COMMENTS : <br><br>" + "You have won the game !";
+                        this.test_track.save_curent_score(this.stopwatch);                
+                        setTimeout(()=>{this.reset()}, 6000);
+                    }
+    
                 }
+
+
             }
             
             if( this.scooterObj ) {

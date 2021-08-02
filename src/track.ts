@@ -212,7 +212,11 @@ class Track {
         return this.lost;
     }
 
-    
+    get_won(scooter_pos)
+    {
+        //won if can go after part 5 and if we are after part five (out of the track)
+        return this.part5_cango_after && !this.is_in_track(scooter_pos,this.arrayX,this.arrayY)
+    }
 
 
 
@@ -386,7 +390,7 @@ class Track {
         this.part5_on =this.part5.is_in(scooter_pos); 
 
         
-        if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY))
+        if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY) && !this.part5_cango_after)
         {
             this.lost = true;
             this.line_failled = true;
