@@ -64,7 +64,9 @@
   },
   "dependencies": {
     "fs": "*",
+    "html2canvas": "^1.2.1",
     "ml-matrix": "^6.8.0",
-    "typewiz": "^1.2.4"
+    "typewiz": "^1.2.4",
+    "webcam-easy": "^1.0.5"
   }
 }

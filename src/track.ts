@@ -444,10 +444,11 @@ class Track {
     }
 
 
-    save_curent_score(timer:Timer)
+    save_curent_score(timer:Timer):number 
     {
         this.score.account_time_in_score(timer);
         this.score.save_to_file();
+        return this.score.get_number_of_points();
     }
 
 

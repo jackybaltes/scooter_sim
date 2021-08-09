@@ -62,7 +62,7 @@ class TestHandler(http.server.SimpleHTTPRequestHandler):
 
 def start_server():
     """Start the server."""
-    server_address = ("", PORT)
+    server_address = ("", PORT) # "" = localhost
     server = http.server.HTTPServer(server_address, TestHandler)
     server.serve_forever()
 

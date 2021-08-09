@@ -1751,6 +1751,11 @@
     "mixin-deep" "^1.2.0"
     "pascalcase" "^0.1.1"
 
+"base64-arraybuffer@^0.2.0":
+  "integrity" "sha512-7emyCsu1/xiBXgQZrscw/8KPRT44I4Yq9Pe6EGs3aPRTsWuggML1/1DTuZUuIaJPIm1FTDUVXl4x/yW8s0kQDQ=="
+  "resolved" "https://registry.npmjs.org/base64-arraybuffer/-/base64-arraybuffer-0.2.0.tgz"
+  "version" "0.2.0"
+
 "bcrypt-pbkdf@^1.0.0":
   "integrity" "sha1-pDAdOJtqQ/m2f/PKEaP2Y342Dp4="
   "resolved" "https://registry.npmjs.org/bcrypt-pbkdf/-/bcrypt-pbkdf-1.0.2.tgz"
@@ -2170,6 +2175,13 @@
   "integrity" "sha1-ojD2T1aDEOFJgAmUB5DsmVRbyn4="
   "resolved" "https://registry.npmjs.org/crypto-random-string/-/crypto-random-string-1.0.0.tgz"
   "version" "1.0.0"
+
+"css-line-break@2.0.1":
+  "integrity" "sha512-gwKYIMUn7xodIcb346wgUhE2Dt5O1Kmrc16PWi8sL4FTfyDj8P5095rzH7+O8CTZudJr+uw2GCI/hwEkDJFI2w=="
+  "resolved" "https://registry.npmjs.org/css-line-break/-/css-line-break-2.0.1.tgz"
+  "version" "2.0.1"
+  dependencies:
+    "base64-arraybuffer" "^0.2.0"
 
 "cssom@^0.4.1", "cssom@^0.4.4":
   "integrity" "sha512-p3pvU7r1MyyqbTk+WbNJIgJjG2VmTIaB10rI93LzVPrmDJKkzKYMtxxyAvQXR/NS6otuzveI7+7BBq3SjBS2mw=="
@@ -3188,6 +3200,13 @@
   "integrity" "sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg=="
   "resolved" "https://registry.npmjs.org/html-escaper/-/html-escaper-2.0.2.tgz"
   "version" "2.0.2"
+
+"html2canvas@^1.2.1":
+  "integrity" "sha512-XoP12gER5pvxBADy4KKTMinZ69PP/+EZbILEk+WDCJFPIkhbREwMy2nhuMBFWPUDGWCw1DCrhDlbADJ5m8dC5g=="
+  "resolved" "https://registry.npmjs.org/html2canvas/-/html2canvas-1.2.1.tgz"
+  "version" "1.2.1"
+  dependencies:
+    "css-line-break" "2.0.1"
 
 "http-proxy-agent@^4.0.1":
   "integrity" "sha512-k0zdNgqWTGA6aeIRVpvfVob4fL52dTfaehylg0Y4UvSySvOq/Y+BOyPrgpUrA7HylqvU8vIZGsRuXmspskV0Tg=="
@@ -6105,6 +6124,11 @@
   "version" "1.0.7"
   dependencies:
     "makeerror" "1.0.x"
+
+"webcam-easy@^1.0.5":
+  "integrity" "sha512-YSXB21kfnwdrlPX/u1O5r8pbHxCaw3bsxhmvS1S9ixK/8n8LzxOduylqwVUSjYGSVJRhopJUN77SOh3Z0QgaIQ=="
+  "resolved" "https://registry.npmjs.org/webcam-easy/-/webcam-easy-1.0.5.tgz"
+  "version" "1.0.5"
 
 "webidl-conversions@^4.0.2":
   "integrity" "sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg=="

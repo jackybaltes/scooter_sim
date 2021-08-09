@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Taiwan Scooter Licence Test Simulator</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta charset="utf-8"/>
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta content="utf-8" http-equiv="encoding">
+        <title>Taiwan Scooter Licence Test Simulator</title>
+        <script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.4.3/webcomponents-bundle.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100,300" rel="stylesheet"/>
+        <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
+        <link href="./styles_fira_deliver_scooter_license.css" rel="stylesheet" />
+    </head>
+
+    <body style="width: 1024px; height: 700px;">
+        <div id="photo">
+            <div id="DiscordID" class="DiscordID">
+                DiscordID
+            </div>
+            <div id="score" class="score">
+                Final score
+            </div>
+            <!--div id="face" class="face">
+                Face
+            </div-->
+            <video id="webcam" autoplay playsinline width="200" height="200"></video>
+            <canvas id="face" class="face">face</canvas>
+            <script type="module" src="./scooter_license.js"></script>
+        </div>
+
+        <div id="vfdrrfge">
+        <button id="SAVE" class="SAVE">SAVE</button>
+        </div>
+
+    </body>
+</html>

@@ -465,7 +465,19 @@ class ScooterSimScene extends JBScene {
                         this.test_track.save_curent_score(this.stopwatch);                
                         setTimeout(()=>{this.reset()}, 6000);
                     }
-    
+
+                    if(this.test_track.part0_cango_after && !this.jingle_played )
+                    {
+                        this.jingle_played = true;
+                        var newWin = window.open('../html/fira_deliver_scooter_license.html', '_blank');
+                        var score_ = this.test_track.save_curent_score(this.stopwatch);
+                        newWin.onload = function(){
+                        var discrodid = newWin.document.getElementById('DiscordID');
+                        var score = newWin.document.getElementById('score');
+                        discrodid.innerHTML = "YOUGO";
+                        score.innerHTML = score_.toString();                            
+                        };
+                    }
                 }
 
 
