@@ -166,6 +166,7 @@ class ScooterSimPhaseSlowDriving extends ScooterSimPhaseOverlay {
         console.log(`SlowDriving tick phase ${sim.currentPhase} dt ${dt}`);
 
         if ( ( track != null ) && ( scooter != null ) ) {
+
             let terr = this.updateTrack( scooter );
 
             if ( terr === TrackUpdateReturn.OK ) {

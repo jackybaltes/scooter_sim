@@ -368,6 +368,11 @@ class ScooterSimScene extends JBScene {
             this.steer_keyboard();
         }
     
+        for ( const obj of this.updateables ) {
+            this.scooterObj.collission( obj );
+        }
+
+
         this.timer_element.innerHTML = this.stopwatch.getShowTime();
 
         //if in slow driving phase

@@ -10,6 +10,7 @@ import {
     Matrix,
     pseudoInverse,
 } from 'ml-matrix';
+import { JBAnimation } from './jbanimation';
 
 export class Robot{
 
@@ -311,12 +312,6 @@ export class Robot{
         }
         this.scooter.setJointValue( "steering_joint",this.steering_angle );
     }
-
-
-
-
-
-
 
 
     get_pendulum()
@@ -681,7 +676,19 @@ export class Robot{
 
     }
 
+    CollideDistanceParam = 0.5;
 
+    collission( obj : JBAnimation ) {
+        let xs = this.get_position().x;
+        let zs = this.get_position().z;
+        
+        let { x, y, z } = obj.model.position;
+        let dist = Math.hypot( zs - z, xs - x );
+
+        if ( dist <= this.CollideDistanceParam ) {
+            this.crash();
+        }
+    }
 
     crash() {
 
