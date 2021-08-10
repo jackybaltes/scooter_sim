@@ -26,6 +26,7 @@ class ScooterSimPhaseOverlay extends IntroScene {
         super( "scooter_sim_phase_overlay", game, "", "", "", "../assets/images/taiwan traffic board.png", "id_sim_overlay" );
         this.content = content;
         this.spawn = spawn;
+
     }
 
     

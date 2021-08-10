@@ -63,7 +63,7 @@ class JBGame {
     render = this._render.bind( this );
 
     _render() {
-        console.log( `JBGame render` );
+        //console.log( `JBGame render` );
         
         this.render_game( true );
     }
@@ -85,10 +85,10 @@ class JBGame {
             //return;            
         }
         this.count = this.count + 1;
-        console.log( `render_game physics ${physics}` );
+        //console.log( `render_game physics ${physics}` );
         if ( physics ) {
             requestAnimationFrame( this.render );
-            console.log( `JBGame render currentScene ${this.currentSceneName}`);
+            //console.log( `JBGame render currentScene ${this.currentSceneName}`);
             let ci = this.currentScene;
             if ( ci !== null ) {
                 ci.tick( this.clock.getDelta() );

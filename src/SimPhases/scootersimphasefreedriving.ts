@@ -1,7 +1,7 @@
-import { JBGame } from './jbgame';
-import { ScooterSimPhaseOverlay } from "./scootersimphaseoverlay";
-import { ScooterSimScene, SimPhase } from "./scootersimscene";
-import { Robot } from "./robot";
+import { ScooterSimPhaseOverlay } from "../scootersimphaseoverlay";
+import { JBGame } from '../jbgame';
+import { ScooterSimScene } from "../scootersimscene";
+import { Robot } from "../robot";
 
 const content = `<h1>Free Driving</h1>
 `;
@@ -15,8 +15,9 @@ class ScooterSimPhaseFreeDriving extends ScooterSimPhaseOverlay {
     state : ScooterSimPhaseFreeDrivingState;
 
     constructor( game : JBGame, state : string ) {
-        super( "scooter_sim_phase_free_driving_intro", game, content, [ 0, 0.94, 0, Math.PI/2 ] );
+        super( "scooter_sim_phase_free_driving_intro", game, content, [ -12.2, 0.94, -15, -Math.PI/2 ] );
         this.state = ScooterSimPhaseFreeDrivingState[ state.toLowerCase() ];
+
     }
 
     switchPhase( prev: string, next: string ) {

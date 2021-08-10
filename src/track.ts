@@ -2,17 +2,24 @@ import {
     Vector2,
     Color,
 } from 'three';
+import {Timer} from './timer';
 
 enum TrackUpdateReturn {
     OK,
-    SCOOTER_FALL
+    SCOOTER_FALL,
+
+    SLOW_LINE_CROSSED,
+    SLOW_LINE_STOPPED,
+    SLOW_LINE_TOO_FAST,
+    
 };
+import {Score} from './score'
 
 class Track {
-    protected scooter_obj_blinker_state:boolean;
-    protected start_score:number;
+
+    public scooter_obj_blinker_state:boolean;
     protected lost:boolean;
-    message:string;
+    protected message:string;
     protected zebra_blink:boolean;
     protected traffic_state:number;
     protected train_blink:boolean;
@@ -23,7 +30,6 @@ class Track {
 
     // protected render;
     protected track_; // the track described as a threeJS object
-
 
     //Parsing the track to find visuals
     protected zebra_l;
@@ -40,36 +46,44 @@ class Track {
     protected black:Color;
 
     //crosswalk
-    protected part1:CheckPoint;
-    protected part1_after:CheckPoint;
-    protected part1_cango_after:boolean;
-    protected part1_on:boolean;
+    public part1:CheckPoint;
+    public part1_after:CheckPoint;
+    public part1_cango_after:boolean;
+    public part1_on:boolean;
 
     //Traffic light
-    protected part2:CheckPoint;
-    protected part2_after:CheckPoint;
-    protected part2_cango_after:boolean;
-    protected part2_on:boolean;
+    public part2:CheckPoint;
+    public part2_after:CheckPoint;
+    public part2_cango_after:boolean;
+    public part2_on:boolean;
 
     //position part
-    protected part3:CheckPoint;
-    protected part3_after:CheckPoint;
-    protected part3_cango_after:boolean;
-    protected part3_on:boolean;
+    public part3:CheckPoint;
+    public part3_after:CheckPoint;
+    public part3_cango_after:boolean;
+    public part3_on:boolean;
 
-    protected part4:CheckPoint;
-    protected part4_after:CheckPoint;
-    protected part4_cango_after:boolean;
-    protected part4_on:boolean;
+    public part4:CheckPoint;
+    public part4_after:CheckPoint;
+    public part4_cango_after:boolean;
+    public part4_on:boolean;
 
-    protected part5:CheckPoint;
-    protected part5_after:CheckPoint;
-    protected part5_cango_after:boolean;
-    protected part5_on:boolean;
+    public part5:CheckPoint;
+    public part5_after:CheckPoint;
+    public part5_cango_after:boolean;
+    public part5_on:boolean;
 
-    protected part35:CheckPoint;
-    protected part35_on:boolean;
+    public part0:CheckPoint;
+    public part0_after:CheckPoint;
 
+    public part0_on:boolean;
+    public part0_cango_after:boolean;
+
+    public part35:CheckPoint;
+    public part35_on:boolean;
+
+
+    protected part0_failled:boolean;
     protected part1_failled:boolean;
     protected part2_failled:boolean;
     protected part3_failled:boolean;
@@ -82,14 +96,17 @@ class Track {
     protected arrayX:Array<number>;
     protected arrayY:Array<number>;
 
+    protected score:Score;
     
-    constructor(track_threejs ) // ,render)
+    constructor(track_threejs) 
     {
-//        this.render = render
+
+
+        this.score = new Score(null);
+
         this.track_ = track_threejs; // the track described as a threeJS object
     
         this.scooter_obj_blinker_state = false;
-        this.start_score = 100;
         this.lost=false;
         this.message = "";
         this.zebra_blink = false;
@@ -149,11 +166,15 @@ class Track {
         this.part5_cango_after = false;
         this.part5_on = false;
     
+        this.part0 = new CheckPoint(new Vector2(-10,12.7),new Vector2(-13.8,-2.35)); 
+        this.part0_after = new CheckPoint(new Vector2(-10.7,-2.4),new Vector2(-14.8,-7.57)); 
+        this.part0_on = false;
+        this.part0_cango_after = false;
+
         this.part35 = new CheckPoint(new Vector2(4.15,-5.29),new Vector2(2.84,-12.94)); 
         this.part35_on = false;
     
-
-
+        this.part0_failled = false;
         this.part1_failled = false;
         this.part2_failled = false;
         this.part3_failled = false;
@@ -162,14 +183,12 @@ class Track {
         this.part5_failled = false;
         this.line_failled = false;
     
-
-
         this.part_1_collision_callback(3000,this.stop_blink_zebra);
         this.part_2_collision_callback(3000,this.trun_traffic_green);
         this.part_3_collision_callback(3000);
         this.part_4_collision_callback(3000);
         this.part_5_collision_callback(3000,this.stop_blink_train);
-        //this.part_0_collision_callback(7000);
+        this.part_0_collision_callback(7000);
         this.part_35_collision_callback();
 
 
@@ -193,7 +212,11 @@ class Track {
         return this.lost;
     }
 
-    
+    get_won(scooter_pos)
+    {
+        //won if can go after part 5 and if we are after part five (out of the track)
+        return this.part5_cango_after && !this.is_in_track(scooter_pos,this.arrayX,this.arrayY)
+    }
 
 
 
@@ -220,7 +243,8 @@ class Track {
                 await this.sleep(500);
             }
         }
-        
+        this.change_color(this.zebra_l,this.black);
+        this.change_color(this.zebra_r,this.black);
     }
 
 
@@ -251,7 +275,8 @@ class Track {
             }
             this.train_blink = false;
         }
-        
+        this.change_color(this.train_l,this.black);
+        this.change_color(this.train_r,this.black);
     }
 
 
@@ -309,7 +334,12 @@ class Track {
         //this.stop_blink_train();
         //this.stop_blink_zebra();
         //this.sleep(1000);
-``
+
+        //this.score.save_to_file();
+        this.score.reset();
+
+        this.part0_cango_after = false;
+        this.part0_on= false;
         this.part1_cango_after = false;
         this.part1_on= false;
         this.part2_cango_after= false;
@@ -322,6 +352,8 @@ class Track {
         this.part5_cango_after = false;
         this.part5_on = false;
         
+
+        this.part0_failled = false;
         this.part1_failled = false;
         this.part2_failled = false;
         this.part3_failled = false;
@@ -349,6 +381,7 @@ class Track {
         //can opti the code a lot here
         this.scooter_yaw = scooter_yaw;
 
+        this.part0_on =this.part0.is_in(scooter_pos); 
         this.part1_on =this.part1.is_in(scooter_pos); 
         this.part2_on =this.part2.is_in(scooter_pos); 
         this.part3_on =this.part3.is_in(scooter_pos); 
@@ -357,21 +390,21 @@ class Track {
         this.part5_on =this.part5.is_in(scooter_pos); 
 
         
-        // if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY))
-        // {
-        //     this.lost = true;
-        //     this.line_failled = true;
-        //     this.message = "You went off track !"
-        //     retValue = TrackUpdateReturn.SLOW_LINE_CROSSED;
-        // }
+        if(!this.is_in_track(scooter_pos,this.arrayX,this.arrayY) && !this.part5_cango_after)
+        {
+            this.lost = true;
+            this.line_failled = true;
+            this.message = "You went off track !"
+            retValue = TrackUpdateReturn.SLOW_LINE_CROSSED;
+        }
         
         
-        // if((this.slowdriving_after.is_in(scooter_pos) && !this.slowdriving_cango_after) || (this.slowdriving_on && this.slowdriving_failled) )
-        // {
-        //     this.lost = true;
-        //     this.message = "You have to stay 7 sec on the line (without stoping)!"
-        //     retValue = TrackUpdateReturn.SLOW_LINE_TOO_FAST;
-        // }
+        if((this.part0_after.is_in(scooter_pos) && !this.part0_cango_after) || (this.part0_on && this.part0_failled) )
+        {
+            this.lost = true;
+            this.message = "You have to stay 7 sec on the line (without stoping)!"
+            retValue = TrackUpdateReturn.SLOW_LINE_TOO_FAST;
+        }
 
         if(this.part1_after.is_in(scooter_pos) && !this.part1_cango_after)
         {
@@ -392,8 +425,6 @@ class Track {
         {
             this.part3_failled = true;
             this.message = "Wait a bit inside the rectangle";
-
-
         }
         if(this.part4_after.is_in(scooter_pos) && !this.part4_cango_after)
         {
@@ -413,39 +444,54 @@ class Track {
     }
 
 
+    save_curent_score(timer:Timer):number 
+    {
+        this.score.account_time_in_score(timer);
+        this.score.save_to_file();
+        return this.score.get_number_of_points();
+    }
 
 
+    update_score_timer(timer:Timer)
+    {
+        this.score.account_time_in_score(timer);
+    }
+
+
+    get_best_score():any
+    {
+        return this.score.get_best_score();
+    }
 
     getscore()
     {
-        var curent_score = this.start_score;
         if(this.part1_failled)
         {
-            curent_score-=32;
+            this.score.remove_points(32);
         }
         if(this.part2_failled)
         {
-            curent_score-=32;
+            this.score.remove_points(32);
         }
         if(this.part3_failled)
         {
-            curent_score-=32;
+            this.score.remove_points(32);
         }
         if(this.part35_failled)
         {
-            curent_score-=32;
+            this.score.remove_points(32);
         }
         if(this.part4_failled)
         {
-            curent_score-=32;
+            this.score.remove_points(32);
         }
         if(this.part5_failled)
         {
-            curent_score-=32;
+            this.score.remove_points(32);
         }
 
 
-        return curent_score
+        return this.score.get_number_of_points();
     }
 
 
@@ -455,10 +501,14 @@ class Track {
     }
 
 
+    setMessage(s:string)
+    {
+        this.message = s;
+    }
 
 
 
-    is_in_track(point, cornersX, cornersY)
+    is_in_track(point,cornersX, cornersY)
     {
 
         var x = point.x;
@@ -498,7 +548,7 @@ class Track {
             while(this.part1_on)
             {
                 /*
-                if(!this.slowdriving_cango_after)
+                if(!this.part0_cango_after)
                 {
                     this.message = "Wait "+((time_needed_ms/1000)-var_counter)+" seconds";
                 }
@@ -526,6 +576,12 @@ class Track {
             await this.sleep(1000);
         }
     }
+
+
+
+
+
+
 
     async part_2_collision_callback(time_needed_ms,function_ = null)
     {
@@ -704,6 +760,45 @@ class Track {
         }
     }
 
+
+
+    async part_0_collision_callback(time_needed_ms,function_ = null)
+    {
+        this.part0_cango_after = false; 
+        while(true)
+        {   
+            var var_counter = 0;
+            while(this.part0_on)
+            {
+                if(!this.part0_cango_after)
+                {
+                    this.message = (var_counter/10)+" seconds | (min 7 seconds)";
+                }
+
+                if(this.scooter_vel)
+                {
+                    this.part0_failled = true;
+                    break;
+                }
+
+                var_counter++;
+                await this.sleep(100);
+                if(var_counter*100>=time_needed_ms)
+                {
+                    this.part0_cango_after = true
+                    this.message = "you lasted more than 7 sec !";
+                    break;
+                }
+            }
+            //delay to not kill the computer
+            await this.sleep(100);
+        }        
+    }
+
+
+
+
+
     async part_35_collision_callback()
     {
         while(true)
@@ -720,8 +815,25 @@ class Track {
     }
 }
 
+export {  Track, TrackUpdateReturn }; 
 
-class CheckPoint
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export class CheckPoint
 {
     protected top_left :Vector2;
     protected bottom_right :Vector2;
@@ -740,9 +852,6 @@ class CheckPoint
 
 
 }
-
-export {  Track, TrackUpdateReturn, CheckPoint }; 
-
 
 
 

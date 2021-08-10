@@ -25,9 +25,12 @@ export class Robot{
     public h:number; // height of the center of mass
     public b:number; //inter wheel distance=
     protected a:number;
-    protected g:number;
+    public g:number;
     protected J:number;//aprox
     protected D:number;
+    public spawn_x:number;
+    public spawn_y:number;
+    public spawn_z:number;
 
     protected orange:Color;
     protected red:Color;
@@ -77,7 +80,14 @@ export class Robot{
     protected start_pose_R:Matrix;
 
     public phi:number;
+    public lean:number;
 
+    protected test ;
+    protected phi_vel;
+    public max_phi;
+    protected prev_rx:number;
+    protected prev_ry:number;
+    protected crash_frames_countdown:number;
 
 
     constructor(robot_three)
@@ -90,13 +100,24 @@ export class Robot{
         this.steering_angle = 0.0;
         this.max_steering_angle = 0.6;
         this.min_steering_angle = -0.6;
+
+        this.phi_vel=0.001;
+        this.max_phi = 0.5
+        this.prev_rx=0;
+        this.prev_ry=0;
+        this.test = 0.0;
+        this.crash_frames_countdown;
+
         this.m = 125; //mass of scooter + robot in kg
         this.h = 0.89; // height of the center of mass
         this.b = 1.184012; //inter wheel distance=
         this.a = this.b/2;
-        this.g= 9.806;
+        this.g= 5.0; //low gravity mode else it's too hard
         this.J = this.m*Math.pow(this.h,2); //aprox
         this.D = this.m*this.a*this.h;
+        this.spawn_x =-12.2;
+        this.spawn_y =0.94;
+        this.spawn_z =-15;
 
         this.orange= new Color(255,69,0);
         this.red= new Color(255,0,0);
@@ -106,7 +127,6 @@ export class Robot{
         this.blinker_l = this.scooter.links["blinker_left"].children[0].children[0].material
         this.blinker_r = this.scooter.links["blinker_right"].children[0].children[0].material
         this.stop_light = this.scooter.links["stop_light"].children[0].children[0].material
-
         this.sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
         this.blinking_left = false;
@@ -135,11 +155,17 @@ export class Robot{
         this.steering_angle = 0; // r/5;
         //this.steering_angle = 0.0;
         this.phi=0;
+        this.lean=0;
+        this.prev_rx=0;
+        this.prev_ry=0;
+        this.test = 0.0;
+        this.phi_vel = 0.001;
         this.velocity =0.0;
+        this.crash_frames_countdown =0;
     }
 
 
-    change_color(obj,color)
+    change_color(obj,color):void
     {
         obj.color.set(color);
         obj.emissive.set(color);
@@ -149,7 +175,7 @@ export class Robot{
 
 
 
-    get_wheel_position()
+    get_wheel_position(): Vector3
     {
 
         var point_x = this.a*Math.cos(-this.scooter_yaw_rotation);
@@ -209,7 +235,9 @@ export class Robot{
 
                 await this.sleep(500);
             }
-        }        
+        }    
+        this.change_color(this.blinker_l,this.black);
+        this.change_color(this.blinker_r,this.black);    
     }
 
 
@@ -229,6 +257,8 @@ export class Robot{
                 await this.sleep(500);
             }
         }  
+        this.change_color(this.blinker_l,this.black);
+        this.change_color(this.blinker_r,this.black);
     }
     
     /*
@@ -255,11 +285,123 @@ export class Robot{
     }
 
 
+    apply_position()
+    {
+        let yaw_velocity:number = this.velocity * this.steering_angle / this.b;
+        this.scooter_yaw_rotation += yaw_velocity;
+        let x_vel:number = this.velocity * Math.cos( this.scooter_yaw_rotation + Math.PI/2 );
+        let y_vel:number = this.velocity * Math.sin( this.scooter_yaw_rotation + Math.PI/2 );
+        this.scooter.position.x += y_vel;
+        this.scooter.position.z += x_vel;
+    }
+
+
+
+    apply_steering()
+    {
+        //aplying some random noise
+        if( this.velocity !=0 ) {
+            if( this.steering_angle<0 ) {   
+                var r :number  = (Math.random() -0.5)*2; //random -1 to 1
+                this.steering_angle = this.steering_angle + r/100;
+            } else {
+                var r :number  = (Math.random() - 0.5)*2; //random -1 to 1
+                this.steering_angle = this.steering_angle+ r/100;
+            }
+        }
+        this.scooter.setJointValue( "steering_joint",this.steering_angle );
+    }
+
+
+
+
+
+
+
+
+    get_pendulum()
+    {
+        var zero = 0.001
+        var pendulum = (this.g/this.h)*Math.sin(this.phi);
+        if( this.steering_angle<0.0 &&  (-0.001<=this.phi && this.phi<=0.001))
+        {
+            this.phi=-zero;
+        }
+        else if(0.0<this.steering_angle &&  (-0.001<=this.phi && this.phi<=0.001))
+        {
+            this.phi=zero;
+        }
+        else if(0.0<this.steering_angle &&  this.phi<=0.0)
+        {
+            this.phi +=0.01;
+            pendulum = 0;
+        }
+        else if(this.steering_angle<0.0 && 0.0<=this.phi)
+        {
+            this.phi -=0.01;
+            pendulum = 0;
+        }
+        if(this.velocity ==0)
+        {
+            pendulum = 0;
+        }
+        return pendulum;
+    }
+
+
     get_phi()
     {
-        var phi = this.transfer_function_steer_to_tilt(this.steering_angle)-this.transfer_function_steer_to_tilt(0);
-        return phi*1000*this.velocity;    
+        if(this.crash_frames_countdown<=0)
+        {
+
+            //var coef = 1.3
+            var rad = (this.b/(this.steering_angle*Math.cos(0.52)));
+            if(this.velocity !=0)
+            {
+                this.lean = Math.atan(((this.velocity*30)**2)/(this.g*(rad)));
+            }
+            this.phi += this.get_pendulum()*0.01*(1/(1+this.velocity*50));
+            console.log(this.get_pendulum());
+
+            if( this.phi < - this.max_phi ) {
+                this.phi = - this.max_phi;
+            } else if( this.phi > this.max_phi ) {
+                this.phi = this.max_phi;
+            }
+
+            if( this.phi-this.lean < - this.max_phi ) {
+                this.lean = -(this.max_phi-this.phi);
+            } else if( this.phi+this.lean > this.max_phi ) {
+                this.lean = (this.max_phi-this.phi);
+            }
+
+            
+            if( this.test != this.phi ) {
+                let a = Math.sin( this.phi+this.lean ) * ( this.h );
+                let [rx,ry] = this.rotate_around( 0, 0, 0, a, - ( this.scooter_yaw_rotation + ( Math.PI/2 ) ) );
+                this.scooter.position.x -= ry - this.prev_ry;
+                this.scooter.position.z -= rx - this.prev_rx;
+                this.prev_rx = rx;
+                this.prev_ry = ry;
+            }
+            
+            this.test = this.phi;
+            return this.phi+this.lean;
+        }
+        else
+        {
+            return this.phi;
+        }
     }
+
+    rotate_around( cx, cy, x, y, radians) {
+        var cos = Math.cos( radians ),
+            sin = Math.sin( radians ),
+            nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+            ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+        return [nx, ny];
+    }
+
 
 
     forward_kin(q_list,is_left_arm = true)
@@ -476,19 +618,95 @@ export class Robot{
 
     move_arms()
     {
-        var left_handle  = this.get_grip_L_Fkin(0.0,0.0,this.steering_angle);
-        var right_handle  = this.get_grip_R_Fkin(0.0,0.0,this.steering_angle);
+        if(this.crash_frames_countdown<=0)
+        {
+            var left_handle  = this.get_grip_L_Fkin(0.0,0.0,this.steering_angle);
+            var right_handle  = this.get_grip_R_Fkin(0.0,0.0,this.steering_angle);
 
-        var gen_L = this.pseudo_inverse(left_handle,this.last_pose_L, 500, true);
-        var gen_R = this.pseudo_inverse(right_handle,this.last_pose_R, 500, false);
-        this.last_pose_R =gen_R;
-        this.last_pose_L =gen_L;
-        this.set_pose(this.last_pose_L,this.last_pose_R);
+            var gen_L = this.pseudo_inverse(left_handle,this.last_pose_L, 500, true);
+            var gen_R = this.pseudo_inverse(right_handle,this.last_pose_R, 500, false);
+            this.last_pose_R =gen_R;
+            this.last_pose_L =gen_L;
+            this.set_pose(this.last_pose_L,this.last_pose_R);
+        }
+        else
+        {
+            this.crash_frames_countdown--;
+        }
+
     }
 
+
+
+
+    set_sit_pose()
+    {
+        this.scooter.setJointValue("r_leg_hip_y",0);
+        this.scooter.setJointValue("r_leg_hip_p",1.);
+        this.scooter.setJointValue("r_leg_kn_p",-0.7);
+        this.scooter.setJointValue("r_leg_an_p",0.52);
+
+        this.scooter.setJointValue("l_leg_hip_y",0);
+        this.scooter.setJointValue("l_leg_hip_p",-1.);
+        this.scooter.setJointValue("l_leg_kn_p",0.7);
+        this.scooter.setJointValue("l_leg_an_p",-0.52);
+    }
+
+    set_stop_pause_rigth(prct:number)
+    {
+        this.scooter.setJointValue("l_leg_hip_y",0);
+        this.scooter.setJointValue("l_leg_hip_p",-1.0*prct);
+        this.scooter.setJointValue("l_leg_kn_p",0.7*prct);
+        this.scooter.setJointValue("l_leg_an_p",-0.52*prct);
+
+        this.scooter.setJointValue("r_leg_hip_y",0.7*prct);
+        this.scooter.setJointValue("r_leg_hip_r",0.2*prct);
+        this.scooter.setJointValue("r_leg_hip_p",0.8*prct);
+        this.scooter.setJointValue("r_leg_kn_p",-0.5*prct);
+    }
+
+
+    set_stop_pause_left(prct:number)
+    {
+
+        this.scooter.setJointValue("r_leg_hip_y",0);
+        this.scooter.setJointValue("r_leg_hip_p",1.0*prct);
+        this.scooter.setJointValue("r_leg_kn_p",-0.7*prct);
+        this.scooter.setJointValue("r_leg_an_p",0.52*prct);
+        this.scooter.setJointValue("l_leg_hip_y",-0.7*prct);
+        this.scooter.setJointValue("l_leg_hip_r",-0.2*prct);
+        this.scooter.setJointValue("l_leg_hip_p",-0.8*prct);
+        this.scooter.setJointValue("l_leg_kn_p",0.5*prct);
+
+
+    }
+
+
+
     crash() {
+
         this.velocity = 0.0;
         this.phi = 45.0/180.0 * Math.PI;
+        
+        //faster to simply do it 
+        this.scooter.setJointValue("torso_y",0);
+        this.scooter.setJointValue("l_arm_sh_p1",0);
+        this.scooter.setJointValue("l_arm_sh_r",-1.57);
+        this.scooter.setJointValue("l_arm_sh_p2",0);
+        this.scooter.setJointValue("l_arm_el_y",-1.57);
+        this.scooter.setJointValue("l_arm_wr_r",0);
+        this.scooter.setJointValue("l_arm_wr_y",0);
+        this.scooter.setJointValue("l_arm_wr_p",0);
+
+        this.scooter.setJointValue("r_arm_sh_p1",0);
+        this.scooter.setJointValue("r_arm_sh_r",1.57);
+        this.scooter.setJointValue("r_arm_sh_p2",0);
+        this.scooter.setJointValue("r_arm_el_y",1.57);
+        this.scooter.setJointValue("r_arm_wr_r",0);
+        this.scooter.setJointValue("r_arm_wr_y",0);
+        this.scooter.setJointValue("r_arm_wr_p",0);
+        this.crash_frames_countdown=100;
+        console.log("crash");
     }
 }
 

@@ -47,6 +47,21 @@ export class Timer {
         this.running = 0;
     }
 
+
+
+    getSeconds():number
+    {
+        this.updatedTime = new Date().getTime();
+        if (this.savedTime){
+            this.difference = (this.updatedTime - this.startTime) + this.savedTime;
+        } else {
+            this.difference =  this.updatedTime - this.startTime;
+        }
+        return (this.difference/1000)
+    }
+
+
+
     getShowTime()
     {
         this.updatedTime = new Date().getTime();
