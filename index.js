@@ -48299,8 +48299,8 @@
 	class Score {
 	    constructor(username) {
 	        //need change when we have a static server
-	        this.score_server_ip_set_csv = "http://127.0.0.1:8080/set_csv";
-	        this.score_server_ip_get_csv = "http://127.0.0.1:8080/get_csv";
+	        this.score_server_ip_set_csv = "http://140.122.105.193:8080/set_csv";
+	        this.score_server_ip_get_csv = "http://140.122.105.193:8080/get_csv";
 	        this.user_name = username;
 	        this.reset();
 	        console.log("TEST CSV");
