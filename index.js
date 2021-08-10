@@ -48654,6 +48654,7 @@
 	    save_curent_score(timer) {
 	        this.score.account_time_in_score(timer);
 	        this.score.save_to_file();
+	        return this.score.get_number_of_points();
 	    }
 	    update_score_timer(timer) {
 	        this.score.account_time_in_score(timer);
@@ -52517,6 +52518,7 @@ ${indent}columns: ${matrix.columns}
 	class Robot {
 	    constructor(robot_three) {
 	        this.sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+	        this.CollideDistanceParam = 0.5;
 	        this.scooter = robot_three;
 	        this.velocity = 0.0; //m/s
 	        this.scooter_yaw_rotation = 0.0;
@@ -52939,6 +52941,15 @@ ${indent}columns: ${matrix.columns}
 	        this.scooter.setJointValue("l_leg_hip_r", -0.2 * prct);
 	        this.scooter.setJointValue("l_leg_hip_p", -0.8 * prct);
 	        this.scooter.setJointValue("l_leg_kn_p", 0.5 * prct);
+	    }
+	    collission(obj) {
+	        let xs = this.get_position().x;
+	        let zs = this.get_position().z;
+	        let { x, y, z } = obj.model.position;
+	        let dist = Math.hypot(zs - z, xs - x);
+	        if (dist <= this.CollideDistanceParam) {
+	            this.crash();
+	        }
 	    }
 	    crash() {
 	        this.velocity = 0.0;
@@ -57563,13 +57574,7 @@ ${indent}columns: ${matrix.columns}
 	    }
 	}
 
-	const content$8 = `<h1>Balance in a straight line<br>
-(One re-test is allowed)</h1> 
-<hr>
-<p>1. Balance in a straight line completed in fewer than seven seconds 
-<span style="color:red">- deduct 32 points</span></p>
-<p>2. Wheel crossing lines or either one or both feet touching the ground 
-<span style="color:red">- deduct 32 points</span></p>
+	const content$8 = `<h1>Free Driving</h1>
 `;
 	var ScooterSimPhaseFreeDrivingState;
 	(function (ScooterSimPhaseFreeDrivingState) {
@@ -57580,6 +57585,23 @@ ${indent}columns: ${matrix.columns}
 	    constructor(game, state) {
 	        super("scooter_sim_phase_free_driving_intro", game, content$8, [-12.2, 0.94, -15, -Math.PI / 2]);
 	        this.state = ScooterSimPhaseFreeDrivingState[state.toLowerCase()];
+	    }
+	    switchPhase(prev, next) {
+	        if (next === ScooterSimPhaseFreeDrivingState.FreeDriving) {
+	            let sim = this.game.currentScene;
+	            let scooter = sim.scooterObj;
+	            sim.test_track;
+	            scooter.init_position(sim.overlayPhase.spawn);
+	        }
+	    }
+	    tickPhase(dt) {
+	        let sim = this.game.currentScene;
+	        sim.scooterObj;
+	        sim.test_track;
+	        if (sim.prevPhase !== sim.currentPhase) {
+	            sim.overlayPhase.switchPhase(sim.prevPhase, sim.currentPhase);
+	        }
+	        console.log(`SlowDriving tick phase ${sim.currentPhase} dt ${dt}`);
 	    }
 	}
 
@@ -58393,7 +58415,9 @@ ${indent}columns: ${matrix.columns}
 	            setInterval(function () {
 	                let msg = `State message ${count}`;
 	                console.log(`Trying to send message ${msg}`);
-	                this.controlServer.send(msg);
+	                if ((this.controlServer !== null) && (this.controlServer !== undefined)) {
+	                    this.controlServer.send(msg);
+	                }
 	                count++;
 	            }, 5000);
 	            this._onResize();
@@ -58438,6 +58462,9 @@ ${indent}columns: ${matrix.columns}
 	        }
 	        if (this.scooterObj) {
 	            this.steer_keyboard();
+	        }
+	        for (const obj of this.updateables) {
+	            this.scooterObj.collission(obj);
 	        }
 	        this.timer_element.innerHTML = this.stopwatch.getShowTime();
 	        //if in slow driving phase
@@ -58512,6 +58539,17 @@ ${indent}columns: ${matrix.columns}
 	                        this.comment_element.innerHTML = "COMMENTS : <br><br>" + "You have won the game !";
 	                        this.test_track.save_curent_score(this.stopwatch);
 	                        setTimeout(() => { this.reset(); }, 6000);
+	                    }
+	                    if (this.test_track.part0_cango_after && !this.jingle_played) {
+	                        this.jingle_played = true;
+	                        var newWin = window.open('../html/fira_deliver_scooter_license.html', '_blank');
+	                        var score_ = this.test_track.save_curent_score(this.stopwatch);
+	                        newWin.onload = function () {
+	                            var discrodid = newWin.document.getElementById('DiscordID');
+	                            var score = newWin.document.getElementById('score');
+	                            discrodid.innerHTML = "YOUGO";
+	                            score.innerHTML = score_.toString();
+	                        };
 	                    }
 	                }
 	            }
