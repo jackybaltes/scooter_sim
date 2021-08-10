@@ -10,13 +10,13 @@ class JBScene extends Scene {
     game : JBGame;
     camera : PerspectiveCamera | OrthographicCamera;
     root : string;
-
+    userID:string;
     constructor( name : string, game : JBGame, root : string ) {
         super();
         this.name = name;
         this.game = game;
         this.root = root;
-
+        this.userID = "anon"
         console.log( "JBScene constructor" );
     }
 
@@ -29,6 +29,13 @@ class JBScene extends Scene {
     start( ) { this.enter( null ) }
 
     pause( ) { }
+
+    set_user_id(id:string)
+    {
+        this.userID = id;
+        console.log("setting user ID");
+        console.log(this.userID);
+    }
 
     async enter( prev : JBScene, phase? : string ) { 
         this.renderer = new WebGLRenderer( { antialias: false } );

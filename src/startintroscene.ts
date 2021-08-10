@@ -36,6 +36,8 @@ that is able to pass the Taiwan scooter licence test.</p>
 <td>Thormang 3 and Gogoro Scooter</td>
 <td>Thormang 3 First Driving Tests </td>
 </tr>
+
+
 </table>
 
 <!-- <button id="start_intro_btn_prev" class="game_button_prev">>Previous</button> -->

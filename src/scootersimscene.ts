@@ -116,7 +116,7 @@ class ScooterSimScene extends JBScene {
             manager2.onLoad = () => {
                 this.track.rotation.x = -Math.PI/2;
                 this.add( this.track );
-                this.test_track = new Track(this.track); //, render_no_physics );
+                this.test_track = new Track(this.track,this.userID); //, render_no_physics );
                 this.test_track.init_track()
             };
             
@@ -334,10 +334,12 @@ class ScooterSimScene extends JBScene {
         this.stopwatch.startTimer();
         this.scooterObj.init_position( this.overlayPhase.spawn );
         this.test_track.init_track();
-
         this.jingle_played = false;
-        this.best_score = this.test_track.get_best_score();
+
+
         var retrunarr = this.test_track.get_best_score();
+        
+
         this.best_score= retrunarr[0];
         this.best_user = retrunarr[1];
         this.comment_element.innerHTML = "COMMENTS : <br><br>";
@@ -452,35 +454,33 @@ class ScooterSimScene extends JBScene {
                 if (this.currentPhase !== SimPhase.FreeDriving ){
                     if( this.is_done() )
                     {
-                        this.test_track.save_curent_score(this.stopwatch);                
+                        this.test_track.save_curent_score(this.stopwatch);   
+                        console.log("savw_curent_score");             
                         this.reset();
                     }
                     //put this outside of the if (this.currentPhase !== SimPhase.FreeDriving  if you want to try it on free driving
                     if(this.test_track.get_won(this.scooterObj.get_position()) && !this.jingle_played)
                     {
+                        console.log("TEST2");             
                         this.jingle_played = true;
                         var audio = new Audio('../assets/sound/Stimme_5.mp3');
                         audio.play();
                         this.comment_element.innerHTML = "COMMENTS : <br><br>" + "You have won the game !";
-                        this.test_track.save_curent_score(this.stopwatch);                
+                        var newWin = window.open('../html/fira_deliver_scooter_license.html', '_blank');
+                        this.test_track.save_curent_score(this.stopwatch);
+                        var score_ = this.test_track.getscore();
+                        var userID_ = this.userID;
+                        newWin.onload = function()
+                        {
+                            var discrodid = newWin.document.getElementById('DiscordID');
+                            var score = newWin.document.getElementById('score');
+                            discrodid.innerHTML = userID_;
+                            score.innerHTML = score_.toString();                            
+                        };
+
                         setTimeout(()=>{this.reset()}, 6000);
                     }
-
-                    if(this.test_track.part0_cango_after && !this.jingle_played )
-                    {
-                        this.jingle_played = true;
-                        var newWin = window.open('../html/fira_deliver_scooter_license.html', '_blank');
-                        var score_ = this.test_track.save_curent_score(this.stopwatch);
-                        newWin.onload = function(){
-                        var discrodid = newWin.document.getElementById('DiscordID');
-                        var score = newWin.document.getElementById('score');
-                        discrodid.innerHTML = "YOUGO";
-                        score.innerHTML = score_.toString();                            
-                        };
-                    }
                 }
-
-
             }
             
             if( this.scooterObj ) {

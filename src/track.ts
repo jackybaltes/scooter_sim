@@ -90,6 +90,17 @@ class Track {
     protected part35_failled:boolean;
     protected part4_failled:boolean;
     protected part5_failled:boolean;
+
+    protected part0_failled_accounted:boolean;
+    protected part1_failled_accounted:boolean;
+    protected part2_failled_accounted:boolean;
+    protected part3_failled_accounted:boolean;
+    protected part35_failled_accounted:boolean;
+    protected part4_failled_accounted:boolean;
+    protected part5_failled_accounted:boolean;
+
+
+    
     protected line_failled:boolean;
     //coords for the line
     protected coord :Array<Array<number>>;
@@ -98,11 +109,11 @@ class Track {
 
     protected score:Score;
     
-    constructor(track_threejs) 
+    constructor(track_threejs,username?:string) 
     {
 
 
-        this.score = new Score(null);
+        this.score = new Score(username);
 
         this.track_ = track_threejs; // the track described as a threeJS object
     
@@ -181,8 +192,15 @@ class Track {
         this.part35_failled = false;
         this.part4_failled = false;
         this.part5_failled = false;
+        this.part0_failled_accounted = false;
+        this.part1_failled_accounted = false;
+        this.part2_failled_accounted = false;
+        this.part3_failled_accounted = false;
+        this.part35_failled_accounted = false;
+        this.part4_failled_accounted = false;
+        this.part5_failled_accounted = false;
         this.line_failled = false;
-    
+
         this.part_1_collision_callback(3000,this.stop_blink_zebra);
         this.part_2_collision_callback(3000,this.trun_traffic_green);
         this.part_3_collision_callback(3000);
@@ -362,6 +380,14 @@ class Track {
         this.part5_failled = false;
         this.line_failled = false;
 
+        this.part0_failled_accounted = false;
+        this.part1_failled_accounted = false;
+        this.part2_failled_accounted = false;
+        this.part3_failled_accounted = false;
+        this.part35_failled_accounted = false;
+        this.part4_failled_accounted = false;
+        this.part5_failled_accounted = false;
+
         //this.zebra_blink = false;
         //this.traffic_state = 0;
         //this.train_blink = false;
@@ -444,11 +470,11 @@ class Track {
     }
 
 
-    save_curent_score(timer:Timer):number 
+    save_curent_score(timer:Timer)
     {
         this.score.account_time_in_score(timer);
         this.score.save_to_file();
-        return this.score.get_number_of_points();
+        //return this.score.get_number_of_points();
     }
 
 
@@ -465,29 +491,35 @@ class Track {
 
     getscore()
     {
-        if(this.part1_failled)
+        if(this.part1_failled &&!this.part1_failled_accounted)
         {
             this.score.remove_points(32);
+            this.part1_failled_accounted=true;
         }
-        if(this.part2_failled)
+        if(this.part2_failled &&!this.part2_failled_accounted)
         {
             this.score.remove_points(32);
+            this.part2_failled_accounted=true;
         }
-        if(this.part3_failled)
+        if(this.part3_failled &&!this.part3_failled_accounted)
         {
             this.score.remove_points(32);
+            this.part3_failled_accounted=true;
         }
-        if(this.part35_failled)
+        if(this.part35_failled&&!this.part35_failled_accounted )
         {
             this.score.remove_points(32);
+            this.part35_failled_accounted=true;
         }
-        if(this.part4_failled)
+        if(this.part4_failled&&!this.part4_failled_accounted)
         {
             this.score.remove_points(32);
+            this.part4_failled_accounted=true;
         }
-        if(this.part5_failled)
+        if(this.part5_failled&&!this.part5_failled_accounted)
         {
             this.score.remove_points(32);
+            this.part5_failled_accounted=true;
         }
 
 

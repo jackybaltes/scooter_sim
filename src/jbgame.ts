@@ -98,7 +98,7 @@ class JBGame {
         }
     }
 
-    switch( nextSceneName : string, phase? : string ) {
+    switch( nextSceneName : string, phase? : string ,userID? : string) {
         console.log( `game switching to ${nextSceneName}`);
 
         if ( this.currentScene !== null ) {
@@ -107,7 +107,12 @@ class JBGame {
             }).then( () => {
                 let ns = this.sceneByName( nextSceneName );
                 if ( ns !== null ) {
+                    if(userID)
+                    {
+                        ns.set_user_id(userID);
+                    }
                     ns.enter( ns, phase ).then( () => { 
+
                         this.currentSceneName = nextSceneName;
                         this.currentScene = ns;
                     });        

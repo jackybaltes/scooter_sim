@@ -32,7 +32,7 @@ class TestHandler(http.server.SimpleHTTPRequestHandler):
         if self.path.endswith('/get_csv'):
             with open(csv_path,'r') as myfile:
                 self.send_response(200)
-                str = myfile.read()
+                str = self.get_high_score()#myfile.read()
                 self.send_header('Access-Control-Allow-Origin', '*')
                 self.send_header('Access-Control-Allow-Headers', 'Content-Type,Authorization')
                 self.send_header('Access-Control-Allow-Methods', 'GET,POST')
@@ -47,13 +47,23 @@ class TestHandler(http.server.SimpleHTTPRequestHandler):
     def get_high_score(self):
         data = pd.read_csv(csv_path)
         scores = data.score.tolist()
+        names = data.username.tolist()
 
+        print(scores)
         max = scores[0]
+        best = ""
+        index = 0
         for s in scores:
-            if(s>max):
+            if(s>=max):
                 max = s
+                best = names[index]
+                print(index)
 
-        return max
+            index=+1
+        
+        print(names)
+        print(str(max)+","+best)
+        return str(max)+","+best
 
 
 

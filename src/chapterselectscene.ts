@@ -54,10 +54,13 @@ class ChapterSelectScene extends IntroScene {
         \n
         </tr>
 
-
-        <!-- <tr>
+        <tr>
+        <td><p>Enter username for the driving test</p>
+        <input name="searchTxt" type="text" maxlength="512" id="userID" class="userID"/></td>
+        </tr>
+        <tr>
         <td><button id="chapter_driving_test" class="chapter_select">Take the Driving Test</button></td>
-        </tr> -->
+        </tr>
         </table>
     
         <button id="${name}_btn_prev" class="game_button_prev">Previous</button>
@@ -130,7 +133,26 @@ class ChapterSelectScene extends IntroScene {
         if ( nb !== null ) {
             nb.onclick = () => {
                 console.log("chapter driving test");
-                this.game.switch( "sim", SimPhase.DrivingTest );
+                var textfield;
+
+                textfield =  document.getElementById("userID");
+                if(textfield.value)
+                {
+                    if(textfield.value!="insert username here")
+                    {
+                        console.log(textfield.value);
+                        this.game.switch( "sim", SimPhase.DrivingTest,textfield.value);
+                    }else
+                    {
+                        window.prompt("USERNAME","You need to specify your username to take the real test ");
+                    }
+                }
+                else
+                {
+                    textfield.value = "insert username here"
+                }
+
+
             };
         }
     }

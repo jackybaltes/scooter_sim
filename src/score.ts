@@ -9,8 +9,8 @@ export class Score
     user_name:String;
 
     //need change when we have a static server
-    score_server_ip_set_csv = "http://140.122.105.193:8080/set_csv";
-    score_server_ip_get_csv = "http://140.122.105.193:8080/get_csv";
+    score_server_ip_set_csv = "http://127.0.0.1:8080/set_csv";
+    score_server_ip_get_csv = "http://127.0.0.1:8080/get_csv";
 
     constructor(username)
     {
@@ -77,14 +77,19 @@ export class Score
         }
     }
 
-    get_scores_csv()
+
+
+    get_best_simple()
     {
         try
         {
+            var t0 = performance.now()
             var xmlHttp = new XMLHttpRequest();
-            console.log(this.score_server_ip_get_csv);
             xmlHttp.open( "GET", this.score_server_ip_get_csv, false ); // false for synchronous request
             xmlHttp.send( null );
+            var t1 = performance.now()
+            console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
+    
             return xmlHttp.responseText;
         }
         catch(err)
@@ -92,15 +97,38 @@ export class Score
             console.log(err);
             return "0,0\n0,Server not responding\n";
         }
+    }
+
+
+
+    get_scores_csv()
+    {
+        try
+        {
+            var t0 = performance.now()
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "GET", this.score_server_ip_get_csv, false ); // false for synchronous request
+            xmlHttp.send( null );
+            var t1 = performance.now()
+            console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
     
+            return xmlHttp.responseText;
+        }
+        catch(err)
+        {
+            console.log(err);
+            return "0,0\n0,Server not responding\n";
+        }
     }
     
     get_best_score_server():any
     {
         try
         {
+            /*
             //spliting the csv to lines
             var line_array = this.get_scores_csv().split("\n");
+            console.log("LINE ARRAY =");
             console.log(line_array);
             //removing the first eleemnt (csv header)
             line_array.shift();
@@ -117,6 +145,10 @@ export class Score
                     best_user=username;
                 }
             }
+            */
+            var response = this.get_best_simple();
+            var max:number  = parseInt(response.split(",")[0]);
+            var best_user:string = response.split(",")[1];
             return [max,best_user];
         }
         catch(err)
