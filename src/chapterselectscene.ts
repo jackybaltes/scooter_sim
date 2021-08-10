@@ -54,9 +54,9 @@ class ChapterSelectScene extends IntroScene {
         </tr>
 
 
-        <tr>
+        <!-- <tr>
         <td><button id="chapter_driving_test" class="chapter_select">Take the Driving Test</button></td>
-        </tr>
+        </tr> -->
         </table>
     
         <button id="${name}_btn_prev" class="game_button_prev">Previous</button>
