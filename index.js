@@ -58311,19 +58311,19 @@ ${indent}columns: ${matrix.columns}
 	                const pol1 = new TaiwanPolice("marry");
 	                const pol2 = new TaiwanCopMale("chi tai");
 	                yield pol1.init();
-	                //console.log("loaded taiwan police Marry", pol1.model );
+	                console.log("loaded taiwan police Marry", pol1.model);
 	                m = pol1.home();
-	                //console.log("Police 1", m );
-	                //console.dir(m);
-	                this.add(m);
-	                this.updateables.push(pol1);
+	                console.log("Police 1", m);
+	                console.dir(m);
+	                //this.add( m );
+	                //this.updateables.push( pol1 );
 	                yield pol2.init();
-	                //console.log("loaded taiwan police Chi Tai", pol2.model );
+	                console.log("loaded taiwan police Chi Tai", pol2.model);
 	                m = pol2.home();
-	                //console.log("Police Chi tai" );
-	                //console.dir(m)
-	                this.add(m);
-	                this.updateables.push(pol2);
+	                console.log("Police Chi tai");
+	                console.dir(m);
+	                //this.add( m );
+	                //this.updateables.push( pol2 );
 	                const directionalLight = new DirectionalLight(0xffffff, 1.0);
 	                directionalLight.castShadow = true;
 	                directionalLight.shadow.mapSize.setScalar(1024);
@@ -58379,7 +58379,6 @@ ${indent}columns: ${matrix.columns}
 	        else {
 	            console.log("ScooterSimScene ERROR Scene not found");
 	        }
-	        this.scooterObj.init_position(this.overlayPhase.spawn);
 	        //this.overlayPhase.wrapper.hidden = true;
 	    }
 	    enter(prev, phase) {
