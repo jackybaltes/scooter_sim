@@ -139,13 +139,41 @@ class TaiwanBear extends JBAnimation {
     AttackCoolDownTimeParam = 7.0;
     AttackSpeedParam = 2.5;
     WalkSpeedParam = 0.5;
+    ColissionDistanceParam = 1.0;
 
     AniSpeedFactor = 0.3;
+
+    collideScooter( sim : ScooterSimScene ) {
+        let colission = false;
+
+        let scooter = sim.scooterObj;
+
+        let xt = scooter.get_position().x;
+        let zt = scooter.get_position().z;
+
+        let { x, y, z } = this.model.position;
+
+        let dist = Math.hypot( z - zt, x - xt );
+
+        if ( dist < this.ColissionDistanceParam ) {
+            colission = true;
+
+            let theta = this.normalizeAngle( this.model.rotation.y );
+    
+            let phi = this.normalizeAngle( Math.atan2( xt - x, zt - z ) + 180.0/180.0 * Math.PI );
+            let diff = this.angleDifference( theta, phi );
+    
+            this.velocities[1] = diff * this.kpa + this.kda * ( diff - this.prevDiff );
+            this.velocities[0] = this.WalkSpeedParam; 
+        }
+        return colission;
+    }
 
     tick( delta : number, sim : ScooterSimScene ) {
         let aniSpeed = 1.0;
         let scooter = sim.scooterObj;
-        if ( this.state === States.Roaming ) {
+        if ( this.collideScooter( sim) ) {
+        } else if ( this.state === States.Roaming ) {
             this.playAnimation("slow_walking");
 
             if ( Math.random() < 0.01 ) {
