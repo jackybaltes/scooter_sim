@@ -140,22 +140,22 @@ class ScooterSimScene extends JBScene {
             const pol2 = new TaiwanCopMale( "chi tai" );
             
             await pol1.init()
-            //console.log("loaded taiwan police Marry", pol1.model );
+            console.log("loaded taiwan police Marry", pol1.model );
             m = pol1.home();
-            //console.log("Police 1", m );
-            //console.dir(m);
-            this.add( m );
-            this.updateables.push( pol1 );
+            console.log("Police 1", m );
+            console.dir(m);
+            //this.add( m );
+            //this.updateables.push( pol1 );
         
             await pol2.init()
             
-            //console.log("loaded taiwan police Chi Tai", pol2.model );
+            console.log("loaded taiwan police Chi Tai", pol2.model );
             m = pol2.home();
-            //console.log("Police Chi tai" );
-            //console.dir(m)
+            console.log("Police Chi tai" );
+            console.dir(m)
 
-            this.add( m );
-            this.updateables.push( pol2 );
+            //this.add( m );
+            //this.updateables.push( pol2 );
             
 
             const directionalLight : DirectionalLight = new DirectionalLight(0xffffff, 1.0);
@@ -252,19 +252,12 @@ class ScooterSimScene extends JBScene {
         {
             console.log("ScooterSimScene ERROR Scene not found");
         }
-
-
-
-
-        this.scooterObj.init_position( this.overlayPhase.spawn );
-
         //this.overlayPhase.wrapper.hidden = true;
 
     }
 
     async enter( prev : JBScene, phase : string ) {
         this.currentPhase = phase;
-
         await this.preload(); 
         console.log( `ScooterSimScene enter prev=${prev} , phase= ${phase}`);
 
