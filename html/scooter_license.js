@@ -166,15 +166,15 @@ class Webcam {
         if(this._snapSoundElement!= null){
           this._snapSoundElement.play();
         }
-        this._canvasElement.height = this._webcamElement.scrollHeight;
-        this._canvasElement.width = this._webcamElement.scrollWidth;
+        this._canvasElement.height = 1000;//this._webcamElement.scrollHeight;
+        this._canvasElement.width = 1000;//this._webcamElement.scrollWidth;
         let context = this._canvasElement.getContext('2d');
         if(this._facingMode == 'user'){
-          context.translate(this._canvasElement.width, 0);
+          context.translate(165, 0);
           context.scale(-1, 1);
         }
         context.clearRect(0, 0, this._canvasElement.width, this._canvasElement.height);
-        context.drawImage(this._webcamElement, 0, 0, this._canvasElement.width, this._canvasElement.height);
+        context.drawImage(this._webcamElement, -330, 0, 163, 163);
         let data = this._canvasElement.toDataURL('image/png');
         return data;
       }
@@ -201,8 +201,7 @@ function resizedataURL(datas, wantedWidth, wantedHeight)
 const webcamElement = document.getElementById('webcam');
 const canvasElement = document.getElementById('face');
 const webcam = new Webcam(webcamElement, 'user', canvasElement);
-webcam.start()
-   .then(result =>{
+webcam.start().then(result =>{
       console.log("webcam started");
    })
    .catch(err => {
@@ -227,20 +226,30 @@ console.error("Error: " + err);
 }
 };
 
+
+
+
+
+
 var button =  document.getElementById( "SAVE");
 button.onclick = () => {
     console.log("click");
+    webcam.snap();
     var div = document.getElementById('photo');
     html2canvas(div,{allowTaint: true,taintTest: false}).then(
     function(canvas) 
     {
-      console.log(canvas.height)
-      // Export the canvas to its data URI representation
-      var base64image = canvas.toDataURL("image/png");
-      // Open the image in a new window
-      window.open(base64image , "_blank");
+      //var base64image = canvas.toDataURL("image/png");
+      canvas.toBlob(function(blob) {
+        saveAs(blob, 'test.png');
+      });
+
+
+      //window.open(base64image , "_blank");
     });
   
 
+    var context = canvasElement.getContext('2d');  
+    context.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
 };

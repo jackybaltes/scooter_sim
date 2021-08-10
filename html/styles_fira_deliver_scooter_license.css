@@ -291,8 +291,6 @@ div#score {
 }
 
 div#face {
-    width: 100%;
-    height: 100%;
     overflow: hidden;
     font-size: 4 vmin;
     position: absolute;
