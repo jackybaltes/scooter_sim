@@ -45,10 +45,11 @@ class ChapterSelectScene extends IntroScene {
         <tr>
         <td><button id="chapter_hair_pin" class="chapter_select">Practice: Hairpin Bend</button></td>
         </tr>
+        
         <tr>
         <td><button id="chapter_rail_crossing" class="chapter_select">Practice: Railroad crossing</button></td>
         </tr>
-
+        
         <tr>
         \n
         </tr>
@@ -126,13 +127,12 @@ class ChapterSelectScene extends IntroScene {
         };
 
         nb =  document.getElementById( "chapter_driving_test");
-        nb.onclick = () => {
-            
-            console.log("chapter driving test");
-            this.game.switch( "sim", SimPhase.DrivingTest );
-        };
-
-
+        if ( nb !== null ) {
+            nb.onclick = () => {
+                console.log("chapter driving test");
+                this.game.switch( "sim", SimPhase.DrivingTest );
+            };
+        }
     }
 }
 
