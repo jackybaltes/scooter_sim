@@ -549,7 +549,11 @@ class Track {
             this.part5_failled_accounted=true;
         }
 /////////////////////////
-
+        if(this.part0_cango_after &&!this.part0_win_accounted)
+        {
+        this.score.add_points(30);
+        this.part0_win_accounted=true;
+        }
         if(this.part1_cango_after &&!this.part1_win_accounted)
         {
         this.score.add_points(30);
