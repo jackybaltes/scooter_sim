@@ -9,8 +9,8 @@ export class Score
     user_name:String;
 
     //need change when we have a static server
-    score_server_ip_set_csv = "http://127.0.0.1:8080/set_csv";
-    score_server_ip_get_csv = "http://127.0.0.1:8080/get_csv";
+    score_server_ip_set_csv = "http://140.122.105.193:8080/set_csv";
+    score_server_ip_get_csv = "http://140.122.105.193:8080/get_csv";
 
     constructor(username)
     {
