@@ -9,8 +9,13 @@ export class Score
     user_name:String;
 
     //need change when we have a static server
+<<<<<<< HEAD
     score_server_ip_set_csv = "http://140.122.105.193:8080/set_csv";
     score_server_ip_get_csv = "http://140.122.105.193:8080/get_csv";
+=======
+    score_server_ip_set_csv = " http://140.122.105.193:8080/set_csv";
+    score_server_ip_get_csv = " http://140.122.105.193:8080/get_csv";
+>>>>>>> 68071c1677d40be7506f8e6397a68c236b482ee7
 
     constructor(username)
     {
@@ -37,6 +42,10 @@ export class Score
         this.curent_score-=points;
     }
 
+    add_points(points:number):void
+    {
+        this.curent_score+=points;
+    }
 
 
     account_time_in_score(timer:Timer):void
