@@ -357,8 +357,13 @@ div.sim_menu {
     flex-direction: column;
     max-height: 100%;
     margin: 20px;
-    background:rgb(243, 243, 60);
+    background:rgba(243, 243, 60, 0);
     font-size: 3vh;
+    text-shadow:  
+        1px 1px 0px #fff,
+        1px -1px 0px #fff,
+        -1px 1px 0px #fff,
+        -1px -1px 0px #fff
 }
 
 hr { 
