@@ -99,6 +99,13 @@ class Track {
     protected part4_failled_accounted:boolean;
     protected part5_failled_accounted:boolean;
 
+    protected part0_win_accounted:boolean;
+    protected part1_win_accounted:boolean;
+    protected part2_win_accounted:boolean;
+    protected part3_win_accounted:boolean;
+    protected part35_win_accounted:boolean;
+    protected part4_win_accounted:boolean;
+    protected part5_win_accounted:boolean;
 
     
     protected line_failled:boolean;
@@ -199,6 +206,18 @@ class Track {
         this.part35_failled_accounted = false;
         this.part4_failled_accounted = false;
         this.part5_failled_accounted = false;
+
+
+        this.part0_win_accounted = false;
+        this.part1_win_accounted = false;
+        this.part2_win_accounted = false;
+        this.part3_win_accounted = false;
+        this.part35_win_accounted = false;
+        this.part4_win_accounted = false;
+        this.part5_win_accounted = false;
+
+
+
         this.line_failled = false;
 
         this.part_1_collision_callback(3000,this.stop_blink_zebra);
@@ -388,6 +407,14 @@ class Track {
         this.part4_failled_accounted = false;
         this.part5_failled_accounted = false;
 
+        this.part0_win_accounted = false;
+        this.part1_win_accounted = false;
+        this.part2_win_accounted = false;
+        this.part3_win_accounted = false;
+        this.part35_win_accounted = false;
+        this.part4_win_accounted = false;
+        this.part5_win_accounted = false;
+
         //this.zebra_blink = false;
         //this.traffic_state = 0;
         //this.train_blink = false;
@@ -521,7 +548,33 @@ class Track {
             this.score.remove_points(32);
             this.part5_failled_accounted=true;
         }
+/////////////////////////
 
+        if(this.part1_cango_after &&!this.part1_win_accounted)
+        {
+        this.score.add_points(30);
+        this.part1_win_accounted=true;
+        }
+        if(this.part2_cango_after &&!this.part2_win_accounted)
+        {
+        this.score.add_points(30);
+        this.part2_win_accounted=true;
+        }
+        if(this.part3_cango_after &&!this.part3_win_accounted)
+        {
+        this.score.add_points(30);
+        this.part3_win_accounted=true;
+        }
+        if(this.part4_cango_after&&!this.part4_win_accounted)
+        {
+        this.score.add_points(30);
+        this.part4_win_accounted=true;
+        }
+        if(this.part5_cango_after&&!this.part5_win_accounted)
+        {
+        this.score.add_points(30);
+        this.part5_win_accounted=true;
+        }
 
         return this.score.get_number_of_points();
     }
