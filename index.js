@@ -48299,8 +48299,8 @@
 	class Score {
 	    constructor(username) {
 	        //need change when we have a static server
-	        this.score_server_ip_set_csv = "http://140.122.105.193:8080/set_csv";
-	        this.score_server_ip_get_csv = "http://140.122.105.193:8080/get_csv";
+	        this.score_server_ip_set_csv = "http://127.0.0.1:8080/set_csv";
+	        this.score_server_ip_get_csv = "http://127.0.0.1:8080/get_csv";
 	        this.user_name = username;
 	        this.reset();
 	        console.log("TEST CSV");
@@ -48342,12 +48342,29 @@
 	            console.log(err);
 	        }
 	    }
-	    get_scores_csv() {
+	    get_best_simple() {
 	        try {
+	            var t0 = performance.now();
 	            var xmlHttp = new XMLHttpRequest();
-	            console.log(this.score_server_ip_get_csv);
 	            xmlHttp.open("GET", this.score_server_ip_get_csv, false); // false for synchronous request
 	            xmlHttp.send(null);
+	            var t1 = performance.now();
+	            console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
+	            return xmlHttp.responseText;
+	        }
+	        catch (err) {
+	            console.log(err);
+	            return "0,0\n0,Server not responding\n";
+	        }
+	    }
+	    get_scores_csv() {
+	        try {
+	            var t0 = performance.now();
+	            var xmlHttp = new XMLHttpRequest();
+	            xmlHttp.open("GET", this.score_server_ip_get_csv, false); // false for synchronous request
+	            xmlHttp.send(null);
+	            var t1 = performance.now();
+	            console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
 	            return xmlHttp.responseText;
 	        }
 	        catch (err) {
@@ -48357,21 +48374,30 @@
 	    }
 	    get_best_score_server() {
 	        try {
+	            /*
 	            //spliting the csv to lines
 	            var line_array = this.get_scores_csv().split("\n");
+	            console.log("LINE ARRAY =");
 	            console.log(line_array);
 	            //removing the first eleemnt (csv header)
 	            line_array.shift();
-	            var max = parseInt(line_array[0].split(",")[1]);
-	            var best_user = line_array[0].split(",")[0];
-	            for (let index = 0; index < line_array.length; index++) {
+	            var max:number  = parseInt(line_array[0].split(",")[1]);
+	            var best_user:string = line_array[0].split(",")[0];
+	            for (let index = 0; index < line_array.length; index++)
+	            {
 	                var username = line_array[index].split(",")[0];
 	                var score = parseInt(line_array[index].split(",")[1]);
-	                if (max < score) {
-	                    max = score;
-	                    best_user = username;
+
+	                if(max<score)
+	                {
+	                    max=score;
+	                    best_user=username;
 	                }
 	            }
+	            */
+	            var response = this.get_best_simple();
+	            var max = parseInt(response.split(",")[0]);
+	            var best_user = response.split(",")[1];
 	            return [max, best_user];
 	        }
 	        catch (err) {
@@ -48399,9 +48425,9 @@
 	    TrackUpdateReturn[TrackUpdateReturn["SLOW_LINE_TOO_FAST"] = 4] = "SLOW_LINE_TOO_FAST";
 	})(TrackUpdateReturn || (TrackUpdateReturn = {}));
 	class Track {
-	    constructor(track_threejs) {
+	    constructor(track_threejs, username) {
 	        this.sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
-	        this.score = new Score(null);
+	        this.score = new Score(username);
 	        this.track_ = track_threejs; // the track described as a threeJS object
 	        this.scooter_obj_blinker_state = false;
 	        this.lost = false;
@@ -48461,6 +48487,13 @@
 	        this.part35_failled = false;
 	        this.part4_failled = false;
 	        this.part5_failled = false;
+	        this.part0_failled_accounted = false;
+	        this.part1_failled_accounted = false;
+	        this.part2_failled_accounted = false;
+	        this.part3_failled_accounted = false;
+	        this.part35_failled_accounted = false;
+	        this.part4_failled_accounted = false;
+	        this.part5_failled_accounted = false;
 	        this.line_failled = false;
 	        this.part_1_collision_callback(3000, this.stop_blink_zebra);
 	        this.part_2_collision_callback(3000, this.trun_traffic_green);
@@ -48597,6 +48630,13 @@
 	        this.part4_failled = false;
 	        this.part5_failled = false;
 	        this.line_failled = false;
+	        this.part0_failled_accounted = false;
+	        this.part1_failled_accounted = false;
+	        this.part2_failled_accounted = false;
+	        this.part3_failled_accounted = false;
+	        this.part35_failled_accounted = false;
+	        this.part4_failled_accounted = false;
+	        this.part5_failled_accounted = false;
 	        //this.zebra_blink = false;
 	        //this.traffic_state = 0;
 	        //this.train_blink = false;
@@ -48654,7 +48694,7 @@
 	    save_curent_score(timer) {
 	        this.score.account_time_in_score(timer);
 	        this.score.save_to_file();
-	        return this.score.get_number_of_points();
+	        //return this.score.get_number_of_points();
 	    }
 	    update_score_timer(timer) {
 	        this.score.account_time_in_score(timer);
@@ -48663,23 +48703,29 @@
 	        return this.score.get_best_score();
 	    }
 	    getscore() {
-	        if (this.part1_failled) {
+	        if (this.part1_failled && !this.part1_failled_accounted) {
 	            this.score.remove_points(32);
+	            this.part1_failled_accounted = true;
 	        }
-	        if (this.part2_failled) {
+	        if (this.part2_failled && !this.part2_failled_accounted) {
 	            this.score.remove_points(32);
+	            this.part2_failled_accounted = true;
 	        }
-	        if (this.part3_failled) {
+	        if (this.part3_failled && !this.part3_failled_accounted) {
 	            this.score.remove_points(32);
+	            this.part3_failled_accounted = true;
 	        }
-	        if (this.part35_failled) {
+	        if (this.part35_failled && !this.part35_failled_accounted) {
 	            this.score.remove_points(32);
+	            this.part35_failled_accounted = true;
 	        }
-	        if (this.part4_failled) {
+	        if (this.part4_failled && !this.part4_failled_accounted) {
 	            this.score.remove_points(32);
+	            this.part4_failled_accounted = true;
 	        }
-	        if (this.part5_failled) {
+	        if (this.part5_failled && !this.part5_failled_accounted) {
 	            this.score.remove_points(32);
+	            this.part5_failled_accounted = true;
 	        }
 	        return this.score.get_number_of_points();
 	    }
@@ -57298,6 +57344,7 @@ ${indent}columns: ${matrix.columns}
 	        this.name = name;
 	        this.game = game;
 	        this.root = root;
+	        this.userID = "anon";
 	        console.log("JBScene constructor");
 	    }
 	    preload() {
@@ -57307,6 +57354,11 @@ ${indent}columns: ${matrix.columns}
 	    }
 	    start() { this.enter(null); }
 	    pause() { }
+	    set_user_id(id) {
+	        this.userID = id;
+	        console.log("setting user ID");
+	        console.log(this.userID);
+	    }
 	    enter(prev, phase) {
 	        return __awaiter$3(this, void 0, void 0, function* () {
 	            this.renderer = new WebGLRenderer({ antialias: false });
@@ -58340,7 +58392,7 @@ ${indent}columns: ${matrix.columns}
 	                manager2.onLoad = () => {
 	                    this.track.rotation.x = -Math.PI / 2;
 	                    this.add(this.track);
-	                    this.test_track = new Track(this.track); //, render_no_physics );
+	                    this.test_track = new Track(this.track, this.userID); //, render_no_physics );
 	                    this.test_track.init_track();
 	                };
 	                const bear = new TaiwanBear("pooh");
@@ -58489,7 +58541,6 @@ ${indent}columns: ${matrix.columns}
 	        this.scooterObj.init_position(this.overlayPhase.spawn);
 	        this.test_track.init_track();
 	        this.jingle_played = false;
-	        this.best_score = this.test_track.get_best_score();
 	        var retrunarr = this.test_track.get_best_score();
 	        this.best_score = retrunarr[0];
 	        this.best_user = retrunarr[1];
@@ -58574,27 +58625,27 @@ ${indent}columns: ${matrix.columns}
 	                if (this.currentPhase !== SimPhase.FreeDriving) {
 	                    if (this.is_done()) {
 	                        this.test_track.save_curent_score(this.stopwatch);
+	                        console.log("savw_curent_score");
 	                        this.reset();
 	                    }
 	                    //put this outside of the if (this.currentPhase !== SimPhase.FreeDriving  if you want to try it on free driving
 	                    if (this.test_track.get_won(this.scooterObj.get_position()) && !this.jingle_played) {
+	                        console.log("TEST2");
 	                        this.jingle_played = true;
 	                        var audio = new Audio('../assets/sound/Stimme_5.mp3');
 	                        audio.play();
 	                        this.comment_element.innerHTML = "COMMENTS : <br><br>" + "You have won the game !";
-	                        this.test_track.save_curent_score(this.stopwatch);
-	                        setTimeout(() => { this.reset(); }, 6000);
-	                    }
-	                    if (this.test_track.part0_cango_after && !this.jingle_played) {
-	                        this.jingle_played = true;
 	                        var newWin = window.open('../html/fira_deliver_scooter_license.html', '_blank');
-	                        var score_ = this.test_track.save_curent_score(this.stopwatch);
+	                        this.test_track.save_curent_score(this.stopwatch);
+	                        var score_ = this.test_track.getscore();
+	                        var userID_ = this.userID;
 	                        newWin.onload = function () {
 	                            var discrodid = newWin.document.getElementById('DiscordID');
 	                            var score = newWin.document.getElementById('score');
-	                            discrodid.innerHTML = "YOUGO";
+	                            discrodid.innerHTML = userID_;
 	                            score.innerHTML = score_.toString();
 	                        };
+	                        setTimeout(() => { this.reset(); }, 6000);
 	                    }
 	                }
 	            }
@@ -58801,6 +58852,8 @@ that is able to pass the Taiwan scooter licence test.</p>
 <td>Thormang 3 and Gogoro Scooter</td>
 <td>Thormang 3 First Driving Tests </td>
 </tr>
+
+
 </table>
 
 <!-- <button id="start_intro_btn_prev" class="game_button_prev">>Previous</button> -->
@@ -58893,10 +58946,13 @@ that is able to pass the Taiwan scooter licence test.</p>
         \n
         </tr>
 
-
-        <!-- <tr>
+        <tr>
+        <td><p>Enter username for the driving test</p>
+        <input name="searchTxt" type="text" maxlength="512" id="userID" class="userID"/></td>
+        </tr>
+        <tr>
         <td><button id="chapter_driving_test" class="chapter_select">Take the Driving Test</button></td>
-        </tr> -->
+        </tr>
         </table>
     
         <button id="${name}_btn_prev" class="game_button_prev">Previous</button>
@@ -58957,7 +59013,20 @@ that is able to pass the Taiwan scooter licence test.</p>
 	            if (nb !== null) {
 	                nb.onclick = () => {
 	                    console.log("chapter driving test");
-	                    this.game.switch("sim", SimPhase.DrivingTest);
+	                    var textfield;
+	                    textfield = document.getElementById("userID");
+	                    if (textfield.value) {
+	                        if (textfield.value != "insert username here") {
+	                            console.log(textfield.value);
+	                            this.game.switch("sim", SimPhase.DrivingTest, textfield.value);
+	                        }
+	                        else {
+	                            window.prompt("USERNAME", "You need to specify your username to take the real test ");
+	                        }
+	                    }
+	                    else {
+	                        textfield.value = "insert username here";
+	                    }
 	                };
 	            }
 	        });
@@ -59023,7 +59092,7 @@ that is able to pass the Taiwan scooter licence test.</p>
 	            requestAnimationFrame(this.render_no_physics);
 	        }
 	    }
-	    switch(nextSceneName, phase) {
+	    switch(nextSceneName, phase, userID) {
 	        console.log(`game switching to ${nextSceneName}`);
 	        if (this.currentScene !== null) {
 	            this.currentScene.leave(this.currentScene).then(() => {
@@ -59031,6 +59100,9 @@ that is able to pass the Taiwan scooter licence test.</p>
 	            }).then(() => {
 	                let ns = this.sceneByName(nextSceneName);
 	                if (ns !== null) {
+	                    if (userID) {
+	                        ns.set_user_id(userID);
+	                    }
 	                    ns.enter(ns, phase).then(() => {
 	                        this.currentSceneName = nextSceneName;
 	                        this.currentScene = ns;
