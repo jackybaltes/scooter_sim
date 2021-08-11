@@ -48299,8 +48299,8 @@
 	class Score {
 	    constructor(username) {
 	        //need change when we have a static server
-	        this.score_server_ip_set_csv = "http://127.0.0.1:8080/set_csv";
-	        this.score_server_ip_get_csv = "http://127.0.0.1:8080/get_csv";
+	        this.score_server_ip_set_csv = " http://140.122.105.193:8080/set_csv";
+	        this.score_server_ip_get_csv = " http://140.122.105.193:8080/get_csv";
 	        this.user_name = username;
 	        this.reset();
 	        console.log("TEST CSV");
@@ -48314,6 +48314,9 @@
 	    }
 	    remove_points(points) {
 	        this.curent_score -= points;
+	    }
+	    add_points(points) {
+	        this.curent_score += points;
 	    }
 	    account_time_in_score(timer) {
 	        //300 sec (5 min) is the max you can take to finish before the score turn negative
@@ -48494,6 +48497,13 @@
 	        this.part35_failled_accounted = false;
 	        this.part4_failled_accounted = false;
 	        this.part5_failled_accounted = false;
+	        this.part0_win_accounted = false;
+	        this.part1_win_accounted = false;
+	        this.part2_win_accounted = false;
+	        this.part3_win_accounted = false;
+	        this.part35_win_accounted = false;
+	        this.part4_win_accounted = false;
+	        this.part5_win_accounted = false;
 	        this.line_failled = false;
 	        this.part_1_collision_callback(3000, this.stop_blink_zebra);
 	        this.part_2_collision_callback(3000, this.trun_traffic_green);
@@ -48637,6 +48647,13 @@
 	        this.part35_failled_accounted = false;
 	        this.part4_failled_accounted = false;
 	        this.part5_failled_accounted = false;
+	        this.part0_win_accounted = false;
+	        this.part1_win_accounted = false;
+	        this.part2_win_accounted = false;
+	        this.part3_win_accounted = false;
+	        this.part35_win_accounted = false;
+	        this.part4_win_accounted = false;
+	        this.part5_win_accounted = false;
 	        //this.zebra_blink = false;
 	        //this.traffic_state = 0;
 	        //this.train_blink = false;
@@ -48726,6 +48743,27 @@
 	        if (this.part5_failled && !this.part5_failled_accounted) {
 	            this.score.remove_points(32);
 	            this.part5_failled_accounted = true;
+	        }
+	        /////////////////////////
+	        if (this.part1_cango_after && !this.part1_win_accounted) {
+	            this.score.add_points(30);
+	            this.part1_win_accounted = true;
+	        }
+	        if (this.part2_cango_after && !this.part2_win_accounted) {
+	            this.score.add_points(30);
+	            this.part2_win_accounted = true;
+	        }
+	        if (this.part3_cango_after && !this.part3_win_accounted) {
+	            this.score.add_points(30);
+	            this.part3_win_accounted = true;
+	        }
+	        if (this.part4_cango_after && !this.part4_win_accounted) {
+	            this.score.add_points(30);
+	            this.part4_win_accounted = true;
+	        }
+	        if (this.part5_cango_after && !this.part5_win_accounted) {
+	            this.score.add_points(30);
+	            this.part5_win_accounted = true;
 	        }
 	        return this.score.get_number_of_points();
 	    }
