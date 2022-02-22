@@ -354,7 +354,7 @@ class Track {
 
 
 
-    change_color(obj,color)
+    private change_color(obj,color)
     {
         obj.color.set(color);
         obj.emissive.set(color);
@@ -505,7 +505,7 @@ class Track {
     }
 
 
-    update_score_timer(timer:Timer)
+    private update_score_timer(timer:Timer)
     {
         this.score.account_time_in_score(timer);
     }
@@ -597,7 +597,7 @@ class Track {
 
 
 
-    is_in_track(point,cornersX, cornersY)
+    private is_in_track(point,cornersX, cornersY)
     {
 
         var x = point.x;

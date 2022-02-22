@@ -11,14 +11,14 @@ import { ControlIntroScene } from './controlintroscene';
 import { ChapterSelectScene } from './chapterselectscene';
 
 class JBGame {
-    name : string;
-    scenes = new Array<JBScene>();
-    renderer : WebGLRenderer;
+    private name : string;
+    private scenes = new Array<JBScene>();
+    private renderer : WebGLRenderer;
 
-    currentSceneName: string;
+    private currentSceneName: string;
     currentScene : JBScene;
 
-    clock : Clock = new Clock();
+    private clock : Clock = new Clock();
 
     constructor( name : string ) {
         console.log( `JBGame constructor ${name}` );
@@ -37,7 +37,7 @@ class JBGame {
         this.addScene( sSim );
     }
 
-    sceneByName( name : string ) {
+    private sceneByName( name : string ) {
         return this.scenes.find( scene => scene.name === name );
     }
 
@@ -54,32 +54,32 @@ class JBGame {
         }
     }
 
-    addScene( scene : JBScene ) {
+    private addScene( scene : JBScene ) {
         console.log("JBGame addScene");
         
         this.scenes.push( scene );
     }
 
-    render = this._render.bind( this );
+    private render = this._render.bind( this );
 
-    _render() {
+    private _render() {
         //console.log( `JBGame render` );
         
         this.render_game( true );
     }
     
-    render_no_physics = this._render_no_physics.bind( this );
+    private render_no_physics = this._render_no_physics.bind( this );
 
-    _render_no_physics() {
+    private _render_no_physics() {
         console.log( `JBGame render_no_physics` );
         
         this.render_game( false );
     }
     
-    render_game = this._render_game.bind( this );
+    private render_game = this._render_game.bind( this );
 
-    count = 0;
-    _render_game( physics : boolean ) {
+    private count = 0;
+    private _render_game( physics : boolean ) {
         if ( this.count >= 100 ) {
             //console.log("*** STOP ***");
             //return;            

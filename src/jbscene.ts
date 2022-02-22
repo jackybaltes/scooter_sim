@@ -9,6 +9,7 @@ class JBScene extends Scene {
     currentPhase : string;
     game : JBGame;
     camera : PerspectiveCamera | OrthographicCamera;
+
     root : string;
     userID:string;
     constructor( name : string, game : JBGame, root : string ) {
@@ -28,9 +29,9 @@ class JBScene extends Scene {
 
     start( ) { this.enter( null ) }
 
-    pause( ) { }
+    private pause( ) { }
 
-    set_user_id(id:string)
+    public set_user_id(id:string)
     {
         this.userID = id;
         console.log("setting user ID");

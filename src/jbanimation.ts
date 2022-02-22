@@ -62,7 +62,7 @@ class JBAnimation {
         return this.model;
     }
 
-    findAnimation( name : string ) {
+    private findAnimation( name : string ) {
         let anims = this.data["animations"];
         let ani : AnimationClip = null;
 
@@ -75,8 +75,8 @@ class JBAnimation {
         return ani;
     }
 
-    currentClip : AnimationClip;
-    currentAction : AnimationAction;
+    private currentClip : AnimationClip;
+    private currentAction : AnimationAction;
 
     playAnimation( name : string ) {
         if ( ( this.currentClip === undefined ) || ( this.currentClip === null ) || ( this.currentClip.name !== name ) ) {                
@@ -96,7 +96,7 @@ class JBAnimation {
         }
     }
 
-    stopAnimation( ) {
+    private stopAnimation( ) {
         if ( (this.currentAction !== undefined ) && ( this.currentAction !== null ) ) {
             this.currentAction.stop();
             this.currentAction = null;

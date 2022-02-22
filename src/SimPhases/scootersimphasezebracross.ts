@@ -20,7 +20,7 @@ enum ScooterSimPhaseZebraState {
 }
 
 class ScooterSimPhaseZebra extends ScooterSimPhaseOverlay {
-    state : ScooterSimPhaseZebraState;
+    private state : ScooterSimPhaseZebraState;
 
     constructor( game : JBGame, state : string ) {
         super( "scooter_sim_phase_zebra_crossing_intro", game, content, [ -12.2, 0.94, 7, -Math.PI/2 ] );

@@ -13,7 +13,7 @@ def main( argv = None ):
     if argv is None:
         argv = sys.argv
     parser = argparse.ArgumentParser( prog='control_server', description='proxies control messages received via UDP broadcast to the ws server, so that we can control the game in the browser instance')
-    parser.add_argument( '-u', '--udp_port', type=int, default='8877' ) 
+    parser.add_argument( '-u', '--udp_port', type=int, default='8787' ) 
     parser.add_argument( '--udp_ip', type=str, default='0.0.0.0' )
 
     args = parser.parse_args()

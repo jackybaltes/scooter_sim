@@ -1,16 +1,13 @@
-export class ControlServer {
+export class VideoServer {
     private socket : WebSocket;
     private port: Number;
-
-    steering_angle : number = 0.0; //I changed Number to number here 
-    velocity : number = 0.0;
 
     constructor( port : Number ) {
         this.port = port;
         this.waitForSocket();
     }
 
-    private init( ) {
+    public init( ) {
         //console.log("Creating ControlServer");
         this.socket = new WebSocket(`ws://127.0.0.1:${this.port}`);
         this.socket.onopen = this.createOnOpen();
@@ -19,31 +16,22 @@ export class ControlServer {
         this.socket.onerror = this.createOnError();
     }
 
-    private createOnOpen( ) {
+    public createOnOpen( ) {
         return function ( event :  Event ) {
-            //console.log("[open] Connection established");
+        console.log("[open] Connection established");
             //console.log("Sending to server");
         }
     }
     
-    private createOnMessage() {
+    public createOnMessage() {
         let cs = this;
-        return function ( event : MessageEvent ) {
-            ////console.log(`[message] Data received from server: ${event.data}`); 
-            let js = JSON.parse( event.data );
-            //console.log(`parsed json 2 ${js} ${"steering" in js}`);
-            if ( "steering" in js ) {
-                cs.steering_angle = js["steering"][0] * 1.5; // make turns larger
-                cs.velocity = js["steering"][1]/4; // slow it down by a factor of 3
-                //console.log( `steering angle ${cs.steering_angle} vel ${cs.velocity}`);
-            } else {
-                cs.velocity = 0.0;
-                cs.steering_angle = 0.0;
-            }
+        return function ( event : MessageEvent )
+        {
         }
     }
     
-    private createOnClose( ) {
+    
+    public createOnClose( ) {
         let cs = this;
         return function ( event : CloseEvent ) {
             if (event.wasClean) {
@@ -57,21 +45,22 @@ export class ControlServer {
         }
     }
 
-    private createOnError( ) {
+    public createOnError( ) {
         return function ( error : any ) {
-            //console.log(`[error] ${error.message}`);
+            console.log(`[error] ${error.message}`);
         }
     }
 
-    private waitForSocket() {
-        //console.log(`Waiting for socket on localhost port ${this.port} to become available`);
+    public waitForSocket() {
+        console.log(`Waiting for socket on localhost port ${this.port} to become available`);
         let cs = this;
         setTimeout( function( ) {
             cs.init();
         }, 1000 );
     }
 
-    private send( data : string | ArrayBuffer | Blob ) {
+    public send( data : string | ArrayBuffer | Blob ) {
+        
         this.socket.send( data );
     }
 }

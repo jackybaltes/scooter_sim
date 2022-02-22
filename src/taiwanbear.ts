@@ -11,9 +11,9 @@ enum States {
 };
 
 class TaiwanBear extends JBAnimation {
-    state: States = States.Roaming;
+    private state: States = States.Roaming;
 
-    clock : Clock;
+    private clock : Clock;
 
     constructor ( name : string ) {
         super( name, "../assets/tlgf/taiwan bear.glb", JBObjectType.TaiwanBear, 2.0 );
@@ -27,18 +27,14 @@ class TaiwanBear extends JBAnimation {
         this.state = States.Roaming;
     }
 
-    velocities : number[];
+    private velocities : number[];
 
-    freq = 2.0;
+    private freq = 2.0;
 
     home( ) {
         
         this.translate( -7, 0.0, -12.0 );
         this.rotate( 0.0, 0.0/360.0 * Math.PI, 0.0 );
-
-        console.log( `TaiwanBear home. data=${typeof(this.data)} animation=` );
-        console.dir( this.data );
-
         
         this.velocities = [0,0, 1];
 
@@ -52,7 +48,7 @@ class TaiwanBear extends JBAnimation {
         return m;
     }
 
-    normalizeAngle( theta ) {
+    private normalizeAngle( theta ) {
         while( theta < - 180.0/180.0 * Math.PI ) {
             theta = theta + 360.0/180.0 * Math.PI;
         }
@@ -77,7 +73,7 @@ class TaiwanBear extends JBAnimation {
     //     return sign * diff;
     // }
 
-    angleDifference( a1 : number , a2 : number ) {
+    private angleDifference( a1 : number , a2 : number ) {
         let a1n = a1; //this.normalizeAngle( a1 );
         let a2n = a2; //this.normalizeAngle( a2 );
 
@@ -91,16 +87,16 @@ class TaiwanBear extends JBAnimation {
         return diff;
     }
 
-    kpa = 10; kda = 0; kia = 0;
-    kpv = 1; kdv = 0; kiv = 0;
+    private kpa = 10; private kda = 0; private kia = 0;
+    private kpv = 1; private kdv = 0; private kiv = 0;
 
-    prevDiff = 0;
+    private prevDiff = 0;
 
-    maxVelocity = 5;
+    private maxVelocity = 5;
 
-    updateClock : Clock = new Clock();
+    private updateClock : Clock = new Clock();
 
-    update( ) {
+    private update( ) {
         const delta = this.updateClock.getDelta();
         let { x, y, z } = this.model.position;
         let theta = this.normalizeAngle( this.model.rotation.y );
@@ -113,7 +109,7 @@ class TaiwanBear extends JBAnimation {
         this.rotate( 0, this.normalizeAngle( theta + theta_d * delta ), 0 );
     }
 
-    chase( xt : number, zt : number, vel : number = 0.4 ) {
+    private chase( xt : number, zt : number, vel : number = 0.4 ) {
         let { x, y, z } = this.model.position;
         let dist = Math.hypot( z - zt, x - xt );
         let theta = this.normalizeAngle( this.model.rotation.y );
@@ -125,21 +121,20 @@ class TaiwanBear extends JBAnimation {
         this.velocities[0] = vel; 
 
         this.prevDiff = diff;
-        console.log( `dist ${dist} x ${x} z ${z} theta ${theta} xt ${xt} zt ${zt} phi ${phi} diff ${diff} theta_d ${this.velocities[1]} v_lin ${this.velocities[0]}` );
     }
 
-    roamX: number = 0;
-    roamZ: number = 0;
-    attackTime : number = 0;
+    private roamX: number = 0;
+    private roamZ: number = 0;
+    private attackTime : number = 0;
 
-    ChargeDistanceParam = 10.0;
-    AttackDistanceParam = 2.0;
-    AttackTimeParam = 2.5;
-    AttackCoolDownTimeParam = 7.0;
-    AttackSpeedParam = 2.5;
-    WalkSpeedParam = 0.5;
+    private ChargeDistanceParam = 10.0;
+    private AttackDistanceParam = 2.0;
+    private AttackTimeParam = 2.5;
+    private AttackCoolDownTimeParam = 7.0;
+    private AttackSpeedParam = 2.5;
+    private WalkSpeedParam = 0.5;
 
-    AniSpeedFactor = 0.3;
+    private AniSpeedFactor = 0.3;
 
     tick( delta : number, sim : ScooterSimScene ) {
         let aniSpeed = 1.0;
@@ -197,7 +192,6 @@ class TaiwanBear extends JBAnimation {
                 let dist = Math.hypot( z - zt, x - xt );
 
                 if ( dist <= this.AttackDistanceParam ) {
-                    console.log("CRASH");
                     scooter.crash();
                 }
                 this.playAnimation("slow_walking");

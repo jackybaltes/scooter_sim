@@ -16,6 +16,8 @@ import {Track} from './track';
 import {Timer} from './timer';
 import {Robot} from './robot';
 import {ControlServer} from './controlserver';
+import {VideoServer} from './video_server';
+
 import { JBAnimation,JBObjectType } from './jbanimation';
 import { TaiwanBear } from './taiwanbear';
 import { TaiwanPolice, TaiwanCopMale } from './taiwancop';
@@ -45,21 +47,23 @@ class ScooterSimScene extends JBScene {
     //elements to modify the html page
     score_element : HTMLElement;
     comment_element : HTMLElement;
-    timer_element : HTMLElement;
+    private timer_element : HTMLElement;
 
     //Stopwatch used to show the time and TODO: add some score
-    stopwatch :Timer;
+    private stopwatch :Timer;
 
-    controlServer : ControlServer;
+    private controlServer : ControlServer;
+    private videoServer : VideoServer;
+
     background : Color;
     //camera : PerspectiveCamera;
-    controls : OrbitControls;
+    private controls : OrbitControls;
 
     updateables = new Array<JBAnimation>(); 
 
     //Objects ThreeJs of the track and robot
-    track :Object3D;
-    scooter_three :URDFRobot;
+    private track :Object3D;
+    private scooter_three :URDFRobot;
     //Class used to controll the scooter
     test_track :Track;
     //Class used to controll the track
@@ -67,27 +71,30 @@ class ScooterSimScene extends JBScene {
 
     //Booleans to check user inputs
     lock_imputs :boolean=false;
-    a_up :boolean=true;
-    d_up :boolean=true;
-    w_up :boolean=true;
-    s_up :boolean=true;
+    private a_up :boolean=true;
+    private d_up :boolean=true;
+    private w_up :boolean=true;
+    private s_up :boolean=true;
 
-    loaded:boolean=false;
+    private loaded:boolean=false;
 
-    overlay : string;
+    private overlay : string;
     overlayPhase : ScooterSimPhaseOverlay = null;
 
-    jingle_played : boolean;
+    private jingle_played : boolean;
     
-    numer_animation_L_count: number = 0;
-    numer_animation_R_count: number = 0;
+    private numer_animation_L_count: number = 0;
+    private numer_animation_R_count: number = 0;
+
+    private ms_count: number = 0;
+
 
     constructor( name : string, game : JBGame, root: string, overlay : string ) {
         super( name, game, root );
         this.overlay = overlay;
     }
 
-    bears : Array<JBAnimation> = new Array<JBAnimation>();
+    private bears : Array<JBAnimation> = new Array<JBAnimation>();
 
     async preload() {
         if(!this.loaded)
@@ -173,7 +180,7 @@ class ScooterSimScene extends JBScene {
         }
     }
 
-    html = `
+    private html = `
     <div id="id_sim_menu" class="sim_menu">
         <div style="color: rgb(0, 0, 0);">
             <select id="cb_camera_view" class="combobox" type=text list=value>
@@ -196,7 +203,7 @@ class ScooterSimScene extends JBScene {
     </div>
     `;
 
-    createDOM( phase : string ) {
+    private createDOM( phase : string ) {
         let gel = document.getElementById("game");
 
         let h = document.createElement('div');
@@ -290,12 +297,19 @@ class ScooterSimScene extends JBScene {
         let count = 0;
         setInterval( function () {
             let msg = `State message ${count}`;  
-            console.log( `Trying to send message ${msg}`);
+            //console.log( `Trying to send message ${msg}`);
             if ( ( this.controlServer !== null) && ( this.controlServer !== undefined) ) {
                 this.controlServer.send( msg );
             } 
             count++; }
         , 5000 );
+
+
+
+
+
+
+
 
         this._onResize();
         window.addEventListener('resize', this.onResize );
@@ -306,6 +320,8 @@ class ScooterSimScene extends JBScene {
 
         //setting the server to port 8878
         this.controlServer = new ControlServer(8878);
+        this.videoServer = new VideoServer(8787);
+
 
         if ( this.overlayPhase !== null ) {
             await this.overlayPhase.enter( prev );
@@ -315,11 +331,11 @@ class ScooterSimScene extends JBScene {
         this.reset();
     }
 
-    clock : Clock; 
+    private clock : Clock; 
     dt: number;
 
     prevPhase : string = "";
-    nextPhase : string = "";
+    private nextPhase : string = "";
 
 
     is_done()
@@ -353,6 +369,34 @@ class ScooterSimScene extends JBScene {
         if( this.scooterObj == null ) {
             return;
         }
+        console.log(this.ms_count)
+        console.log(this.dt)
+        console.log("=======")
+
+        if(this.ms_count >=0.05)
+        {
+            this.scooterObj.update_camera()
+            //testing the camera system
+            this.renderer.setSize( 352, 240 );
+            this.scooterObj.camera_robot_view.aspect = 352 / 240;
+            this.scooterObj.camera_robot_view.updateProjectionMatrix();
+            this.renderer.render(this, this.scooterObj.camera_robot_view);
+            var t = this
+            this.renderer.domElement.toBlob(function(blob){
+                t.videoServer.send(blob);
+                /*
+                var a = document.createElement('a');
+                var url = URL.createObjectURL(blob);
+                a.href = url;
+                a.download = 'canvas.png';
+                a.click(); 
+                */
+            }, 'image/png', 1.0);    
+            this.renderer.setSize( window.innerWidth, window.innerHeight );
+            this.ms_count=0;
+        }
+        this.ms_count += this.dt;
+
 
         if( this.controlServer.velocity != 0) {
             this.scooterObj.velocity = this.controlServer.velocity;
@@ -495,6 +539,9 @@ class ScooterSimScene extends JBScene {
                 let sel = e.selectedIndex;
                 let opt = e.options[sel];
                 let cb_view = (<HTMLOptionElement>opt).value;
+                
+                console.log("TEST12")
+                
 
                 if ( cb_view == "cb_follow" ) {
                     this.camera.position.set( this.scooterObj.get_position().x - camdist_x, this.scooterObj.get_position().y+5, this.scooterObj.get_position().z-camdist_y);
@@ -582,7 +629,7 @@ class ScooterSimScene extends JBScene {
     }
     
 
-    applyRotation( obj, rpy, additive = false) {
+    private applyRotation( obj, rpy, additive = false) {
         var tempQuaternion:Quaternion = new Quaternion();
         var tempEuler:Euler = new Euler();
         // if additive is true the rotation is applied in
@@ -599,7 +646,7 @@ class ScooterSimScene extends JBScene {
     
     
     
-    steer_keyboard() { 
+    private steer_keyboard() { 
         const vel_update :number= 0.12;
         const steer_update:number = 1.5;
         if(!this.lock_imputs)
@@ -625,7 +672,7 @@ class ScooterSimScene extends JBScene {
     }
     
     
-    _user_input_up(event) {
+    private _user_input_up(event) {
         if ( this.stopwatch !== null ) {
             this.stopwatch.startTimer();
         }
@@ -659,9 +706,9 @@ class ScooterSimScene extends JBScene {
         }
     }
     
-    user_input_up = this._user_input_up.bind( this );
+    private user_input_up = this._user_input_up.bind( this );
 
-    _user_input_down(event) {
+    private _user_input_down(event) {
         if(event.key == "w") {
             this.w_up = false;
         } else if(event.key == "s") {
@@ -673,9 +720,9 @@ class ScooterSimScene extends JBScene {
         }
     }
     
-    user_input_down = this._user_input_down.bind( this );
+    private user_input_down = this._user_input_down.bind( this );
     
-    check_angles() {
+    private check_angles() {
         //controls
         if( this.scooterObj.velocity < this.scooterObj.min_x_velocity ) {
             this.scooterObj.velocity = this.scooterObj.min_x_velocity;

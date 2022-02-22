@@ -5,20 +5,17 @@ export class Score
 {
 
     //const fs = require('fs');
-    curent_score:number;
-    user_name:String;
+    private curent_score:number;
+    private user_name:String;
 
     //need change when we have a static server
-    score_server_ip_set_csv = "http://140.122.105.193:8080/set_csv";
-    score_server_ip_get_csv = "http://140.122.105.193:8080/get_csv";
+    private score_server_ip_set_csv = "http://localhost:8080/set_csv";
+    private score_server_ip_get_csv = "http://localhost:8080/get_csv";
 
     constructor(username)
     {
         this.user_name =  username;
         this.reset();
-        console.log("TEST CSV");
-        console.log(this.get_scores_csv());
-
     }
 
     reset():void
@@ -60,6 +57,7 @@ export class Score
     //is no user is given it will just use 'anonymous'
     save_to_file():void
     {
+        /*
         try
         {
             var xmlHttp = new XMLHttpRequest();
@@ -79,12 +77,15 @@ export class Score
         {
             console.log(err);
         }
+        */
     }
 
 
 
-    get_best_simple()
+    private get_best_simple()
     {
+        return "0.0\nServer down\n";
+        /*
         try
         {
             var t0 = performance.now()
@@ -101,55 +102,17 @@ export class Score
             console.log(err);
             return "0,0\n0,Server not responding\n";
         }
+        */
     }
 
 
-
-    get_scores_csv()
+    
+    private get_best_score_server():any
     {
+/*
         try
         {
-            var t0 = performance.now()
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "GET", this.score_server_ip_get_csv, false ); // false for synchronous request
-            xmlHttp.send( null );
-            var t1 = performance.now()
-            console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
-    
-            return xmlHttp.responseText;
-        }
-        catch(err)
-        {
-            console.log(err);
-            return "0,0\n0,Server not responding\n";
-        }
-    }
-    
-    get_best_score_server():any
-    {
-        try
-        {
-            /*
-            //spliting the csv to lines
-            var line_array = this.get_scores_csv().split("\n");
-            console.log("LINE ARRAY =");
-            console.log(line_array);
-            //removing the first eleemnt (csv header)
-            line_array.shift();
-            var max:number  = parseInt(line_array[0].split(",")[1]);
-            var best_user:string = line_array[0].split(",")[0];
-            for (let index = 0; index < line_array.length; index++)
-            {
-                var username = line_array[index].split(",")[0];
-                var score = parseInt(line_array[index].split(",")[1]);
-
-                if(max<score)
-                {
-                    max=score;
-                    best_user=username;
-                }
-            }
-            */
+        
             var response = this.get_best_simple();
             var max:number  = parseInt(response.split(",")[0]);
             var best_user:string = response.split(",")[1];
@@ -160,6 +123,8 @@ export class Score
             console.log(err);
             return [0,"Server not responding"];
         }
+        */
+        return [0.0,"Server Down"];
     }
 
 }

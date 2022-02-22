@@ -19,17 +19,17 @@ import { ScooterSimScene } from './scootersimscene';
 
 class IntroScene extends JBScene {
 
-    texture : Texture;
-    material : Material;
-    plane : Mesh;
-    loader : TextureLoader = null;
+    private texture : Texture;
+    private material : Material;
+    private plane : Mesh;
+    private loader : TextureLoader = null;
     content : string;
-    prev : string;
-    next : string;
+    private prev : string;
+    private next : string;
 
-    loaded : boolean = false;
+    private loaded : boolean = false;
 
-    textureName : string;
+    private textureName : string;
     
 // "../assets/images/taiwan_drivers_licence_intro.png"
 
@@ -53,7 +53,7 @@ class IntroScene extends JBScene {
     labels : HTMLDivElement;
     wrapper: HTMLElement;
 
-    createDOM( ) {
+    private createDOM( ) {
         let parent = document.getElementById( this.root );
         if ( parent !== null ) {
             this.wrapper = parent;

@@ -4,6 +4,7 @@ import {
     Matrix3,
     Matrix4,
     Euler,
+    PerspectiveCamera,
 } from 'three';
 
 import { 
@@ -13,6 +14,9 @@ import {
 import { JBAnimation } from './jbanimation';
 
 export class Robot{
+
+    public camera_robot_view : PerspectiveCamera;
+
 
     public scooter;
     public velocity:number; //m/s
@@ -140,6 +144,8 @@ export class Robot{
         this.start_pose_R = new Matrix([[0.,0.,-Math.PI/2,Math.PI,-Math.PI/2,-Math.PI/2,0.,Math.PI/2,0.]]);
         this.last_pose_R = new Matrix([[0.,0.,0.,-Math.PI/2,0.,0.,0.,0.,0.]]);
 
+        this.camera_robot_view = new PerspectiveCamera();
+
     }
 
 
@@ -166,7 +172,7 @@ export class Robot{
     }
 
 
-    change_color(obj,color):void
+    private change_color(obj,color):void
     {
         obj.color.set(color);
         obj.emissive.set(color);
@@ -174,7 +180,23 @@ export class Robot{
         obj.needsUpdate = true;
     }
 
+    get_head_position(): Vector3
+    {
+        return this.scooter.links["head_p_link"].getWorldPosition();
+    }
+    
 
+    update_camera()
+    {
+        var pos =this.get_head_position();
+        this.camera_robot_view.position.set(pos.x,pos.y,pos.z);
+        this.camera_robot_view.quaternion.copy(this.scooter.links["head_p_link"].getWorldQuaternion());
+
+        this.camera_robot_view.lookAt(  this.scooter.links["front"].getWorldPosition().x,
+                                        this.scooter.links["front"].getWorldPosition().y+1,
+                                        this.scooter.links["front"].getWorldPosition().z);
+    }
+    
 
     get_wheel_position(): Vector3
     {
@@ -193,12 +215,6 @@ export class Robot{
     }
 
 
-
-    transfer_function_steer_to_tilt(s)
-    {
-        return ((this.a*this.velocity)/(this.b*this.h)) * ( (s+(this.velocity/this.a) )/( (Math.pow(s,2)-(this.g/this.h))  ));
-        //return ((this.a*this.velocity)/(this.b*this.h)) * ( (s+(this.velocity/this.a) )/( (Math.pow(s,2)-(this.g/this.h))  ));
-    }
 
     stop_signal() {
         this.change_color(this.stop_light,this.red);
@@ -265,7 +281,7 @@ export class Robot{
     /*
     Change the pose of the robot arms
     */
-    set_pose(q_list_L,q_list_R)
+    private set_pose(q_list_L,q_list_R)
     {   
         this.scooter.setJointValue("torso_y",q_list_L.get(0,0)+q_list_L.get(0,1));
         this.scooter.setJointValue("l_arm_sh_p1",q_list_L.get(0,2));
@@ -314,7 +330,7 @@ export class Robot{
     }
 
 
-    get_pendulum()
+    private get_pendulum()
     {
         var zero = 0.001
         var pendulum = (this.g/this.h)*Math.sin(this.phi);
@@ -356,7 +372,6 @@ export class Robot{
                 this.lean = Math.atan(((this.velocity*30)**2)/(this.g*(rad)));
             }
             this.phi += this.get_pendulum()*0.01*(1/(1+this.velocity*50));
-            console.log(this.get_pendulum());
 
             if( this.phi < - this.max_phi ) {
                 this.phi = - this.max_phi;
@@ -389,7 +404,7 @@ export class Robot{
         }
     }
 
-    rotate_around( cx, cy, x, y, radians) {
+    private rotate_around( cx, cy, x, y, radians) {
         var cos = Math.cos( radians ),
             sin = Math.sin( radians ),
             nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
@@ -399,7 +414,7 @@ export class Robot{
 
 
 
-    forward_kin(q_list,is_left_arm = true)
+    private forward_kin(q_list,is_left_arm = true)
     {
         if(is_left_arm)
         {
@@ -502,7 +517,7 @@ export class Robot{
         }
     }
 
-    calc_jacob_newton(state,is_left_arm =true)
+    private calc_jacob_newton(state,is_left_arm =true)
     {
         var eps = 0.01;
         var current = this.forward_kin(state,is_left_arm);
@@ -523,7 +538,7 @@ export class Robot{
         return J;
     }
 
-    pseudo_inverse(p_desired,start_q,max_steps,is_left_arm =true)
+    private pseudo_inverse(p_desired,start_q,max_steps,is_left_arm =true)
     {
         var use_momentum = false;
         var p_start = this.forward_kin(start_q,is_left_arm);
@@ -578,7 +593,7 @@ export class Robot{
         return curent_q_pos
     }
 
-    get_grip_L_Fkin(yaw,phi,steering)
+    private get_grip_L_Fkin(yaw,phi,steering)
     {
         var s1=Math.sin(yaw);
         var c1=Math.cos(yaw);
@@ -594,7 +609,7 @@ export class Robot{
         return new Matrix([[link_x3,link_z3,-link_y3,0,0,0]]);
     }
 
-    get_grip_R_Fkin(yaw : number, phi : number, steering : number )
+    private get_grip_R_Fkin(yaw : number, phi : number, steering : number )
     {
         var s1=Math.sin(yaw);
         var c1=Math.cos(yaw);
@@ -628,6 +643,7 @@ export class Robot{
         {
             this.crash_frames_countdown--;
         }
+            
 
     }
 
@@ -676,7 +692,7 @@ export class Robot{
 
     }
 
-    CollideDistanceParam = 0.5;
+    private CollideDistanceParam = 0.5;
 
     collission( obj : JBAnimation ) {
         let xs = this.get_position().x;

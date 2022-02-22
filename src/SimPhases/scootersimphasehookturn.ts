@@ -23,7 +23,7 @@ enum ScooterSimPhaseHookTurnState {
 }
 
 class ScooterSimPhaseHookTurn extends ScooterSimPhaseOverlay {
-    state : ScooterSimPhaseHookTurnState;
+    private state : ScooterSimPhaseHookTurnState;
 
     constructor( game : JBGame, state : string ) {
         super( "scooter_sim_phase_hook_turn_intro", game, content, [ -4, 0.94, 16.7, 0.0 ] );

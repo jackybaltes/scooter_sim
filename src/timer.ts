@@ -26,7 +26,7 @@ export class Timer {
         }
     }
 
-    pauseTimer(){
+    private pauseTimer(){
         if (!this.difference){
             // if timer never started, don't allow pause button to do anything
         } else if (!this.paused) {

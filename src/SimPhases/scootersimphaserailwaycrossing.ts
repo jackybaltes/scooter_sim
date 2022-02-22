@@ -20,7 +20,7 @@ enum ScooterSimPhaseRailCrossState {
 }
 
 class ScooterSimPhaseRailCross extends ScooterSimPhaseOverlay {
-    state : ScooterSimPhaseRailCrossState;
+    private state : ScooterSimPhaseRailCrossState;
 
     constructor( game : JBGame, state : string ) {
         super( "scooter_sim_phase_rail_cross_intro", game, content, [ 2, 0.94, -1.7, 0.0 ] );

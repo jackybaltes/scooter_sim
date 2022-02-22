@@ -20,7 +20,7 @@ enum ScooterSimPhaseHairPinState {
 }
 
 class ScooterSimPhaseHairPin extends ScooterSimPhaseOverlay {
-    state : ScooterSimPhaseHairPinState;
+    private state : ScooterSimPhaseHairPinState;
 
     constructor( game : JBGame, state : string ) {
         super( "scooter_sim_phase_hair_pin_intro", game, content, [ 3.3, 0.94, 9, 1.57 ] );

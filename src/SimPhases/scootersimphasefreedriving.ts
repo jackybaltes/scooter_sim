@@ -12,7 +12,7 @@ enum ScooterSimPhaseFreeDrivingState {
 }
 
 class ScooterSimPhaseFreeDriving extends ScooterSimPhaseOverlay {
-    state : ScooterSimPhaseFreeDrivingState;
+    private state : ScooterSimPhaseFreeDrivingState;
 
     constructor( game : JBGame, state : string ) {
         super( "scooter_sim_phase_free_driving_intro", game, content, [ -12.2, 0.94, -15, -Math.PI/2 ] );
