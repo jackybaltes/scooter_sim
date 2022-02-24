@@ -46,5 +46,13 @@ Uou can also control the simulated robot speed and steering angle the simulation
 A camera is palced on the robot and the video flux is send via UDP at the port 8787 of 127.0.0.1.
 You will find a python script showing how to acces the video flux here : scooter_sim/Tools/image_receiver.py
 
+To setup a python environment that includes websockets, numpy, and opencv, you can use the following commands
+
+```
+python -m venv .venv
+.venv\Scripts\activate # Windows
+source .venv/bin/activate.sh # Linux
+python -m pip install websockets numpy opencv-python
+```
 Ps: The code is curently poorly commented so contact me (Ugo Roux) at ugo.roux31@gmail.com or directly on discord with the username UgoLeRobot#5012
 
