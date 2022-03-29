@@ -16,7 +16,6 @@ import {Track} from './track';
 import {Timer} from './timer';
 import {Robot} from './robot';
 import {ControlServer} from './controlserver';
-import {VideoServer} from './video_server';
 
 import { JBAnimation,JBObjectType } from './jbanimation';
 import { TaiwanBear } from './taiwanbear';
@@ -53,7 +52,6 @@ class ScooterSimScene extends JBScene {
     private stopwatch :Timer;
 
     private controlServer : ControlServer;
-    private videoServer : VideoServer;
 
     background : Color;
     //camera : PerspectiveCamera;
@@ -319,8 +317,7 @@ class ScooterSimScene extends JBScene {
         this.clock = new Clock();
 
         //setting the server to port 8878
-        this.controlServer = new ControlServer(8878);
-        this.videoServer = new VideoServer(8787);
+        this.controlServer = new ControlServer(8787);
 
 
         if ( this.overlayPhase !== null ) {
@@ -369,9 +366,6 @@ class ScooterSimScene extends JBScene {
         if( this.scooterObj == null ) {
             return;
         }
-        console.log(this.ms_count)
-        console.log(this.dt)
-        console.log("=======")
 
         if(this.ms_count >=0.05)
         {
@@ -383,7 +377,7 @@ class ScooterSimScene extends JBScene {
             this.renderer.render(this, this.scooterObj.camera_robot_view);
             var t = this
             this.renderer.domElement.toBlob(function(blob){
-                t.videoServer.send(blob);
+                t.controlServer.send(blob);
                 /*
                 var a = document.createElement('a');
                 var url = URL.createObjectURL(blob);
@@ -539,9 +533,6 @@ class ScooterSimScene extends JBScene {
                 let sel = e.selectedIndex;
                 let opt = e.options[sel];
                 let cb_view = (<HTMLOptionElement>opt).value;
-                
-                console.log("TEST12")
-                
 
                 if ( cb_view == "cb_follow" ) {
                     this.camera.position.set( this.scooterObj.get_position().x - camdist_x, this.scooterObj.get_position().y+5, this.scooterObj.get_position().z-camdist_y);

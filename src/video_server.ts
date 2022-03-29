@@ -14,6 +14,13 @@ export class VideoServer {
         this.socket.onmessage = this.createOnMessage();
         this.socket.onclose = this.createOnClose();
         this.socket.onerror = this.createOnError();
+
+        this.socket.addEventListener('message', function (event) {
+            console.log('MESSAGE RECEIVED VIDEOSERVER')
+            console.log(event.data)
+        })
+
+
     }
 
     public createOnOpen( ) {
