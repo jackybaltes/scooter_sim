@@ -367,12 +367,12 @@ class ScooterSimScene extends JBScene {
             return;
         }
 
-        if(this.ms_count >=0.05)
+        if(this.ms_count >=0.005)
         {
             this.scooterObj.update_camera()
             //testing the camera system
-            this.renderer.setSize( 352, 240 );
-            this.scooterObj.camera_robot_view.aspect = 352 / 240;
+            this.renderer.setSize( 140, 140 );
+            this.scooterObj.camera_robot_view.aspect = 1 / 1;
             this.scooterObj.camera_robot_view.updateProjectionMatrix();
             this.renderer.render(this, this.scooterObj.camera_robot_view);
             var t = this
